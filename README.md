@@ -26,7 +26,7 @@ sudo ./embyupdate.py
 ```
 Needs sudo to be able to install packages and Stop/Start the server if needed
 
-## I however suggest running it as a cron job as root. 
+### **I however suggest running it as a cron job as root.** 
 
 ### Supported Linux Distros
 ```
