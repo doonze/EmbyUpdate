@@ -7,6 +7,7 @@ import requests
 import os.path
 import time
 
+os.chdir(sys.path[0])
 ###############################################################################################
 # This script can be used to to keep Emby servers for linux automatically up to date.         #
 # It is setup for the X64 and ARM versions of Debian,Ubuntu,Mint,CentOS,Fedora,Arch and       #
