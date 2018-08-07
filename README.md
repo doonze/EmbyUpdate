@@ -59,7 +59,7 @@ OpenSuse
 4. For Debian based distros the script will download the newest deb file from Emby github. It will then run dpkg on the downloaded file    installing it as long as the version it's trying to install isn't also the current version. Dpkg stops and starts the server for you.    It will then delete the deb file to keep things nice and clean.
     
    All other distros I believe do the three above steps from one command (yum, zypper, pacman, dnf) I have taken that into account in
-   the script and as long as you've uncomments out the correct commands for your distro you should be fine. (untested)
+   the script and as long as you've correctly set the distro variable for your distro you should be fine. (untested)
    
 5. Lastly, if everything has gone ok with no errors, the script will write the newly installed version number into version.txt
 
