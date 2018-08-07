@@ -28,6 +28,8 @@ Needs sudo to be able to install packages and Stop/Start the server if needed
 
 ### **I however suggest running it as a cron job as root.** 
 
+See deployment section for cron example
+
 ### Supported Linux Distros
 ```
 Debian
@@ -40,7 +42,7 @@ OpenSuse
 ```
 (Or anything based on them. If you want to modify the code it should work on any distro)
 
-** For any Distro but Debian/Ubuntu/Mint you have to comment out the default code block, find your distro code block, and uncomment it's settings. **
+** For any Distro but Debian/Ubuntu/Mint you have to chage the distro varable as it set to Debian flavors by default **
 
 ### Script Logic Flow
 
@@ -80,6 +82,12 @@ sudo embyupdate.py
 ```
 
 As stated above you must either be root or use sudo because the script calls privileged Linux commands. I also highly suggest running the script through cron as root.
+
+Example CRONTAB entry:
+```
+35 12   * * *    root  /usr/bin/python3 /path/to/embyupdate/embyupdate.py >> /path/to/embyupdate/embyupdate.log 2>&1
+```
+That runs the script every day at 12:35 and creates a log file in the location of my choice. I use my script location.
 
 However, if your user has sudo access without a password, you could update the commands in the script by apending
 ```
