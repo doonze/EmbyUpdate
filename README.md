@@ -50,9 +50,9 @@ OpenSuse
 
 2. Once it has pulled the latest version number it will test to see if the version.txt file exist already. 
   
- * a. If it doesn't exist it will create a blank version.txt file. Script will notify you and exit if it can't create the file or              encounters any other errors. Due to the file being blank, it will always try and update the server to the latest version the first      time the script is run. On Debian derived distro's it will download the latest deb, but if the latest version is already the            current version it won't do anything and will exit. It will however update the version.txt file with the version it just installed.      Every other future run should be normal.
+ * If it doesn't exist it will create a blank version.txt file. Script will notify you and exit if it can't create the file or              encounters any other errors. Due to the file being blank, it will always try and update the server to the latest version the first      time the script is run. On Debian derived distro's it will download the latest deb, but if the latest version is already the            current version it won't do anything and will exit. It will however update the version.txt file with the version it just installed.      Every other future run should be normal.
   
- * b. If version.txt exist, it will compare the version download from github with the most recent installed version in version.txt. If        they match the script will let you know and exit. If they don't match the script will move on to installing the latest version.
+ * If version.txt exist, it will compare the version download from github with the most recent installed version in version.txt. If        they match the script will let you know and exit. If they don't match the script will move on to installing the latest version.
   
 3. The script will start the upgrade now, first checking to see if your Distro settings (or manual settings) ask it to stop the server.    As written this will only work on systemd systems, but the commands can be changed as needed. This is not required in most cases as      the install packages normally stops/starts the server when it's being updated anyway. But it's in the script if needed.
 
