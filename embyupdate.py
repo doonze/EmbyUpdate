@@ -7,7 +7,6 @@ import requests
 import os.path
 import time
 
-os.chdir(sys.path[0])
 ###############################################################################################
 # This script can be used to to keep Emby servers for linux automatically up to date.         #
 # It is setup for the X64 and ARM versions of Debian,Ubuntu,Mint,CentOS,Fedora,Arch and       #
@@ -15,10 +14,28 @@ os.chdir(sys.path[0])
 # install logic of the distro's installer. But if your distro uses systemd then this script   #
 # has logic that can stop and start the server if needed. If you don't have systemd then      #
 # if you want the server stopped and started by the script you'll need to modify the          #
-# commands as needed. Just make sure if not running Debian/Ubuntu/Mint X64 to comment out     #
-# that block of code and uncomment the correct block for your Distro/Architecture.            #
+# commands as needed. Just make sure if not running Debian/Ubuntu/Mint X64 to change the      #
+# distro varable below!!!!                                                                    #
 # Should work with both python 2.7 and all flavors of 3.                                      #
 ###############################################################################################
+
+###############################################################
+# Fill in the following distro varable with your distro type. #
+# Here are the aviable options:                               #
+# Debian X64 (Use for Ubuntu and Mint as well)                #
+# Debian ARM (Use for Ubuntu and Mint as well)                #  
+# Arch                                                        #
+# CentOS                                                      #
+# Fedora X64                                                  #
+# Fedora ARM                                                  #
+# OpenSUSE X64                                                #
+# OpenSUSE ARM                                                # 
+###############################################################
+
+distro = "Debian X64"
+
+# First we're going to force the working path to be where the script lives
+os.chdir(sys.path[0])
 
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
@@ -52,78 +69,81 @@ except Exception as e:
 	print(e)
 	sys.exit()
 
-##################################################################################
-# Uncomment the correct download link, intsall, and updatefile for your distro!!!#
-# Defaults to Debian/Ubuntu/Mint X64. Comment those out to use a differnt one!!!!#
-##################################################################################
-
 # Debian/Ubuntu/Mint amd64 *************
-serverstop  = False
-serverstart = False
-downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb" 
-installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
-updatefile  = "emby-server-deb_" + onlineversion + "_amd64.deb"
+if distro == "Debian X64"
+	serverstop  = False
+	serverstart = False
+	downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb" 
+	installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
+	updatefile  = "emby-server-deb_" + onlineversion + "_amd64.deb"
 #***************************************
 
 # Debian/Ubuntu/Mint armhf *************
-#serverstop  = False
-#serverstart = False
-#downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_armhf.deb"
-#installfile = "dpkg -i emby-server-deb_" + onlineversion + "_armhf.deb"
-#updatefile  = "emby-server-deb_" + onlineversion + "_armhf.deb"
+if distro == "Debian ARM"
+	serverstop  = False
+	serverstart = False
+	downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_armhf.deb"
+	installfile = "dpkg -i emby-server-deb_" + onlineversion + "_armhf.deb"
+	updatefile  = "emby-server-deb_" + onlineversion + "_armhf.deb"
 #***************************************
 
 # Arch Linux ***************************
-#serverstop  = True
-#serverstart = True
-#downloadurl = "notused"
-#installfile = "pacman -S emby-server"
-#updatefile  = "notused"
+if distro == "Arch"
+	serverstop  = True
+	serverstart = True
+	downloadurl = "notused"
+	installfile = "pacman -S emby-server"
+	updatefile  = "notused"
 #***************************************
 
 # CentOS X64 ***************************
 # In Cent I think yum will handle the stop/start of the server, but change below if needed
-#serverstop  = False
-#serverstart = False
-#downloadurl = "yum install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
-#installfile = "notused"
-#updatefile  = "notused"
+if distro == "CentOS"
+	serverstop  = False
+	serverstart = False
+	downloadurl = "yum install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+	installfile = "notused"
+	updatefile  = "notused"
 #****************************************
 
 # Fedora X64 ****************************
 # Pretty sure dnf will stop/start the server, but change below if needed
-#serverstop  = False
-#serverstart = False
-#downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
-#installfile = "notused"
-#updatefile  = "notused"
+if distro == "Fedora X64"
+	serverstop  = False
+	serverstart = False
+	downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+	installfile = "notused"
+	updatefile  = "notused"
 #***************************************
 
 # Fedora Armv7hl ***********************
 # Pretty sure dnf will stop/start the server, but change delow if needed
-#serverstop  = False
-#serverstart = False
-#downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
-#installfile = "notused"
-#updatefile  = "notused"
+if distro == "Fedora ARM"
+	serverstop  = False
+	serverstart = False
+	downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
+	installfile = "notused"
+	updatefile  = "notused"
 #***************************************
 
 # OpenSUSE X64 *************************
 # Pretty sure zypper will stop/start the server, but change below as needed
-#serverstop  = False
-#serverstart = False
-#downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
-#installfile = "notused"
-#updatefile  = "notused"
+if distro == "OpenSUSE X64"
+	serverstop  = False
+	serverstart = False
+	downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+	installfile = "notused"
+	updatefile  = "notused"
 #***************************************
 
 # OpenSUSE Armv7hl *********************
 # Pretty sure zypper will stop/start the server, but change below as needed
-#serverstop  = False
-#serverstart = False
-#downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
-#installfile = "notused"
-#updatefile  = "notused"
+if distro == "OpenSUSE ARM"
+	serverstop  = False
+	serverstart = False
+	downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
+	installfile = "notused"
+	updatefile  = "notused"
 #**************************************
 
 # Now that we know the latest version we're going to see if we need to update.
