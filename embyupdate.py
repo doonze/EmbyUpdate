@@ -70,7 +70,7 @@ except Exception as e:
 	sys.exit()
 
 # Debian/Ubuntu/Mint amd64 *************
-if distro == "Debian X64"
+if distro == "Debian X64":
 	serverstop  = False
 	serverstart = False
 	downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb" 
@@ -79,7 +79,7 @@ if distro == "Debian X64"
 #***************************************
 
 # Debian/Ubuntu/Mint armhf *************
-if distro == "Debian ARM"
+if distro == "Debian ARM":
 	serverstop  = False
 	serverstart = False
 	downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_armhf.deb"
@@ -88,7 +88,7 @@ if distro == "Debian ARM"
 #***************************************
 
 # Arch Linux ***************************
-if distro == "Arch"
+if distro == "Arch":
 	serverstop  = True
 	serverstart = True
 	downloadurl = "notused"
@@ -98,7 +98,7 @@ if distro == "Arch"
 
 # CentOS X64 ***************************
 # In Cent I think yum will handle the stop/start of the server, but change below if needed
-if distro == "CentOS"
+if distro == "CentOS":
 	serverstop  = False
 	serverstart = False
 	downloadurl = "yum install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
@@ -108,7 +108,7 @@ if distro == "CentOS"
 
 # Fedora X64 ****************************
 # Pretty sure dnf will stop/start the server, but change below if needed
-if distro == "Fedora X64"
+if distro == "Fedora X64":
 	serverstop  = False
 	serverstart = False
 	downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
@@ -118,7 +118,7 @@ if distro == "Fedora X64"
 
 # Fedora Armv7hl ***********************
 # Pretty sure dnf will stop/start the server, but change delow if needed
-if distro == "Fedora ARM"
+if distro == "Fedora ARM":
 	serverstop  = False
 	serverstart = False
 	downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
@@ -128,7 +128,7 @@ if distro == "Fedora ARM"
 
 # OpenSUSE X64 *************************
 # Pretty sure zypper will stop/start the server, but change below as needed
-if distro == "OpenSUSE X64"
+if distro == "OpenSUSE X64":
 	serverstop  = False
 	serverstart = False
 	downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
@@ -138,7 +138,7 @@ if distro == "OpenSUSE X64"
 
 # OpenSUSE Armv7hl *********************
 # Pretty sure zypper will stop/start the server, but change below as needed
-if distro == "OpenSUSE ARM"
+if distro == "OpenSUSE ARM":
 	serverstop  = False
 	serverstart = False
 	downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
