@@ -47,7 +47,7 @@ OpenSuse
 ```
 (Or anything based on them. If you want to modify the code it should work on any distro)
 
-## ** For any Distro but Debian/Ubuntu/Mint you have to chage the distro varable as it's set to Debian flavors by default **
+# ** For any Distro but Debian/Ubuntu/Mint you have to chage the distro varable as it's set to Debian flavors by default **
 
 ### Script Logic Flow
 
