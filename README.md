@@ -9,6 +9,11 @@ For Debian and it's derivatives all you need is:
 ```
 wget
 ```
+and one of these:
+```
+python
+python3
+```
 
 ### Getting Started
 
