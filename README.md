@@ -1,10 +1,10 @@
 # EmbyUpdate
 A python script for automatically updating Emby Server to the latest version on Linux distros.
 
-This script has been tested on python 2.7 and 3+. It was tested and developed on Debian 9. I haven't tested it on any other distro but it should work fine on Ubuntu and Mint for sure, or any other Debian based distro. It has also been coded (but not tested) to work with several other distor's listed below.
+This script has been tested with python 2.7 and 3+. It was tested and developed on Debian 9. I haven't tested it on any other distro but it should work fine on Ubuntu and Mint for sure, or any other Debian based distro. It has also been coded (but not tested) to work with several other distor's listed below.
 
 * Backup your server before doing anything!! Install the backup/restore plugin and get a good backup!
-* It's possiable to loose your settings if your switching from a repo version to the standalone version this script installs. So make sure you have that backup!
+* It's possiable to loose your settings if you are switching from a repo version to the standalone version this script installs. So make sure you have that backup!
 * If switching from repo version make sure you uninstall the repo version first (apt remove emby-server or your disto's process) or your next upgrade could switch you back to repo version. MAKE SURE YOU HAVE A BACKUP!!
 
 ### Prerequisites 
