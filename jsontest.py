@@ -6,6 +6,9 @@ import json
 import requests
 import os.path
 import time
+import pprint
+
+installbeta = False
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -16,14 +19,29 @@ def timestamp():
 	return ("<" + ts + "> ")
 
 # URL to try and prase
-url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases/latest"
+url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
 # Now we're just going to see what the latest version is! If we get any funky response we'll exit the script.
 try:
 	response = requests.get(url)
 	updatejson = json.loads(response.text)
-	jsonresponse = updatejson["name"]
-	print(jsonresponse)
+	for i, entry in enumerate(updatejson):
+		if (installbeta == True):
+
+			if entry["prerelease"] == True:
+				version =  entry["tag_name"]
+				break
+		else:
+
+			if entry["prerelease"] == False:
+				version =  entry["tag_name"]
+				break
+
+	print(version)
+
+	# jsonresponse = updatejson["tag_name"]
+	# print(jsonresponse)
+	# pprint.pprint(updatejson)
 except Exception as e:
 	print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
 	print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
