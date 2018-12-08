@@ -72,11 +72,13 @@ try:
 
                         if entry["prerelease"] == True:
                                 onlineversion =  entry["tag_name"]
+				versiontype = "Beta"
                                 break
                 else:
 
                         if entry["prerelease"] == False:
                                 onlineversion =  entry["tag_name"]
+				versiontype = "Stable"
                                 break
 except Exception as e:
 	print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
@@ -172,7 +174,7 @@ fileread.close
 
 if str(onlineversion) in str(fileversion):
 	# If the latest online verson matches the last installed version then we let you know and exit
-	print(timestamp() + "EmbyUpdate: We're up to date! Nothing to see here... move along. Script exiting!")
+	print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are " + onlineversion + " " + versiontype + ". Nothing to see here... move along. Script exiting!")
 	sys.exit()
 else:
 	# If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
