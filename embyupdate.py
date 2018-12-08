@@ -49,8 +49,6 @@ def timestamp():
 # The github API of releases. This includes beta and production releases
 url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
-# At this time I can't find the API path for beta, I'll add if I ever figure it out
-
 # Next we want to see if we have created a version.txt file yet, we'll create one
 # if we haven't. Any error we let you know about.
 try:
