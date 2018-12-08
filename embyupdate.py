@@ -29,10 +29,14 @@ import time
 # Fedora X64                                                  #
 # Fedora ARM                                                  #
 # OpenSUSE X64                                                #
-# OpenSUSE ARM                                                # 
+# OpenSUSE ARM                                                #
+#                                                             #
+# You an also choose to install the latest Release or Beta    #
+# version. Change installbeta to true or false respectively   #
 ###############################################################
 
 distro = "Debian X64"
+installbeta = False
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -42,8 +46,8 @@ def timestamp():
 	ts = time.strftime("%x %X", time.localtime())
 	return ("<" + ts + "> ")
 
-# This URL is for production release only
-url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases/latest"
+# The github API of releases. This includes beta and production releases
+url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
 # At this time I can't find the API path for beta, I'll add if I ever figure it out
 
@@ -62,7 +66,19 @@ except Exception as e:
 try:
 	response = requests.get(url)
 	updatejson = json.loads(response.text)
-	onlineversion = updatejson["name"]
+	# Here we search the github API response for the most recent version of beta or stable depending on what was chosen 
+	#above. 
+        for i, entry in enumerate(updatejson):
+                if (installbeta == True):
+
+                        if entry["prerelease"] == True:
+                                onlineversion =  entry["tag_name"]
+                                break
+                else:
+
+                        if entry["prerelease"] == False:
+                                onlineversion =  entry["tag_name"]
+                                break
 except Exception as e:
 	print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
 	print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
