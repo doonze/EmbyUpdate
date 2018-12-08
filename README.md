@@ -53,7 +53,7 @@ OpenSuse
 
 ### ** For any Distro but Debian/Ubuntu/Mint you have to chage the distro varable as it's set to Debian flavors by default **
 
-### ** You can choose to install beta or stable. Defalut is stable. To change to installing betas change the "installbeta" variable to True.
+### ** You can choose to install beta or stable. Default is stable. To change to installing betas change the "installbeta" variable to True.
 
 ### Script Logic Flow
 
