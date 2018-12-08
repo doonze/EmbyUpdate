@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
+# EmbyUpdate Version 1.1
 import sys
 import os
 import json
