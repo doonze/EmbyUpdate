@@ -86,6 +86,10 @@ except Exception as e:
 	print(e)
 	sys.exit()
 
+##########################################################################################################
+# This block is just setting up the variables for your selected distro. These can be updated as needed.  #
+##########################################################################################################
+
 # Debian/Ubuntu/Mint amd64 *************
 if distro == "Debian X64":
 	serverstop  = False
@@ -163,22 +167,28 @@ if distro == "OpenSUSE ARM":
 	updatefile  = "notused"
 #**************************************
 
+###################################################################################################
+# End distro setup block. End of user configable sections. Don't change anything below this line. #
+###################################################################################################
+
 # Now that we know the latest version we're going to see if we need to update.
 # What we do is compaire the latest version to the last updated version recored in
-# version.txt
+# version.txt, so we need to pull the last installed version.
 fileread = open("version.txt", "r")
 fileversion = fileread.read()
 fileread.close
 
 # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
 
-if str(onlineversion) in str(fileversion):
+onlinefileversion = (onlineversion + "-" + versiontype)
+
+if str(onlinefileversion) in str(fileversion):
 	# If the latest online verson matches the last installed version then we let you know and exit
-	print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlineversion + "-" + versiontype + ". Nothing to see here... move along. Script exiting!")
+	print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion + ". Nothing to see here... move along. Script exiting!")
 	sys.exit()
 else:
 	# If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
-	print(timestamp() + "EmbyUpdate: Most recent online version is " + onlineversion + " and current installed version is " + fileversion + ". We're updating Emby.")
+	print(timestamp() + "EmbyUpdate: Most recent online version is " + onlinefileversion + " and current installed version is " + fileversion + ". We're updating Emby.")
 
 	# This will stop the server on a systemd distro if it's been set to true above
 	if serverstop is True:
@@ -209,9 +219,9 @@ else:
 
 	# Lastly we write the newly installed version into the versions.txt file
 	f = open("version.txt", "w")
-	f.write(str(onlineversion))
+	f.write(str(onlinefileversion))
 	f.close
-	print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlineversion + " finished! Script exiting!")
+	print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlinefileversion + " finished! Script exiting!")
 	print("*****************************************************************************")
 	print("\n")
 	sys.exit()
