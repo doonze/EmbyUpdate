@@ -41,7 +41,7 @@ try:
 		print("")
 		print("Config update started....")
 		print("")
-		returncode = subprocess.call("python configupdate.py",shell=True)
+		returncode = subprocess.call("python3 configupdate.py",shell=True)
 except ImportError:
 	import ConfigParser
 	config = ConfigParser.ConfigParser()
@@ -50,7 +50,7 @@ except ImportError:
 		print("")
 		print("Config update started....")
 		print("")
-		returncode = subprocess.call("python3 configupdate.py",shell=True)
+		returncode = subprocess.call("python configupdate.py",shell=True)
 
 # Here we test to see if the called subprocess above got a return code. If the return code is 1 then
 # the entire process is exited and no updates will be installed. This is triggered by one of the two
@@ -257,7 +257,10 @@ else:
 if appupdate == 'True':
     try:
         returncode = subprocess.call("python3 selfupdate.py",shell=True)
+        if returncode != 0:
+            print('Python 3 was not found, falling back to python 2.')
+            returncode = subprocess.call("python selfupdate.py",shell=True)
     except:
-        returncode = subprocess.call("python selfupdate.py",shell=True)
+        print("Couldn't launch Python for some reason!")
 
 sys.exit()
