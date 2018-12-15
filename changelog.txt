@@ -1,4 +1,5 @@
-EmbyUpdate Version 2.0 Beta
+EmbyUpdate Version 2.0 Beta (Released 12/15/2018)
+* Added self update ability
 * Added input dialog to create config file in configupdate.py
 * Moved all user updatable options from main program into config.ini file
 * Added logic to all code to handle both Python 2 and Python 3
