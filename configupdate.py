@@ -1,18 +1,28 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
+# This file is used to configure and create the config file. It's called from the main app
+
 import sys
 import os
 
+# First we'll try python 3 configparser import. If that fails we'll try python 2. This will 
+# determine which were using. 
 try:
     import configparser
+    python = '3'
 except ImportError:
     import ConfigParser
+    python = '2'
 
+# This function is for compatability between python 3 and python 2
 input_func = None
 try:
     input_func = raw_input
 except NameError:
     input_func = input
+
+# Now we'll start gathering user input
+# First user will choose their distro
 
 print("[1] Debian X64")
 print("[2] Debian ARM")
@@ -64,6 +74,8 @@ print("")
 print(chosendistro + " Chosen")
 print("")
 
+# Now user chooses beta or Stable releases
+
 while True:
 	choosebeta = input_func("Do you want to install the beta version? [y/N] ")
 	if choosebeta == "y" or choosebeta == "Y":
@@ -80,6 +92,8 @@ while True:
 print("")
 print(betachoice + " version of Emby has been choosen for install.")
 print("")
+
+# User chooses if they wish to stop the server before installing updates. Not normally needed.
 
 while True:
 	servstop = input_func("Do we need to manually stop the server to install? (Likely only needed for Arch.) [y/N] ")
@@ -100,6 +114,7 @@ print("")
 print(servstopchoice)
 print("")
 
+# User chooses if they wish to start the server again after updates. Not normally needed.
 while True:
 	servstart = input_func("Do we need to manually start the server after install? (Likely only needed for Arch.) [y/N] ")
 	if servstart == "y" or servstart == "Y":
@@ -119,6 +134,7 @@ print("")
 print(servstartchoice)
 print("")
 
+# User chooses if they wish to autoupdate the Update app (this program)
 while True:
 	scriptupdate = input_func("Keep EmbyUpdate (this script) up to date with latest version? [Y/n] ")
 	if scriptupdate == "y" or scriptupdate == "Y" or scriptupdate == "":
