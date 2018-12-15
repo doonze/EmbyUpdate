@@ -1,0 +1,16 @@
+EmbyUpdate Version 2.0 Beta
+* Added input dialog to create config file in configupdate.py
+* Moved all user updatable options from main program into config.ini file
+* Added logic to all code to handle both Python 2 and Python 3
+* Added -c/--config, -v/--version, and -h/--help comand line options
+* Created changelog file
+* Added version info into code
+
+EmbyUpdate Version 1.1 (Released 12/8/2018)
+* Added options to install both Stable or Beta releases
+* Added more comments
+* Updated output to me more verbose and informative
+* Updated readme with new changes and how to enable them
+
+EmbyUpdate Version 1.0 (Released 12/7/2018)
+* Inital offical release package
