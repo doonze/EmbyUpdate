@@ -34,29 +34,31 @@ if args.config == False:
 # Here we try python3 configparser import. If that fails it means user is running python2. So we import
 # the python2 ConfigParser instead
 try:
-	import configparser
-	config = configparser.ConfigParser()
-	python = '3'
-	if args.config == True:
-		print("")
-		print("Config update started....")
-		print("")
-		returncode = subprocess.call("python3 configupdate.py",shell=True)
+    import configparser
+    config = configparser.ConfigParser()
+    python = '3'
+    if args.config == True:
+        print("")
+        print("Config update started....")
+        print("")
+        returncode = subprocess.call("python3 configupdate.py",shell=True)
+        if returncode > 1:
+            returncode = subprocess.call("python configupdate.py",shell=True)
 except ImportError:
-	import ConfigParser
-	config = ConfigParser.ConfigParser()
-	python = '2'
-	if args.config == True:
-		print("")
-		print("Config update started....")
-		print("")
-		returncode = subprocess.call("python configupdate.py",shell=True)
+    import ConfigParser
+    config = ConfigParser.ConfigParser()
+    python = '2'
+    if args.config == True:
+        print("")
+        print("Config update started....")
+        print("")
+        returncode = subprocess.call("python configupdate.py",shell=True)
 
 # Here we test to see if the called subprocess above got a return code. If the return code is 1 then
 # the entire process is exited and no updates will be installed. This is triggered by one of the two
 # cancel prompts in the configupdate.py script
 if returncode == 1:
-	sys.exit()
+    sys.exit()
 
 # Now we're going to open the config file reader
 config.read('config.ini')
