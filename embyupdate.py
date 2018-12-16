@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
-# EmbyUpdate Version 2.0 Beta
+# EmbyUpdate Version 2.1 Beta
 import sys
 import os
 import json
@@ -10,8 +10,11 @@ import time
 import argparse
 import subprocess
 
+# First we're going to force the working path to be where the script lives
+os.chdir(sys.path[0])
+
 # Sets the version # for the conmand line -v/--version response
-versionnum = "2.0 Beta"
+versionnum = "2.1 Beta"
 
 # Just to make python happy
 returncode = 0
@@ -88,9 +91,6 @@ elif python == '2':
     serverstart = config.get('SERVER', 'startserver')
     appupdate = config.get('EmbyUpdate', 'autoupdate')
 
-# First we're going to force the working path to be where the script lives
-os.chdir(sys.path[0])
-
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
 	ts = time.strftime("%x %X", time.localtime())
@@ -101,23 +101,27 @@ url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
 # Now we're just going to see what the latest version is! If we get any funky response we'll exit the script.
 try:
-	response = requests.get(url)
-	updatejson = json.loads(response.text)
-	# Here we search the github API response for the most recent version of beta or stable depending on what was chosen 
-	#above. 
-	for i, entry in enumerate(updatejson):
-		if (installbeta == True):
+    response = requests.get(url)
+    updatejson = json.loads(response.text)
+    # Here we search the github API response for the most recent version of beta or stable depending on what was chosen 
+    #above. 
+    for i, entry in enumerate(updatejson):
+        if installbeta == 'Beta':
 
-			if entry["prerelease"] == True:
-				onlineversion =  entry["tag_name"]
-				versiontype = "Beta"
-				break
-		else:
+            if entry["prerelease"] == True:
+                onlineversion =  entry["tag_name"]
+                versiontype = "Beta"
+                break
+        elif installbeta == 'Stable':
 
-			if entry["prerelease"] == False:
-				onlineversion =  entry["tag_name"]
-				versiontype = "Stable"
-				break
+            if entry["prerelease"] == False:
+                onlineversion =  entry["tag_name"]
+                versiontype = "Stable"
+                break
+
+        else:
+            print("Couldn't determine release requested, value is " + installbeta)
+
 except Exception as e:
 	print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
 	print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
@@ -205,8 +209,9 @@ elif python == '2':
 onlinefileversion = (onlineversion + "-" + versiontype)
 
 if str(onlinefileversion) in str(fileversion):
-	# If the latest online verson matches the last installed version then we let you know and exit
-	print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion + ". Nothing to see here... move along. Script exiting!")
+    # If the latest online verson matches the last installed version then we let you know and exit
+    print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion + ". Nothing to see here... move along. Script exiting!")
+    print('***')
 else:
     # If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
     print(timestamp() + "EmbyUpdate: Most recent online version is " + onlinefileversion + " and current installed version is " + fileversion + ". We're updating Emby.")
