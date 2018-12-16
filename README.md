@@ -45,7 +45,7 @@ First you choose your distro from the list, or choose c to cancel and not create
 Choose your distro by number or C to cancel update [?]:
 ```
 
-Next question default is no. You can just hit enter if you don't want to install beta versions. Enter y if you DO want to insall beta versions.
+Next question default is no. You can just hit enter if you don't want to install beta versions. Enter y if you DO want to install beta versions.
 
 ```
 Do you want to install the beta version? [y/N]
