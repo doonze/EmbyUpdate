@@ -1,3 +1,7 @@
+EmbyUpdate Version 2.1 Beta (Released 12/16/2018)
+* Fixed bug with running from CRON and path issues (thanks to zero77)
+* Fixed bug with app not reading the Beta option right (thanks also to zero77) 
+
 EmbyUpdate Version 2.0 Beta (Released 12/15/2018)
 * Added self update ability
 * Added input dialog to create config file in configupdate.py
