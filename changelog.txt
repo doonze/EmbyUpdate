@@ -1,3 +1,7 @@
+EmbyUpdate Version 2.2 Beta (Released 1/10/2019)
+* Added logic to each subprocess to exit the script on a non-zero return code
+along with some additional output if the exit is triggered 
+
 EmbyUpdate Version 2.1 Beta (Released 12/16/2018)
 * Fixed bug with running from CRON and path issues (thanks to zero77)
 * Fixed bug with app not reading the Beta option right (thanks also to zero77) 
