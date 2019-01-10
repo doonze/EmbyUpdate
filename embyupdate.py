@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
-# EmbyUpdate Version 2.1 Beta
+# EmbyUpdate Version 2.2 Beta
 import sys
 import os
 import json
@@ -14,7 +14,7 @@ import subprocess
 os.chdir(sys.path[0])
 
 # Sets the version # for the conmand line -v/--version response
-versionnum = "2.1 Beta"
+versionnum = "2.2 Beta"
 
 # Just to make python happy
 returncode = 0
