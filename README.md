@@ -123,10 +123,6 @@ OpenSuse
 ```
 (Or anything based on them. If you want to modify the code it should work on any distro)
 
-### ** For any Distro but Debian/Ubuntu/Mint you have to chage the distro varable as it's set to Debian flavors by default **
-
-### ** You can choose to install beta or stable. Default is stable. To change to installing betas change the "installbeta" variable to True.
-
 ### Script Logic Flow
 
 1. Script will test to see if config file exist. If it doesn't it will notify user they must run the config creator and exit. Once the config has been setup the script will move on to installing the latest Emby version. 
@@ -153,7 +149,7 @@ OpenSuse
 
 Download, copy, git, svn, or use any other way you know to get the script on your box. An easy way is to download the source .zip in releases and unzip in in the desired directory (suggested way). I created a directory just for this script. It will download the deb's and create the version.txt file and log into whatever directory you have it in.
 
-ALL FILE MUST REMAIN IN THE SAME DIRECTORY! Everything it does happens in the directly embyupdate.py lives in. If you move anything, delete anything, or rename anything your going to have issues. The script knows what directory it's in and behaves accordingly. You can move it anywhere, but you must move ALL FILES.
+ALL FILE MUST REMAIN IN THE SAME DIRECTORY! Everything it does happens in the directory embyupdate.py lives in. If you move anything, delete anything, or rename anything your going to have issues. The script knows what directory it's in and behaves accordingly. You can move it anywhere, but you must move ALL FILES.
 
 Make the job executable by running this command on the script (optional)
 ```
