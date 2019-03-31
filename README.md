@@ -65,6 +65,8 @@ Do we need to manually start the server after install? (Likely only needed for A
 
 Defalut is yes. Unless you have a reason you don't want to keep the script updated, just hit enter. This will only update to Stable releases, beta releases will be ignored. I have no desire to change this behavior as I don't plan on keeping an up to date beta version. Only time I'll release beta's is if I'm doing major changes that need testing.
 
+## It takes two runs for script updates to take effect. It does update the script (this program) during the first run, but as the script is already running during the update the changes are not implimented. The next time the script is called it will be running on the updated code. I have an idea on how to correct this behavior, but the need hasn't justified the complete code overhaul yet.
+
 ```
 Keep EmbyUpdate (this script) up to date with latest version? [Y/n]
 ```
