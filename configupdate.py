@@ -79,7 +79,7 @@ while True:
 		print("")
 
 print("")
-print(betachoice + " version of Emby has been choosen for install.")
+print(betachoice + " version of Emby has been chosen for install.")
 print("")
 
 # User chooses if they wish to stop the server before installing updates. Not normally needed.

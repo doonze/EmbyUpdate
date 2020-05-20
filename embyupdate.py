@@ -13,7 +13,7 @@
 # Should work with both python 2.7 and all flavors of 3.                                      #
 ###############################################################################################
 
-# Sets the version # for the conmand line -v/--version response
+# Sets the version # for the command line -v/--version response
 versionnum = "3.0 Beta"
 
 import sys
@@ -71,7 +71,7 @@ if returncode == 1:
 # Now we're going to open the config file reader
 config.read('config.ini')
 
-# Here we pull the main config parms.
+# Here we pull the main config params.
 # if python == '3':
 distro = config['DISTRO']['installdistro']
 installbeta = config['DISTRO']['releaseversion']
@@ -157,7 +157,7 @@ if distro == "Fedora X64":
 #***************************************
 
 # Fedora Armv7hl ***********************
-# Pretty sure dnf will stop/start the server, but change delow if needed
+# Pretty sure dnf will stop/start the server, but change below if needed
 if distro == "Fedora ARM":
     downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
@@ -192,7 +192,7 @@ fileversion = config['SERVER']['embyversion']
 onlinefileversion = (onlineversion + "-" + versiontype)
 
 if str(onlinefileversion) in str(fileversion):
-    # If the latest online verson matches the last installed version then we let you know and exit
+    # If the latest online version matches the last installed version then we let you know and exit
     print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion + ". Exiting.")
     print('***')
 else:

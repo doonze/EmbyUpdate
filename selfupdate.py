@@ -75,7 +75,7 @@ zfile = onlineversion + ".zip"
 onlinefileversion = (onlineversion + "-" + versiontype)
 
 if str(onlinefileversion) in str(appversion):
-    # If the latest online verson matches the last installed version then we let you know and exit
+    # If the latest online version matches the last installed version then we let you know and exit
     print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at " + onlinefileversion + ". Exiting!")
     sys.exit()
 else:

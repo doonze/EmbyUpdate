@@ -2,16 +2,15 @@ EmbyUpdate Version 3.1
 * Added a systemd folder with systemd unit and timer files for using systemd instead of cron to trigger 
   the script
 
-
 EmbyUpdate Version 3.0 Beta (Rolled 5/20/2020)
 Version 3.0 will be a major overhaul of the EmbyUpdate script. I forked this script to
 use to also update Jackett and learned a lot of things as well as found several errors.
 I will be correcting those errors here. 
-* Made the way I handle python 2/3 compatability smarter in all scripts
+* Made the way I handle python 2/3 compatibility smarter in all scripts
     * use "from configphaser import ConfigPhaser" now instead of allowing exceptions to handle the
     logic
-    * used "from builtins import input" to handle 2's raw_input and 3's input compatability in configupdate
-    * removed lots of previous logic and code around making the script python 2/3 compatable
+    * used "from builtins import input" to handle 2's raw_input and 3's input compatibility in configupdate
+    * removed lots of previous logic and code around making the script python 2/3 compatible
 * Added some Try blocks to better handle issues, and report exceptions more clearly in embyupdate.py
 * Corrected a issue in configupdate.py with a variable from server stop dialog being reused in the server
   start code block. Would have caused server stop choices to be used for server start is some cases
@@ -30,7 +29,7 @@ EmbyUpdate Version 2.0 Beta (Released 12/15/2018)
 * Added input dialog to create config file in configupdate.py
 * Moved all user updatable options from main program into config.ini file
 * Added logic to all code to handle both Python 2 and Python 3
-* Added -c/--config, -v/--version, and -h/--help comand line options
+* Added -c/--config, -v/--version, and -h/--help command line options
 * Created changelog file
 * Added version info into code
 
@@ -41,4 +40,4 @@ EmbyUpdate Version 1.1 (Released 12/8/2018)
 * Updated readme with new changes and how to enable them
 
 EmbyUpdate Version 1.0 (Released 12/7/2018)
-* Inital offical release package
+* Initial official release package
