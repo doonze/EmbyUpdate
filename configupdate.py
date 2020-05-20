@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
 # This file is used to configure and create the config file. It's called from the main app
+#EmbyUpdate configupdate file
+
 from builtins import input #For python 2 compatability and use of input
 import sys
 import os
