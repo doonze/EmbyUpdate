@@ -26,9 +26,8 @@ config.read('config.ini')
 try:
     appversion = config['EmbyUpdate']['version']
 except Exception as e:
-    print(timestamp() + "EmbyUpdate(self): We didn't get an expected response from the github api, script is exiting!")
+    print(timestamp() + "EmbyUpdate(self): We couldn't pull the current version from config file!")
     print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
-    print(e)
     sys.exit()
 
 
