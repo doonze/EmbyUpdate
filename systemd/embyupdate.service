@@ -1,0 +1,8 @@
+[Unit]
+Description=EmbyUpdate script
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/bin/embyupdate/embyupdate.py
+StandardOutput=append:/var/log/embyupdate/embyupdate.log
+StandardError=append:/var/log/embyupdate/embyupdate.log
