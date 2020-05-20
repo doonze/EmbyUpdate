@@ -1,3 +1,17 @@
+EmbyUpdate Version 3.0 Beta 
+Version 3.0 will be a major overhaul of the EmbyUpdate script. I forked this script to
+use to also update Jackett and learned a lot of things as well as found several errors.
+I will be correcting those errors here. 
+* Made the way I handle python 2/3 compatability smarter in all scripts
+    * use "from configphaser import ConfigPhaser" now instead of allowing exceptions to handle the
+    logic
+    * used "from builtins import input" to handle 2's raw_input and 3's input compatability in configupdate
+    * removed lots of previous logic and code around making the script python 2/3 compatable
+* Added some Try blocks to better handle issues, and report exceptions more clearly in embyupdate.py
+* Corrected a issue in configupdate.py with a variable from server stop dialog being reused in the server
+  start code block. Would have caused server stop choices to be used for server start is some cases
+
+
 EmbyUpdate Version 2.2 Beta (Released 1/10/2019)
 * Added logic to each subprocess to exit the script on a non-zero return code
 along with some additional output if the exit is triggered 

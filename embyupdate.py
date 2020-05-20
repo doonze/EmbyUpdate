@@ -1,6 +1,21 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
-# EmbyUpdate Version 2.2 Beta
+# EmbyUpdate
+
+###############################################################################################
+# This script can be used to to keep Emby servers for linux automatically up to date.         #
+# It is setup for the X64 and ARM versions of Debian,Ubuntu,Mint,CentOS,Fedora,Arch and       #
+# OpenSUSE. Most of these packages will stop/start the server as needed in the internal       #
+# install logic of the distro's installer. But if your distro uses systemd then this script   #
+# has logic that can stop and start the server if needed. If you don't have systemd then      #
+# if you want the server stopped and started by the script you'll need to modify the          #
+# commands as needed.                                                                         #
+# Should work with both python 2.7 and all flavors of 3.                                      #
+###############################################################################################
+
+# Sets the version # for the conmand line -v/--version response
+versionnum = "3.0 Beta"
+
 import sys
 import os
 import json
@@ -9,12 +24,11 @@ import os.path
 import time
 import argparse
 import subprocess
+from configparser import ConfigParser
+import configparser
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
-
-# Sets the version # for the conmand line -v/--version response
-versionnum = "2.2 Beta"
 
 # Just to make python happy
 returncode = 0
@@ -34,12 +48,9 @@ if args.config == False:
         print("")
         sys.exit()
 
-# Here we try python3 configparser import. If that fails it means user is running python2. So we import
-# the python2 ConfigParser instead
+# Here we call configupdate to setup or update the config file
 try:
-    import configparser
     config = configparser.ConfigParser()
-    python = '3'
     if args.config == True:
         print("")
         print("Config update started....")
@@ -47,15 +58,9 @@ try:
         returncode = subprocess.call("python3 configupdate.py",shell=True)
         if returncode > 1:
             returncode = subprocess.call("python configupdate.py",shell=True)
-except ImportError:
-    from configparser import ConfigParser
-    config = ConfigParser.ConfigParser()
-    python = '2'
-    if args.config == True:
-        print("")
-        print("Config update started....")
-        print("")
-        returncode = subprocess.call("python configupdate.py",shell=True)
+except Exception as e:
+	print("EmbyUpdate: Couldn't call the configupdater.")
+	print("EmbyUpdate: Here's the error we got -- " + str(e))
 
 # Here we test to see if the called subprocess above got a return code. If the return code is 1 then
 # the entire process is exited and no updates will be installed. This is triggered by one of the two
@@ -66,30 +71,13 @@ if returncode == 1:
 # Now we're going to open the config file reader
 config.read('config.ini')
 
-###############################################################################################
-# This script can be used to to keep Emby servers for linux automatically up to date.         #
-# It is setup for the X64 and ARM versions of Debian,Ubuntu,Mint,CentOS,Fedora,Arch and       #
-# OpenSUSE. Most of these packages will stop/start the server as needed in the internal       #
-# install logic of the distro's installer. But if your distro uses systemd then this script   #
-# has logic that can stop and start the server if needed. If you don't have systemd then      #
-# if you want the server stopped and started by the script you'll need to modify the          #
-# commands as needed.                                                                         #
-# Should work with both python 2.7 and all flavors of 3.                                      #
-###############################################################################################
-
 # Here we pull the main config parms.
-if python == '3':
-    distro = config['DISTRO']['installdistro']
-    installbeta = config['DISTRO']['releaseversion']
-    serverstop = config['SERVER']['stopserver']
-    serverstart = config['SERVER']['startserver']
-    appupdate = config['EmbyUpdate']['autoupdate']
-elif python == '2':
-    distro = config.get('DISTRO', 'installdistro')
-    installbeta = config.get('DISTRO', 'releaseversion')
-    serverstop = config.get('SERVER', 'stopserver')
-    serverstart = config.get('SERVER', 'startserver')
-    appupdate = config.get('EmbyUpdate', 'autoupdate')
+# if python == '3':
+distro = config['DISTRO']['installdistro']
+installbeta = config['DISTRO']['releaseversion']
+serverstop = config['SERVER']['stopserver']
+serverstart = config['SERVER']['startserver']
+appupdate = config['EmbyUpdate']['autoupdate']
 
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
@@ -196,13 +184,8 @@ if distro == "OpenSUSE ARM":
 # End distro setup block. End of user configable sections. Don't change anything below this line. #
 ###################################################################################################
 
-# Now were going to pull the version from the config file
-if python == '3':
-    #This fires if user is running python3
-    fileversion = config['SERVER']['embyversion']
-elif python == '2':
-    # This fires if user is running python2
-    fileversion = config.get('SERVER', 'embyversion')
+# Now were going to pull the installed version from the config file
+fileversion = config['SERVER']['embyversion']
 
 # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
 
@@ -210,7 +193,7 @@ onlinefileversion = (onlineversion + "-" + versiontype)
 
 if str(onlinefileversion) in str(fileversion):
     # If the latest online verson matches the last installed version then we let you know and exit
-    print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion + ". Nothing to see here... move along. Script exiting!")
+    print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion + ". Exiting.")
     print('***')
 else:
     # If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
@@ -219,7 +202,7 @@ else:
 
     try:
         # This will stop the server on a systemd distro if it's been set to true above
-        if serverstop is True:
+        if serverstop == "True":
             stopreturn = subprocess.call("systemctl stop emby-server",shell=True)
             time.sleep(3)
 
@@ -245,23 +228,27 @@ else:
             subprocess.call("rm -f " + updatefile,shell=True)
 
         # This will restart the server if using systemd if set to True above
-        if serverstart is True:
+        if serverstart == "True":
             startreturn = subprocess.call("systemctl start emby-server",shell=True)
             if startreturn > 0:
                 print("Server start failed. Non-critical to update but server may not be running. Investigate.")
                 
-            # Lastly we write the newly installed version into the config file
+        # Lastly we write the newly installed version into the config file
         try:
             config['SERVER']['embyversion'] = onlinefileversion
-        except AttributeError:
-            config.set('SERVER', 'embyversion', onlinefileversion)
 
-        with open('config.ini', 'w') as configfile:
-            config.write(configfile)
-        print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlinefileversion + " finished! Script exiting!")
-        print('')
-        print("*****************************************************************************")
-        print("\n")
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+
+            print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlinefileversion + " finished! Script exiting!")
+            print('')
+            print("*****************************************************************************")
+            print("\n")
+
+        except Exception as e:
+            print(timestamp() + "EmbyUpdate: We had a problem writing to config after update!")
+            print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
+            sys.exit()
 
     except Exception as e:
         print(timestamp() + 'EmbyUpdate: Something failed in update. No update done, script exiting')

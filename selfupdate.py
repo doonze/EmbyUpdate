@@ -10,28 +10,27 @@ import time
 import pprint
 import zipfile
 import subprocess
+from configparser import ConfigParser
+import configparser
 
-# Here we try python3 configparser import. If that fails it means user is running python2. So we import
-# the python2 ConfigParser instead
+# Sets up the config system
+config = configparser.ConfigParser()
 
-try:
-    import configparser
-    config = configparser.ConfigParser()
-    python = '3'
-except ImportError:
-    import ConfigParser
-    config = ConfigParser.ConfigParser()
-    python = '2'
-
+# I don't use beta releases, but this is here just in case I do in the future
 installbeta = False
 
 # Now we're going to open the config file reader
 config.read('config.ini')
-# We pull the config info based on if user is running python 2 or python 3
-if python == '3':
+
+# And we're going to get the current installed version from config
+try:
     appversion = config['EmbyUpdate']['version']
-elif python == '2':
-    appversion = config.get('EmbyUpdate', 'version')
+except Exception as e:
+    print(timestamp() + "EmbyUpdate(self): We didn't get an expected response from the github api, script is exiting!")
+    print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
+    print(e)
+    sys.exit()
+
 
 # We're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -63,8 +62,8 @@ try:
                 versiontype = "Stable"
                 break
 except Exception as e:
-    print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
-    print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
+    print(timestamp() + "EmbyUpdate(self): We didn't get an expected response from the github api, script is exiting!")
+    print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
     print(e)
     sys.exit()
 
@@ -78,14 +77,14 @@ onlinefileversion = (onlineversion + "-" + versiontype)
 
 if str(onlinefileversion) in str(appversion):
     # If the latest online verson matches the last installed version then we let you know and exit
-    print(timestamp() + "EmbyUpdate: App is up to date!  Current and Online versions are at " + onlinefileversion + ". Nothing to see here... move along. Script exiting!")
+    print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at " + onlinefileversion + ". Exiting!")
     sys.exit()
 else:
 	# If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
     print('')
-    print(timestamp() + "EmbyUpdate: Most recent app online version is " + onlinefileversion + " and current installed version is " + appversion + ". We're updating EmbyUpdate app.")
+    print(timestamp() + "EmbyUpdate(self): Most recent app online version is " + onlinefileversion + " and current installed version is " + appversion + ". We're updating EmbyUpdate app.")
     print('')
-    print("\n" + timestamp() + "EmbyUpdate: Starting self app update......")
+    print("\n" + timestamp() + "EmbyUpdate(self): Starting self app update......")
     print('')
 
    	# Here we download the zip to install
@@ -109,8 +108,11 @@ else:
 	# Lastly we write the newly installed version into the config file
     try:
         config['EmbyUpdate']['version'] = onlinefileversion
-    except AttributeError:
-        config.set('EmbyUpdate', 'version', onlinefileversion)
+    except Exception as e:
+        print(timestamp() + "EmbyUpdate: We had a problem writing to config after update!")
+        print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
+        sys.exit()
+
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
     print('')
