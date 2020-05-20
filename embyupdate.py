@@ -121,14 +121,14 @@ except Exception as e:
 
 # Debian/Ubuntu/Mint amd64 *************
 if distro == "Debian X64":
-    downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb" 
+    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb" 
     installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
     updatefile  = "emby-server-deb_" + onlineversion + "_amd64.deb"
 #***************************************
 
 # Debian/Ubuntu/Mint armhf *************
 if distro == "Debian ARM":
-    downloadurl = "wget -q --show-progress https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_armhf.deb"
+    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_armhf.deb"
     installfile = "dpkg -i emby-server-deb_" + onlineversion + "_armhf.deb"
     updatefile  = "emby-server-deb_" + onlineversion + "_armhf.deb"
 #***************************************
@@ -203,35 +203,45 @@ else:
     try:
         # This will stop the server on a systemd distro if it's been set to true above
         if serverstop == "True":
+            print("Stopping Emby server.....")
             stopreturn = subprocess.call("systemctl stop emby-server",shell=True)
-            time.sleep(3)
-
+            time.sleep(3)            
             if stopreturn > 0:
                 print("Server Stop failed! Non-critical error! Investigate if needed.")
+
+            print("Emby Server Stopped...")
             
         # Here we download the package to install if used
         if "notused" not in downloadurl:
+            print("Starting Package download...")
             downreturn = subprocess.call(downloadurl,shell=True)
             if downreturn > 0:
                 print("Download failed!! Exiting!")
                 sys.exit()
+            print("Package downloaded!")
 
         # Next we install it if used
         if "notused" not in installfile:
+            print("Installing/Updating Emby server....")
             installreturn = subprocess.call(installfile,shell=True)
             if installreturn > 0:
-                print("Install failed! Exiting!")
+                print("Install/Update failed! Exiting!")
                 sys.exit()
+            print("Install/Update Finished!")
 
         # And to keep things nice and clean, we remove the downloaded file once installed if needed
         if "notused" not in updatefile:
+            print("Removing install file...")
             subprocess.call("rm -f " + updatefile,shell=True)
+            print("File removed!")
 
         # This will restart the server if using systemd if set to True above
         if serverstart == "True":
+            print("Restarting Emby server after update...")
             startreturn = subprocess.call("systemctl start emby-server",shell=True)
             if startreturn > 0:
                 print("Server start failed. Non-critical to update but server may not be running. Investigate.")
+            print("Server restarted!")
                 
         # Lastly we write the newly installed version into the config file
         try:
