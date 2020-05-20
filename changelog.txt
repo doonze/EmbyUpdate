@@ -1,4 +1,9 @@
-EmbyUpdate Version 3.0 Beta 
+EmbyUpdate Version 3.1
+* Added a systemd folder with systemd unit and timer files for using systemd instead of cron to trigger 
+  the script
+
+
+EmbyUpdate Version 3.0 Beta (Rolled 5/20/2020)
 Version 3.0 will be a major overhaul of the EmbyUpdate script. I forked this script to
 use to also update Jackett and learned a lot of things as well as found several errors.
 I will be correcting those errors here. 
