@@ -14,7 +14,7 @@
 ###############################################################################################
 
 # Sets the version # for the command line -v/--version response
-versionnum = "3.0 Beta"
+versionnum = "3.1"
 
 import sys
 import os
