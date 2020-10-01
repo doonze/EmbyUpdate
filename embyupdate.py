@@ -143,7 +143,7 @@ if distro == "Arch":
 # CentOS X64 ***************************
 # In Cent I think yum will handle the stop/start of the server, but change below if needed
 if distro == "CentOS":
-   downloadurl = "yum install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+   downloadurl = "yum --y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
    installfile = "notused"
    updatefile  = "notused"
 #****************************************
@@ -151,7 +151,7 @@ if distro == "CentOS":
 # Fedora X64 ****************************
 # Pretty sure dnf will stop/start the server, but change below if needed
 if distro == "Fedora X64":
-    downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
     installfile = "notused"
     updatefile  = "notused"
 #***************************************
@@ -159,7 +159,7 @@ if distro == "Fedora X64":
 # Fedora Armv7hl ***********************
 # Pretty sure dnf will stop/start the server, but change below if needed
 if distro == "Fedora ARM":
-    downloadurl = "dnf install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
+    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
     updatefile  = "notused"
 #***************************************
@@ -175,7 +175,7 @@ if distro == "OpenSUSE X64":
 # OpenSUSE Armv7hl *********************
 # Pretty sure zypper will stop/start the server, but change below as needed
 if distro == "OpenSUSE ARM":
-    downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
+    downloadurl = "zypper install -y https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
     updatefile  = "notused"
 #**************************************
