@@ -22,7 +22,9 @@ python3 (optional but highly suggested)
 for Python you'll need to get:
 
 ```
-requests (install through pip or apt, google if you need to know specifics for your system)
+(install through pip or apt, google if you need to know specifics for your system)
+requests 
+configparser (or for 2.7 it's ConfigParser)
 ```
 
 ### Getting Started
