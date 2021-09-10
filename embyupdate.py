@@ -21,8 +21,11 @@ import os.path
 import time
 import argparse
 import subprocess
-from configparser import ConfigParser
-import configparser
+
+if sys.version_info.major < 3:
+    import ConfigParser
+else:
+    import configparser as ConfigParser
 
 # Sets the version # for the command line -v/--version response
 versionnum = "3.1"
@@ -50,7 +53,7 @@ if args.config == False:
 
 # Here we call configupdate to setup or update the config file
 try:
-    config = configparser.ConfigParser()
+    config = ConfigParser()
     if args.config == True:
         print("")
         print("Config update started....")

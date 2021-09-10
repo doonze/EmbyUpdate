@@ -6,8 +6,11 @@
 from builtins import input #For python 2 compatability and use of input
 import sys
 import os
-import configparser
-from configparser import ConfigParser #For python 2 compatability to read/write/create config files
+
+if sys.version_info.major < 3:
+    import ConfigParser
+else:
+    import configparser as ConfigParser
 
 
 # Now we'll start gathering user input
@@ -167,7 +170,7 @@ while True:
 
 
 # Setup the config interface
-config = configparser.ConfigParser()
+config = ConfigParser()
 
 # Test if the config file exist
 try:
@@ -180,7 +183,7 @@ except Exception as e:
 	print("EmbyUpdate: Here's the error we got -- " + str(e))
 	sys.exit(1)
 
-# If config doesn't exist (cfgexist False) it will create it with the correct values fill in and 
+# If config doesn't exist (cfgexist False) it will create it with the correct values fill in and
 # if it does exist (cfgexist True) it will simply update the existing config
 try:
 	if cfgexist == False:
@@ -204,5 +207,3 @@ except Exception as e:
 print("")
 print("Config written to file, install continuing!")
 print("")
-
-

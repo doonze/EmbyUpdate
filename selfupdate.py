@@ -10,11 +10,14 @@ import time
 import pprint
 import zipfile
 import subprocess
-from configparser import ConfigParser
-import configparser
+
+if sys.version_info.major < 3:
+    import ConfigParser
+else:
+    import configparser as ConfigParser
 
 # Sets up the config system
-config = configparser.ConfigParser()
+config = ConfigParser()
 
 # I don't use beta releases, but this is here just in case I do in the future
 installbeta = False
@@ -67,7 +70,7 @@ except Exception as e:
     sys.exit()
 
 # Download URL for my github page (app home page) and we'll set the name of the current zip file
-downloadurl = "wget -q --show-progress https://github.com/doonze/EmbyUpdate/archive/" + onlineversion + ".zip" 
+downloadurl = "wget -q --show-progress https://github.com/doonze/EmbyUpdate/archive/" + onlineversion + ".zip"
 zfile = onlineversion + ".zip"
 
 # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
