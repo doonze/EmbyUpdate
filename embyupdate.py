@@ -13,9 +13,6 @@
 # Should work with both python 2.7 and all flavors of 3.                                      #
 ###############################################################################################
 
-# Sets the version # for the command line -v/--version response
-versionnum = "3.1"
-
 import sys
 import os
 import json
@@ -26,6 +23,9 @@ import argparse
 import subprocess
 from configparser import ConfigParser
 import configparser
+
+# Sets the version # for the command line -v/--version response
+versionnum = "3.1"
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -91,8 +91,8 @@ url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 try:
     response = requests.get(url)
     updatejson = json.loads(response.text)
-    # Here we search the github API response for the most recent version of beta or stable depending on what was chosen 
-    #above. 
+    # Here we search the github API response for the most recent version of beta or stable depending on what was chosen
+    #above.
     for i, entry in enumerate(updatejson):
         if installbeta == 'Beta':
 
@@ -121,7 +121,7 @@ except Exception as e:
 
 # Debian/Ubuntu/Mint amd64 *************
 if distro == "Debian X64":
-    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb" 
+    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb"
     installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
     updatefile  = "emby-server-deb_" + onlineversion + "_amd64.deb"
 #***************************************
@@ -205,12 +205,12 @@ else:
         if serverstop == "True":
             print("Stopping Emby server.....")
             stopreturn = subprocess.call("systemctl stop emby-server",shell=True)
-            time.sleep(3)            
+            time.sleep(3)
             if stopreturn > 0:
                 print("Server Stop failed! Non-critical error! Investigate if needed.")
 
             print("Emby Server Stopped...")
-            
+
         # Here we download the package to install if used
         if "notused" not in downloadurl:
             print("Starting Package download...")
@@ -242,7 +242,7 @@ else:
             if startreturn > 0:
                 print("Server start failed. Non-critical to update but server may not be running. Investigate.")
             print("Server restarted!")
-                
+
         # Lastly we write the newly installed version into the config file
         try:
             config['SERVER']['embyversion'] = onlinefileversion
