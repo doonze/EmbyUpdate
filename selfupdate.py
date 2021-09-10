@@ -7,7 +7,6 @@ import json
 import requests
 import os.path
 import time
-import pprint
 import zipfile
 import subprocess
 
@@ -25,6 +24,13 @@ installbeta = False
 # Now we're going to open the config file reader
 config.read('config.ini')
 
+
+# This is a simple timestamp function, created so each call would have a current timestamp
+def timestamp():
+    ts = time.strftime("%x %X", time.localtime())
+    return ("<" + ts + "> ")
+
+
 # And we're going to get the current installed version from config
 try:
     appversion = config['EmbyUpdate']['version']
@@ -37,11 +43,6 @@ except Exception as e:
 # We're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
 
-# This is a simple timestamp function, created so each call would have a current timestamp
-def timestamp():
-	ts = time.strftime("%x %X", time.localtime())
-	return ("<" + ts + "> ")
-
 # The github API of releases for app. This includes beta and production releases
 url = "https://api.github.com/repos/doonze/Embyupdate/releases"
 
@@ -51,16 +52,16 @@ try:
     updatejson = json.loads(response.text)
     # Here we search the github API response for the most recent version of beta or stable depending on what was chosen by the user
     for i, entry in enumerate(updatejson):
-        if (installbeta == True):
+        if (installbeta is True):
 
-            if entry["prerelease"] == True:
-                onlineversion =  entry["tag_name"]
+            if entry["prerelease"] is True:
+                onlineversion = entry["tag_name"]
                 versiontype = "Beta"
                 break
         else:
 
-            if entry["prerelease"] == False:
-                onlineversion =  entry["tag_name"]
+            if entry["prerelease"] is False:
+                onlineversion = entry["tag_name"]
                 versiontype = "Stable"
                 break
 except Exception as e:
@@ -82,17 +83,17 @@ if str(onlinefileversion) in str(appversion):
     print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at " + onlinefileversion + ". Exiting!")
     sys.exit()
 else:
-	# If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
+    # If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
     print('')
     print(timestamp() + "EmbyUpdate(self): Most recent app online version is " + onlinefileversion + " and current installed version is " + appversion + ". We're updating EmbyUpdate app.")
     print('')
     print("\n" + timestamp() + "EmbyUpdate(self): Starting self app update......")
     print('')
 
-   	# Here we download the zip to install
-    subprocess.call(downloadurl,shell=True)
+    # Here we download the zip to install
+    subprocess.call(downloadurl, shell=True)
 
-	# Next we unzip and install it to the directory where the app was ran from
+    # Next we unzip and install it to the directory where the app was ran from
     with zipfile.ZipFile(zfile) as zip:
         for zip_info in zip.infolist():
             if zip_info.filename[-1] == '/':
@@ -100,14 +101,14 @@ else:
             zip_info.filename = os.path.basename(zip_info.filename)
             zip.extract(zip_info, '')
 
-	# And to keep things nice and clean, we remove the downloaded file once unzipped
-    subprocess.call("rm -f " + zfile,shell=True)
+    # And to keep things nice and clean, we remove the downloaded file once unzipped
+    subprocess.call("rm -f " + zfile, shell=True)
 
     # now we'll set the app as executable
     st = os.stat("embyupdate.py")
     os.chmod("embyupdate.py", st.st_mode | 0o111)
 
-	# Lastly we write the newly installed version into the config file
+    # Lastly we write the newly installed version into the config file
     try:
         config['EmbyUpdate']['version'] = onlinefileversion
     except Exception as e:

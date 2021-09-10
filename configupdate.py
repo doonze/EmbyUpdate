@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
 # This file is used to configure and create the config file. It's called from the main app
-#EmbyUpdate configupdate file
+# EmbyUpdate configupdate file
 
-from builtins import input #For python 2 compatability and use of input
+from builtins import input  # For python 2 compatability and use of input
 import sys
 import os
 
@@ -27,40 +27,40 @@ print("[8] OpenSUSE ARM")
 print("[C] Cancel config update")
 
 while True:
-	distrochoice = input("Choose your distro by number or C to cancel update [?]: ")
-	if str(distrochoice) == "1":
-		chosendistro = "Debian X64"
-		break
-	elif str(distrochoice) == "2":
-		chosendistro = "Debian ARM"
-		break
-	elif str(distrochoice) == "3":
-                chosendistro = "Arch"
-                break
-	elif str(distrochoice) == "4":
-                chosendistro = "CentOS"
-                break
-	elif str(distrochoice) == "5":
-                chosendistro = "Fedora X64"
-                break
-	elif str(distrochoice) == "6":
-                chosendistro = "Fedora ARM"
-                break
-	elif str(distrochoice) == "7":
-                chosendistro = "OpenSUSE X64"
-                break
-	elif str(distrochoice) == "8":
-                chosendistro = "OpenSUSE ARM"
-                break
-	elif str(distrochoice) == "c" or str(distrochoice) == "C":
-		print("")
-		print("Exiting config update and installer....")
-		print("")
-		sys.exit(1)
-	else:
-		print("")
-		print("Invalid Choice! Valid choices are 1-8 or C to cancel. Please Try again.")
-		print("")
+    distrochoice = input("Choose your distro by number or C to cancel update [?]: ")
+    if str(distrochoice) == "1":
+        chosendistro = "Debian X64"
+        break
+    elif str(distrochoice) == "2":
+        chosendistro = "Debian ARM"
+        break
+    elif str(distrochoice) == "3":
+        chosendistro = "Arch"
+        break
+    elif str(distrochoice) == "4":
+        chosendistro = "CentOS"
+        break
+    elif str(distrochoice) == "5":
+        chosendistro = "Fedora X64"
+        break
+    elif str(distrochoice) == "6":
+        chosendistro = "Fedora ARM"
+        break
+    elif str(distrochoice) == "7":
+        chosendistro = "OpenSUSE X64"
+        break
+    elif str(distrochoice) == "8":
+        chosendistro = "OpenSUSE ARM"
+        break
+    elif str(distrochoice) == "c" or str(distrochoice) == "C":
+        print("")
+        print("Exiting config update and installer....")
+        print("")
+        sys.exit(1)
+    else:
+        print("")
+        print("Invalid Choice! Valid choices are 1-8 or C to cancel. Please Try again.")
+        print("")
 
 print("")
 print(chosendistro + " Chosen")
@@ -69,17 +69,17 @@ print("")
 # Now user chooses beta or Stable releases
 
 while True:
-	choosebeta = input("Do you want to install the beta version? [y/N] ")
-	if choosebeta == "y" or choosebeta == "Y":
-		betachoice = "Beta"
-		break
-	elif choosebeta == "n" or choosebeta == "N" or choosebeta == "":
-		betachoice = "Stable"
-		break
-	else:
-		print("")
-		print("Invalid choice. Please choose y or n")
-		print("")
+    choosebeta = input("Do you want to install the beta version? [y/N] ")
+    if choosebeta == "y" or choosebeta == "Y":
+        betachoice = "Beta"
+        break
+    elif choosebeta == "n" or choosebeta == "N" or choosebeta == "":
+        betachoice = "Stable"
+        break
+    else:
+        print("")
+        print("Invalid choice. Please choose y or n")
+        print("")
 
 print("")
 print(betachoice + " version of Emby has been chosen for install.")
@@ -88,19 +88,19 @@ print("")
 # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
 while True:
-	servstop = input("Do we need to manually stop the server to install? (Likely only needed for Arch.) [y/N] ")
-	if servstop == "y" or servstop == "Y":
-		servstopchoice = "Server will be manually stopped on install."
-		stopserver = True
-		break
-	elif servstop == "n" or servstop == "N" or servstop == "":
-		servstopchoice = "Server will NOT be manually stopped on install."
-		stopserver = False
-		break
-	else:
-		print("")
-		print("Invalid choice. Please choose y or n")
-		print("")
+    servstop = input("Do we need to manually stop the server to install? (Likely only needed for Arch.) [y/N] ")
+    if servstop == "y" or servstop == "Y":
+        servstopchoice = "Server will be manually stopped on install."
+        stopserver = True
+        break
+    elif servstop == "n" or servstop == "N" or servstop == "":
+        servstopchoice = "Server will NOT be manually stopped on install."
+        stopserver = False
+        break
+    else:
+        print("")
+        print("Invalid choice. Please choose y or n")
+        print("")
 
 print("")
 print(servstopchoice)
@@ -108,19 +108,19 @@ print("")
 
 # User chooses if they wish to start the server again after updates. Not normally needed.
 while True:
-	servstart = input("Do we need to manually start the server after install? (Likely only needed for Arch.) [y/N] ")
-	if servstart == "y" or servstart == "Y":
-		servstartchoice = "Server will be manually started after install."
-		startserver = True
-		break
-	elif servstart == "n" or servstart == "N" or servstart == "":
-		servstartchoice = "Server will NOT be manually started after install."
-		startserver = False
-		break
-	else:
-		print("")
-		print("Invalid choice. Please choose y or n")
-		print("")
+    servstart = input("Do we need to manually start the server after install? (Likely only needed for Arch.) [y/N] ")
+    if servstart == "y" or servstart == "Y":
+        servstartchoice = "Server will be manually started after install."
+        startserver = True
+        break
+    elif servstart == "n" or servstart == "N" or servstart == "":
+        servstartchoice = "Server will NOT be manually started after install."
+        startserver = False
+        break
+    else:
+        print("")
+        print("Invalid choice. Please choose y or n")
+        print("")
 
 print("")
 print(servstartchoice)
@@ -128,19 +128,19 @@ print("")
 
 # User chooses if they wish to autoupdate the Update app (this program)
 while True:
-	scriptupdate = input("Keep EmbyUpdate (this script) up to date with latest version? [Y/n] ")
-	if scriptupdate == "y" or scriptupdate == "Y" or scriptupdate == "":
-		scriptupdatechoice = "Script (EmbyUpdate) will be automatically updated!"
-		autoupdate = True
-		break
-	elif scriptupdate == "n" or scriptupdate == "N":
-		scriptupdatechoice = "Script (EmbyUpdate) will NOT be automatically updated!"
-		autoupdate = False
-		break
-	else:
-		print("")
-		print("Invalid choice. Please choose y or n")
-		print("")
+    scriptupdate = input("Keep EmbyUpdate (this script) up to date with latest version? [Y/n] ")
+    if scriptupdate == "y" or scriptupdate == "Y" or scriptupdate == "":
+        scriptupdatechoice = "Script (EmbyUpdate) will be automatically updated!"
+        autoupdate = True
+        break
+    elif scriptupdate == "n" or scriptupdate == "N":
+        scriptupdatechoice = "Script (EmbyUpdate) will NOT be automatically updated!"
+        autoupdate = False
+        break
+    else:
+        print("")
+        print("Invalid choice. Please choose y or n")
+        print("")
 
 print("")
 print(scriptupdatechoice)
@@ -155,18 +155,18 @@ print(scriptupdatechoice)
 print("")
 
 while True:
-	confirm = input("Please review above choices and type CONFIRM to continue or c to cancel update and install! [CONFIRM/c] ")
-	if confirm == "c" or confirm == "C":
-		print("")
-		print("Exiting config update and installer. No changes were made and nothing will be installed!")
-		print("")
-		sys.exit(1)
-	elif confirm == "CONFIRM":
-		break
-	else:
-		print("")
-		print("Invalid choice. Please type CONFIRM to continue or c to cancel!!")
-		print("")
+    confirm = input("Please review above choices and type CONFIRM to continue or c to cancel update and install! [CONFIRM/c] ")
+    if confirm == "c" or confirm == "C":
+        print("")
+        print("Exiting config update and installer. No changes were made and nothing will be installed!")
+        print("")
+        sys.exit(1)
+    elif confirm == "CONFIRM":
+        break
+    else:
+        print("")
+        print("Invalid choice. Please type CONFIRM to continue or c to cancel!!")
+        print("")
 
 
 # Setup the config interface
@@ -174,35 +174,35 @@ config = ConfigParser()
 
 # Test if the config file exist
 try:
-	if not os.path.isfile("config.ini"):
-		cfgexist = False
-	else:
-		cfgexist = True
+    if not os.path.isfile("config.ini"):
+        cfgexist = False
+    else:
+        cfgexist = True
 except Exception as e:
-	print("EmbyUpdate: Couldn't access the config.ini file. Permission issues? We can't continue")
-	print("EmbyUpdate: Here's the error we got -- " + str(e))
-	sys.exit(1)
+    print("EmbyUpdate: Couldn't access the config.ini file. Permission issues? We can't continue")
+    print("EmbyUpdate: Here's the error we got -- " + str(e))
+    sys.exit(1)
 
 # If config doesn't exist (cfgexist False) it will create it with the correct values fill in and
 # if it does exist (cfgexist True) it will simply update the existing config
 try:
-	if cfgexist == False:
-		config['DISTRO'] = {'installdistro' : chosendistro, 'releaseversion' : betachoice}
-		config['SERVER'] = {'stopserver' : stopserver, 'startserver' : startserver, 'embyversion' : "First Run"}
-		config['EmbyUpdate'] = {'autoupdate' : autoupdate, 'version' : "First Run"}
-	elif cfgexist == True:
-		config.read('config.ini')
-		config['DISTRO']['installdistro'] = chosendistro
-		config['DISTRO']['releaseversion'] = betachoice
-		config['SERVER']['stopserver'] = str(stopserver)
-		config['SERVER']['startserver'] = str(startserver)
-		config['EmbyUpdate']['autoupdate'] = str(autoupdate)
-	with open('config.ini', 'w') as configfile:
-		config.write(configfile)
+    if cfgexist is False:
+        config['DISTRO'] = {'installdistro': chosendistro, 'releaseversion': betachoice}
+        config['SERVER'] = {'stopserver': stopserver, 'startserver': startserver, 'embyversion': "First Run"}
+        config['EmbyUpdate'] = {'autoupdate': autoupdate, 'version': "First Run"}
+    elif cfgexist is True:
+        config.read('config.ini')
+        config['DISTRO']['installdistro'] = chosendistro
+        config['DISTRO']['releaseversion'] = betachoice
+        config['SERVER']['stopserver'] = str(stopserver)
+        config['SERVER']['startserver'] = str(startserver)
+        config['EmbyUpdate']['autoupdate'] = str(autoupdate)
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
 except Exception as e:
-	print("EmbyUpdate: Couldn't write to the config file.")
-	print("EmbyUpdate: Here's the error we got -- " + str(e))
-	sys.exit(1)
+    print("EmbyUpdate: Couldn't write to the config file.")
+    print("EmbyUpdate: Here's the error we got -- " + str(e))
+    sys.exit(1)
 
 print("")
 print("Config written to file, install continuing!")
