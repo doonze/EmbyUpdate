@@ -1,4 +1,4 @@
-EmbyUpdate Versoin 3.3
+EmbyUpdate Version 3.3
 * Merged PEP fixes and ConfigParser updates from @deathbybandaid
 
 EmbyUpdate Version 3.2 (Rolled 10/1/2020)
