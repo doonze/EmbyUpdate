@@ -1,3 +1,10 @@
+EmbyUpdate Version 3.3 (Rolled 9/12/2021)
+* Merged PEP fixes and ConfigParser updates from @deathbybandaid
+
+EmbyUpdate Version 3.2 (Rolled 10/1/2020)
+* Added flags to bypass any install conformations requiring user manual intervention in the install 
+  process. As this is a automatic script those would fail. Updated Fedora, SUSE, and CentOS.
+
 EmbyUpdate Version 3.1
 * Added a systemd folder with systemd unit and timer files for using systemd instead of cron to trigger 
   the script
