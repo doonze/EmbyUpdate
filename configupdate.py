@@ -6,16 +6,8 @@
 from builtins import input  # For python 2 compatability and use of input
 import sys
 import os
-<<<<<<< HEAD
 from configparser import ConfigParser
 import configparser
-=======
-
-if sys.version_info.major < 3:
-    import ConfigParser
-else:
-    import configparser as ConfigParser
->>>>>>> 44dc7307702045c68e1e4614ceed03b8a62bdcea
 
 
 # Now we'll start gathering user input
@@ -175,11 +167,7 @@ while True:
 
 
 # Setup the config interface
-<<<<<<< HEAD
 config = configparser.ConfigParser())
-=======
-config = ConfigParser()
->>>>>>> 44dc7307702045c68e1e4614ceed03b8a62bdcea
 
 # Test if the config file exist
 try:

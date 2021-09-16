@@ -9,14 +9,11 @@ import os.path
 import time
 import zipfile
 import subprocess
-
-if sys.version_info.major < 3:
-    import ConfigParser
-else:
-    import configparser as ConfigParser
+from configparser import ConfigParser
+import configparser
 
 # Sets up the config system
-config = ConfigParser()
+config = configparser.ConfigParser()
 
 # I don't use beta releases, but this is here just in case I do in the future
 installbeta = False
