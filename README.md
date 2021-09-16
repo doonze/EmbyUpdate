@@ -19,6 +19,14 @@ python
 python3 (optional but highly suggested)
 ```
 
+for Python you'll need to get:
+
+```
+(install through pip or apt, google if you need to know specifics for your system)
+requests 
+configparser (or for 2.7 it's ConfigParser)
+```
+
 ### Getting Started
 
 You will need to have root/sudo/admin access to your server to use this script. It won't have access to update your server otherwise. But you have to have those access rights to install Emby anyway, so moot point.
