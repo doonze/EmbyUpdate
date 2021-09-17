@@ -1,6 +1,6 @@
 # EmbyUpdate
 
-# There was a critical bug in version 3.3 that broke the auto updater, you will need to download and install version 3.6 or higher over you existing install (or a fresh install) to fix!!! Sorry!!
+# There was a critical bug in version 3.3 that broke the auto updater, you will need to download and install version 3.6 or higher over your existing install (or do a fresh install) to fix!!! Sorry!!
 
 A python script for automatically updating Emby Server to the latest version on Linux distros.
 
