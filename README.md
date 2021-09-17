@@ -1,4 +1,7 @@
 # EmbyUpdate
+
+# There was a critical bug in version 3.3 that broke the auto updater, you will need to download and install version 3.6 or higher over you existing install (or a fresh install) to fix!!! Sorry!!
+
 A python script for automatically updating Emby Server to the latest version on Linux distros.
 
 This script has been tested with python 2.7 and 3+. I suggest using python 3, it always tries python 3 commands first. If those fail it falls back to python 2 commands. In the end it doesn't matter, it runs the same on both. However if you run it with 3 there won't be behind the scenes exceptions happening. If you don't have 3, or have mapped 3 to python instead of python3 you may get some chatter from the app. It was tested and developed on Debian 9. I haven't tested it on any other distro but it should work fine on Ubuntu and Mint for sure, or any other Debian based distro. It has also been coded (but not tested) to work with several other distor's listed below.
