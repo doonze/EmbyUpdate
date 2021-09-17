@@ -25,7 +25,7 @@ from configparser import ConfigParser
 import configparser
 
 # Sets the version # for the command line -v/--version response
-versionnum = "3.5"
+versionnum = "3.6"
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
