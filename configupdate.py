@@ -167,7 +167,7 @@ while True:
 
 
 # Setup the config interface
-config = configparser.ConfigParser())
+config = configparser.ConfigParser()
 
 # Test if the config file exist
 try:
