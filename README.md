@@ -25,7 +25,7 @@ python3 (optional but highly suggested)
 for Python you'll need to get:
 
 ```
-(install through pip or apt, google if you need to know specifics for your system)
+(install through pip, or run "pip install -r requirements.txt" from the directory you installed EmbyUpdate in, or use apt. Google if you need to know specifics for your system)
 requests 
 configparser (or for 2.7 it's ConfigParser)
 ```
