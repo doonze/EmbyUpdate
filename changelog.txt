@@ -1,3 +1,6 @@
+EmbyUpdate Version 3.6 (Rolled 9/17/2021)
+* Merged a fix by MaDTaZ in configupdate.py
+
 EmbyUpdate Version 3.5 (Rolled 9/16/2021)
 * Working merge with PEP updates and breakfix... fixes...
 
