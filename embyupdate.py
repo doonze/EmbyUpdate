@@ -26,17 +26,17 @@ import requests
 versionnum = "3.7 Beta"
 
 # Setting default init values
-installbeta = None
-distro = None
-onlineversion = None
-config = None
-versiontype = None
-serverstop = None
-downloadurl = None
-installfile = None
-updatefile = None
-serverstart = None
-appupdate = None
+installbeta = ""
+distro = ""
+onlineversion = ""
+config = ""
+versiontype = ""
+serverstop = False
+downloadurl = ""
+installfile = ""
+updatefile = ""
+serverstart = False
+appupdate = True
 returncode = 0
 
 # First we're going to force the working path to be where the script lives
