@@ -13,19 +13,17 @@
 # Should work with both python 2.7 and all flavors of 3.                                      #
 ###############################################################################################
 
-import sys
-import os
-import json
-import requests
-import os.path
-import time
 import argparse
+import json
+import os.path
 import subprocess
-from configparser import ConfigParser
+import sys
+import time
 import configparser
+import requests
 
 # Sets the version # for the command line -v/--version response
-versionnum = "3.6"
+versionnum = "3.7 Beta"
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -33,18 +31,20 @@ os.chdir(sys.path[0])
 # Just to make python happy
 returncode = 0
 
-# This sets up the comand line arguments
+# This sets up the command line arguments
 parser = argparse.ArgumentParser(description="An updater for Emby Media Player", prog='EmbyUpdate')
 parser.add_argument('-c', '--config', action='store_true', help='Runs the config updater', required=False)
-parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + versionnum, help='Displays version number')
+parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + versionnum,
+                    help='Displays version number')
 args = parser.parse_args()
 
-# If the user hasn't used the -c/--config command line argument this will test to see if the config file exist. If it doesn't
-# it will prompt the user to run the config tool from the command line. This only needs done once.
+# If the user hasn't used the -c/--config command line argument this will test to see if the config file exist.
+# If it doesn't it will prompt the user to run the config tool from the command line. This only needs done once.
 if args.config is False:
     if not os.path.isfile("config.ini"):
         print("")
-        print("Config file doesn't exist! Likely this is your first time running the script. You MUST run the script with option -c or --config to continue. This only has to be done once.")
+        print("Config file doesn't exist! Likely this is your first time running the script."
+              " You MUST run the script with option -c or --config to continue. This only has to be done once.")
         print("")
         sys.exit()
 
@@ -60,18 +60,20 @@ try:
         returncode = subprocess.call("python3 configupdate.py", shell=True)
         if returncode > 1:
             returncode = subprocess.call("python configupdate.py", shell=True)
+
+        # Here we test to see if the called subprocess above got a return code. If the return code is 1 then
+        # the entire process is exited and no updates will be installed. This is triggered by one of the two
+        # cancel prompts in the configupdate.py script
+        if returncode == 1:
+            sys.exit()
+
+        # Now we're going to open the config file reader
+        config.read("config.ini")
+
 except Exception as e:
-    print("EmbyUpdate: Couldn't call the configupdater.")
+    print("EmbyUpdate: Couldn't call the Config Updater.")
     print("EmbyUpdate: Here's the error we got -- " + str(e))
 
-# Here we test to see if the called subprocess above got a return code. If the return code is 1 then
-# the entire process is exited and no updates will be installed. This is triggered by one of the two
-# cancel prompts in the configupdate.py script
-if returncode == 1:
-    sys.exit()
-
-# Now we're going to open the config file reader
-config.read("config.ini")
 
 # Here we pull the main config params.
 # if python == '3':
@@ -85,7 +87,7 @@ appupdate = config['EmbyUpdate']['autoupdate']
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
     ts = time.strftime("%x %X", time.localtime())
-    return ("<" + ts + "> ")
+    return "<" + ts + "> "
 
 
 # The github API of releases for Emby Media Browser. This includes beta and production releases
