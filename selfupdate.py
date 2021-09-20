@@ -10,11 +10,9 @@ import zipfile
 import subprocess
 import configparser
 
-# Sets up the config system
-config = configparser.ConfigParser()
-
-# Now we're going to open the config file reader
-config.read('config.ini')
+# Variable init
+onlineversion = ""
+versiontype = ""
 
 
 # This is a simple timestamp function, created so each call would have a current timestamp
@@ -23,12 +21,17 @@ def timestamp():
     return "<" + ts + "> "
 
 
-# And we're going to get the current installed version from config
 try:
+    # Sets up the config system
+    config = configparser.ConfigParser()
+
+    # Now we're going to open the config file reader and read the config
+    config.read('config.ini')
     appversion = config['EmbyUpdate']['version']
     release_version = config['EmbyUpdate']['releaseversion']
+
 except Exception as e:
-    print(timestamp() + "EmbyUpdate(self): We couldn't pull the current version from config file!")
+    print(timestamp() + "EmbyUpdate(self): We couldn't pull the current self update config from config file!")
     print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
     sys.exit()
 
@@ -43,9 +46,10 @@ url = "https://api.github.com/repos/doonze/Embyupdate/releases"
 try:
     response = requests.get(url)
     updatejson = json.loads(response.text)
-    # Here we search the github API response for the most recent version of beta or stable depending on what was chosen by the user
+    # Here we search the github API response for the most recent version of beta or stable depending on what was
+    # chosen by the user
     for i, entry in enumerate(updatejson):
-        if (release_version == "Beta"):
+        if release_version == "Beta":
 
             if entry["prerelease"] is True:
                 onlineversion = entry["tag_name"]
@@ -73,12 +77,15 @@ onlinefileversion = (onlineversion + "-" + versiontype)
 
 if str(onlinefileversion) in str(appversion):
     # If the latest online version matches the last installed version then we let you know and exit
-    print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at " + onlinefileversion + ". Exiting!")
+    print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at "
+          + onlinefileversion + ". Exiting!")
     sys.exit()
 else:
-    # If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
+    # If the online version DOESN'T match the last installed version we let you know what the versions are and start
+    # updating
     print('')
-    print(timestamp() + "EmbyUpdate(self): Most recent app online version is " + onlinefileversion + " and current installed version is " + appversion + ". We're updating EmbyUpdate app.")
+    print(timestamp() + "EmbyUpdate(self): Most recent app online version is "
+          + onlinefileversion + " and current installed version is " + appversion + ". We're updating EmbyUpdate app.")
     print('')
     print("\n" + timestamp() + "EmbyUpdate(self): Starting self app update......")
     print('')
@@ -87,12 +94,12 @@ else:
     subprocess.call(downloadurl, shell=True)
 
     # Next we unzip and install it to the directory where the app was ran from
-    with zipfile.ZipFile(zfile) as zip:
-        for zip_info in zip.infolist():
+    with zipfile.ZipFile(zfile) as unzip:
+        for zip_info in unzip.infolist():
             if zip_info.filename[-1] == '/':
                 continue
             zip_info.filename = os.path.basename(zip_info.filename)
-            zip.extract(zip_info, '')
+            unzip.extract(zip_info, '')
 
     # And to keep things nice and clean, we remove the downloaded file once unzipped
     subprocess.call("rm -f " + zfile, shell=True)
@@ -112,7 +119,8 @@ else:
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
     print('')
-    print(timestamp() + "EmbyUpdate: Updating to EmbyUpdate app version " + onlinefileversion + " finished! Script exiting!")
+    print(timestamp() + "EmbyUpdate: Updating to EmbyUpdate app version "
+          + onlinefileversion + " finished! Script exiting!")
     print('')
     print("*****************************************************************************")
     print("\n")
