@@ -68,10 +68,10 @@ print("")
 while True:
     choosebeta = input("Do you want to install the beta version of Emby Server? [y/N] ")
     if choosebeta == "y" or choosebeta == "Y":
-        betachoice = "Beta"
+        emby_beta_choice = "Beta"
         break
     elif choosebeta == "n" or choosebeta == "N" or choosebeta == "":
-        betachoice = "Stable"
+        emby_beta_choice = "Stable"
         break
     else:
         print("")
@@ -79,7 +79,7 @@ while True:
         print("")
 
 print("")
-print(betachoice + " version of Emby has been chosen for install.")
+print(emby_beta_choice + " version of Emby has been chosen for install.")
 print("")
 
 # User chooses if they wish to stop the server before installing updates. Not normally needed.
@@ -165,7 +165,7 @@ print("")
 
 print("Choices to write to config file...")
 print("Linux distro version to update: " + chosendistro)
-print("The chosen Emby Server install version is: " + betachoice)
+print("The chosen Emby Server install version. is: " + emby_beta_choice)
 print(servstopchoice)
 print(servstartchoice)
 print(scriptupdatechoice)
@@ -173,7 +173,8 @@ print(self_beta_choice)
 print("")
 
 while True:
-    confirm = input("Please review above choices and type CONFIRM to continue or c to cancel update and install! [CONFIRM/c] ")
+    confirm = input("Please review above choices and type CONFIRM to continue or c to cancel update "
+                    "and install! [CONFIRM/c] ")
     if confirm == "c" or confirm == "C":
         print("")
         print("Exiting config update and installer. No changes were made and nothing will be installed!")
@@ -201,20 +202,21 @@ except Exception as e:
     print("EmbyUpdate: Here's the error we got -- " + str(e))
     sys.exit(1)
 
-# If config doesn't exist (cfgexist False) it will create it with the correct values fill in and
+# If config doesn't exist (cfgexist False) it will create it with the correct values filled in and
 # if it does exist (cfgexist True) it will simply update the existing config
 try:
     if cfgexist is False:
-        config['DISTRO'] = {'installdistro': chosendistro, 'releaseversion': betachoice}
+        config['DISTRO'] = {'installdistro': chosendistro, 'releaseversion': emby_beta_choice}
         config['SERVER'] = {'stopserver': stopserver, 'startserver': startserver, 'embyversion': "First Run"}
-        config['EmbyUpdate'] = {'autoupdate': autoupdate, 'version': "First Run"}
+        config['EmbyUpdate'] = {'autoupdate': autoupdate, 'version': "First Run", 'releaseversion': script_beta_choice}
     elif cfgexist is True:
         config.read('config.ini')
         config['DISTRO']['installdistro'] = chosendistro
-        config['DISTRO']['releaseversion'] = betachoice
+        config['DISTRO']['releaseversion'] = emby_beta_choice
         config['SERVER']['stopserver'] = str(stopserver)
         config['SERVER']['startserver'] = str(startserver)
         config['EmbyUpdate']['autoupdate'] = str(autoupdate)
+        config['EmbyUpdate']['releaseversion'] = str(script_beta_choice)
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
 except Exception as e:
