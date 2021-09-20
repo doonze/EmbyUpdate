@@ -147,12 +147,12 @@ print("")
 while True:
     script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? [y/N] ")
     if script_beta_choice.casefold() == "y":
-        self_beta_choice = "Script (EmbyUpdate) will be automatically updated!"
-        self_beta_update = True
+        self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
+        self_beta_update = "Beta"
         break
     elif script_beta_choice.casefold() == "n" or script_beta_choice == "":
-        self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
-        self_beta_update = False
+        self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated to Stable!"
+        self_beta_update = "Stable"
         break
     else:
         print("")
