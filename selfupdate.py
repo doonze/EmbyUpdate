@@ -13,9 +13,6 @@ import configparser
 # Sets up the config system
 config = configparser.ConfigParser()
 
-# I don't use beta releases, but this is here just in case I do in the future
-installbeta = False
-
 # Now we're going to open the config file reader
 config.read('config.ini')
 
@@ -29,6 +26,7 @@ def timestamp():
 # And we're going to get the current installed version from config
 try:
     appversion = config['EmbyUpdate']['version']
+    release_version = config['EmbyUpdate']['releaseversion']
 except Exception as e:
     print(timestamp() + "EmbyUpdate(self): We couldn't pull the current version from config file!")
     print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
@@ -47,7 +45,7 @@ try:
     updatejson = json.loads(response.text)
     # Here we search the github API response for the most recent version of beta or stable depending on what was chosen by the user
     for i, entry in enumerate(updatejson):
-        if (installbeta is True):
+        if (release_version == "Beta"):
 
             if entry["prerelease"] is True:
                 onlineversion = entry["tag_name"]
