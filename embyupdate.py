@@ -70,18 +70,20 @@ try:
         # Now we're going to open the config file reader
         config.read("config.ini")
 
+        # Here we pull the main config params.
+        # if python == '3':
+        distro = config['DISTRO']['installdistro']
+        installbeta = config['DISTRO']['releaseversion']
+        serverstop = config['SERVER']['stopserver']
+        serverstart = config['SERVER']['startserver']
+        appupdate = config['EmbyUpdate']['autoupdate']
+
 except Exception as e:
     print("EmbyUpdate: Couldn't call the Config Updater.")
     print("EmbyUpdate: Here's the error we got -- " + str(e))
 
 
-# Here we pull the main config params.
-# if python == '3':
-distro = config['DISTRO']['installdistro']
-installbeta = config['DISTRO']['releaseversion']
-serverstop = config['SERVER']['stopserver']
-serverstart = config['SERVER']['startserver']
-appupdate = config['EmbyUpdate']['autoupdate']
+
 
 
 # This is a simple timestamp function, created so each call would have a current timestamp
