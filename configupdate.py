@@ -66,7 +66,7 @@ print("")
 # Now user chooses beta or Stable releases
 
 while True:
-    choosebeta = input("Do you want to install the beta version? [y/N] ")
+    choosebeta = input("Do you want to install the beta version of Emby Server? [y/N] ")
     if choosebeta == "y" or choosebeta == "Y":
         betachoice = "Beta"
         break
@@ -143,12 +143,33 @@ print("")
 print(scriptupdatechoice)
 print("")
 
+# User chooses if they want to update to beta or stable for the script
+while True:
+    script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? [y/N] ")
+    if script_beta_choice.casefold() == "y":
+        self_beta_choice = "Script (EmbyUpdate) will be automatically updated!"
+        self_beta_update = True
+        break
+    elif script_beta_choice.casefold() == "n" or script_beta_choice == "":
+        self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
+        self_beta_update = False
+        break
+    else:
+        print("")
+        print("Invalid choice. Please choose y or n")
+        print("")
+
+print("")
+print(self_beta_choice)
+print("")
+
 print("Choices to write to config file...")
 print("Linux distro version to update: " + chosendistro)
-print("The chosen version for install is: " + betachoice)
+print("The chosen Emby Server install version is: " + betachoice)
 print(servstopchoice)
 print(servstartchoice)
 print(scriptupdatechoice)
+print(self_beta_choice)
 print("")
 
 while True:
