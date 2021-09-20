@@ -37,12 +37,11 @@ installfile = None
 updatefile = None
 serverstart = None
 appupdate = None
+returncode = 0
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
 
-# Just to make python happy
-returncode = 0
 
 # This sets up the command line arguments
 parser = argparse.ArgumentParser(description="An updater for Emby Media Player", prog='EmbyUpdate')
@@ -86,7 +85,7 @@ try:
         # Here we pull the main config params.
         # if python == '3':
         distro = config['DISTRO']['installdistro']
-        installbeta = config['DISTRO']['releaseversion']
+        installbeta = config['SERVER']['releaseversion']
         serverstop = config['SERVER']['stopserver']
         serverstart = config['SERVER']['startserver']
         appupdate = config['EmbyUpdate']['autoupdate']
