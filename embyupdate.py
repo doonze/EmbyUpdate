@@ -25,6 +25,19 @@ import requests
 # Sets the version # for the command line -v/--version response
 versionnum = "3.7 Beta"
 
+# Setting default init values
+installbeta = None
+distro = None
+onlineversion = None
+config = None
+versiontype = None
+serverstop = None
+downloadurl = None
+installfile = None
+updatefile = None
+serverstart = None
+appupdate = None
+
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
 
@@ -83,9 +96,6 @@ except Exception as e:
     print("EmbyUpdate: Here's the error we got -- " + str(e))
 
 
-
-
-
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
     ts = time.strftime("%x %X", time.localtime())
@@ -129,14 +139,16 @@ except Exception as e:
 
 # Debian/Ubuntu/Mint amd64 *************
 if distro == "Debian X64":
-    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb"
+    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+                  "/emby-server-deb_" + onlineversion + "_amd64.deb"
     installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
     updatefile = "emby-server-deb_" + onlineversion + "_amd64.deb"
 # ***************************************
 
 # Debian/Ubuntu/Mint armhf *************
 if distro == "Debian ARM":
-    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-deb_" + onlineversion + "_armhf.deb"
+    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+                  "/emby-server-deb_" + onlineversion + "_armhf.deb"
     installfile = "dpkg -i emby-server-deb_" + onlineversion + "_armhf.deb"
     updatefile = "emby-server-deb_" + onlineversion + "_armhf.deb"
 # ***************************************
@@ -151,7 +163,8 @@ if distro == "Arch":
 # CentOS X64 ***************************
 # In Cent I think yum will handle the stop/start of the server, but change below if needed
 if distro == "CentOS":
-    downloadurl = "yum --y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+    downloadurl = "yum --y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+                  "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
     installfile = "notused"
     updatefile = "notused"
 # ****************************************
@@ -159,7 +172,8 @@ if distro == "CentOS":
 # Fedora X64 ****************************
 # Pretty sure dnf will stop/start the server, but change below if needed
 if distro == "Fedora X64":
-    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+                  "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
     installfile = "notused"
     updatefile = "notused"
 # ***************************************
@@ -167,7 +181,8 @@ if distro == "Fedora X64":
 # Fedora Armv7hl ***********************
 # Pretty sure dnf will stop/start the server, but change below if needed
 if distro == "Fedora ARM":
-    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
+    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+                  "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
     updatefile = "notused"
 # ***************************************
@@ -175,7 +190,8 @@ if distro == "Fedora ARM":
 # OpenSUSE X64 *************************
 # Pretty sure zypper will stop/start the server, but change below as needed
 if distro == "OpenSUSE X64":
-    downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
+    downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+                  "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
     installfile = "notused"
     updatefile = "notused"
 # ***************************************
@@ -183,13 +199,14 @@ if distro == "OpenSUSE X64":
 # OpenSUSE Armv7hl *********************
 # Pretty sure zypper will stop/start the server, but change below as needed
 if distro == "OpenSUSE ARM":
-    downloadurl = "zypper install -y https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
+    downloadurl = "zypper install -y https://github.com/MediaBrowser/Emby.Releases/releases/download/"\
+                  + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
     updatefile = "notused"
 # **************************************
 
 ###################################################################################################
-# End distro setup block. End of user configable sections. Don't change anything below this line. #
+# End distro setup block. End of user configurable sections. Don't change anything below this line. #
 ###################################################################################################
 
 # Now were going to pull the installed version from the config file
@@ -201,11 +218,14 @@ onlinefileversion = (onlineversion + "-" + versiontype)
 
 if str(onlinefileversion) in str(fileversion):
     # If the latest online version matches the last installed version then we let you know and exit
-    print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion + ". Exiting.")
+    print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion +
+          ". Exiting.")
     print('***')
 else:
-    # If the online version DOESN'T match the last installed version we let you know what the versions are and start updating
-    print(timestamp() + "EmbyUpdate: Most recent online version is " + onlinefileversion + " and current installed version is " + fileversion + ". We're updating Emby.")
+    # If the online version DOESN'T match the last installed version we let you know what the versions are and start
+    # updating
+    print(timestamp() + "EmbyUpdate: Most recent online version is "
+          + onlinefileversion + " and current installed version is " + fileversion + ". We're updating Emby.")
     print("\n" + timestamp() + "EmbyUpdate: Starting update......")
 
     try:
@@ -258,7 +278,8 @@ else:
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
-            print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlinefileversion + " finished! Script exiting!")
+            print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlinefileversion +
+                  " finished! Script exiting!")
             print('')
             print("*****************************************************************************")
             print("\n")
