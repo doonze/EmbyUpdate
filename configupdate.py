@@ -216,7 +216,7 @@ try:
         config['SERVER']['stopserver'] = str(stopserver)
         config['SERVER']['startserver'] = str(startserver)
         config['EmbyUpdate']['autoupdate'] = str(autoupdate)
-        config['EmbyUpdate']['releaseversion'] = str(script_beta_choice)
+        config['EmbyUpdate']['releaseversion'] = str(self_beta_update)
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
 except Exception as e:
