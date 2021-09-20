@@ -2,14 +2,12 @@
 # This Python file uses the following encoding: utf-8
 # This program is used can called by the main program to update the app itself if needed
 import sys
-import os
 import json
 import requests
 import os.path
 import time
 import zipfile
 import subprocess
-from configparser import ConfigParser
 import configparser
 
 # Sets up the config system
@@ -25,7 +23,7 @@ config.read('config.ini')
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
     ts = time.strftime("%x %X", time.localtime())
-    return ("<" + ts + "> ")
+    return "<" + ts + "> "
 
 
 # And we're going to get the current installed version from config
