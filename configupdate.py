@@ -206,15 +206,16 @@ except Exception as e:
 # if it does exist (cfgexist True) it will simply update the existing config
 try:
     if cfgexist is False:
-        config['DISTRO'] = {'installdistro': chosendistro, 'releaseversion': emby_beta_choice}
-        config['SERVER'] = {'stopserver': stopserver, 'startserver': startserver, 'embyversion': "First Run"}
+        config['DISTRO'] = {'installdistro': chosendistro}
+        config['SERVER'] = {'stopserver': stopserver, 'startserver': startserver, 'embyversion': "First Run",
+                            'releaseversion': emby_beta_choice}
         config['EmbyUpdate'] = {'autoupdate': autoupdate, 'version': "First Run", 'releaseversion': script_beta_choice}
     elif cfgexist is True:
         config.read('config.ini')
         config['DISTRO']['installdistro'] = chosendistro
-        config['DISTRO']['releaseversion'] = emby_beta_choice
         config['SERVER']['stopserver'] = str(stopserver)
         config['SERVER']['startserver'] = str(startserver)
+        config['SERVER']['releaseversion'] = emby_beta_choice
         config['EmbyUpdate']['autoupdate'] = str(autoupdate)
         config['EmbyUpdate']['releaseversion'] = str(self_beta_update)
     with open('config.ini', 'w') as configfile:
