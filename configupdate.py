@@ -3,12 +3,22 @@
 # This file is used to configure and create the config file. It's called from the main app
 # EmbyUpdate configupdate file
 
-from builtins import input  # For python 2 compatability and use of input
+from builtins import input  # For python 2 compatibility and use of input
 import sys
 import os
-from configparser import ConfigParser
 import configparser
 
+configuration = {
+    "distro": "None",
+    "stopserver": False,
+    "startserver": False,
+    "embyversion": "First Run",
+    "embyrelease": "Stable",
+    "selfupdate": True,
+    "selfversion": "First Run",
+    "selfrelease": "Stable",
+    "3.7configfixed": False
+}
 
 # Now we'll start gathering user input
 # First user will choose their distro
@@ -24,32 +34,32 @@ print("[8] OpenSUSE ARM")
 print("[C] Cancel config update")
 
 while True:
-    distrochoice = input("Choose your distro by number or C to cancel update [?]: ")
-    if str(distrochoice) == "1":
-        chosendistro = "Debian X64"
+    distro_choice = input("Choose your distro by number or C to cancel update [?]: ")
+    if str(distro_choice) == "1":
+        configuration["distro"] = "Debian X64"
         break
-    elif str(distrochoice) == "2":
-        chosendistro = "Debian ARM"
+    elif str(distro_choice) == "2":
+        configuration["distro"] = "Debian ARM"
         break
-    elif str(distrochoice) == "3":
-        chosendistro = "Arch"
+    elif str(distro_choice) == "3":
+        configuration["distro"] = "Arch"
         break
-    elif str(distrochoice) == "4":
-        chosendistro = "CentOS"
+    elif str(distro_choice) == "4":
+        configuration["distro"] = "CentOS"
         break
-    elif str(distrochoice) == "5":
-        chosendistro = "Fedora X64"
+    elif str(distro_choice) == "5":
+        configuration["distro"] = "Fedora X64"
         break
-    elif str(distrochoice) == "6":
-        chosendistro = "Fedora ARM"
+    elif str(distro_choice) == "6":
+        configuration["distro"] = "Fedora ARM"
         break
-    elif str(distrochoice) == "7":
-        chosendistro = "OpenSUSE X64"
+    elif str(distro_choice) == "7":
+        configuration["distro"] = "OpenSUSE X64"
         break
-    elif str(distrochoice) == "8":
-        chosendistro = "OpenSUSE ARM"
+    elif str(distro_choice) == "8":
+        configuration["distro"] = "OpenSUSE ARM"
         break
-    elif str(distrochoice) == "c" or str(distrochoice) == "C":
+    elif str(distro_choice.casefold()) == "c":
         print("")
         print("Exiting config update and installer....")
         print("")
@@ -60,18 +70,18 @@ while True:
         print("")
 
 print("")
-print(chosendistro + " Chosen")
+print(configuration["distro"] + " Chosen")
 print("")
 
 # Now user chooses beta or Stable releases
 
 while True:
-    choosebeta = input("Do you want to install the beta version of Emby Server? [y/N] ")
-    if choosebeta == "y" or choosebeta == "Y":
-        emby_beta_choice = "Beta"
+    choose_beta = input("Do you want to install the beta version of Emby Server? [y/N] ")
+    if choose_beta.casefold() == "y":
+        configuration["embyrelease"] = "Beta"
         break
-    elif choosebeta == "n" or choosebeta == "N" or choosebeta == "":
-        emby_beta_choice = "Stable"
+    elif choose_beta == "n" or choose_beta == "N" or choose_beta == "":
+        configuration["embyrelease"] = "Stable"
         break
     else:
         print("")
@@ -79,20 +89,20 @@ while True:
         print("")
 
 print("")
-print(emby_beta_choice + " version of Emby has been chosen for install.")
+print(configuration["embyrelease"] + " version of Emby has been chosen for install.")
 print("")
 
 # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
 while True:
     servstop = input("Do we need to manually stop the server to install? (Likely only needed for Arch.) [y/N] ")
-    if servstop == "y" or servstop == "Y":
+    if servstop.casefold() == "y":
         servstopchoice = "Server will be manually stopped on install."
-        stopserver = True
+        configuration["stopserver"] = True
         break
     elif servstop == "n" or servstop == "N" or servstop == "":
         servstopchoice = "Server will NOT be manually stopped on install."
-        stopserver = False
+        configuration["stopserver"]  = False
         break
     else:
         print("")
@@ -106,13 +116,13 @@ print("")
 # User chooses if they wish to start the server again after updates. Not normally needed.
 while True:
     servstart = input("Do we need to manually start the server after install? (Likely only needed for Arch.) [y/N] ")
-    if servstart == "y" or servstart == "Y":
-        servstartchoice = "Server will be manually started after install."
-        startserver = True
+    if servstart.casefold() == "y":
+        server_start_choice = "Server will be manually started after install."
+        configuration["startserver"] = True
         break
     elif servstart == "n" or servstart == "N" or servstart == "":
-        servstartchoice = "Server will NOT be manually started after install."
-        startserver = False
+        server_start_choice = "Server will NOT be manually started after install."
+        configuration["startserver"] = False
         break
     else:
         print("")
@@ -120,19 +130,19 @@ while True:
         print("")
 
 print("")
-print(servstartchoice)
+print(server_start_choice)
 print("")
 
 # User chooses if they wish to autoupdate the Update app (this program)
 while True:
-    scriptupdate = input("Keep EmbyUpdate (this script) up to date with latest version? [Y/n] ")
-    if scriptupdate == "y" or scriptupdate == "Y" or scriptupdate == "":
-        scriptupdatechoice = "Script (EmbyUpdate) will be automatically updated!"
-        autoupdate = True
+    script_update = input("Keep EmbyUpdate (this script) up to date with latest version? [Y/n] ")
+    if script_update.casefold() == "y" or script_update == "":
+        script_update_choice = "Script (EmbyUpdate) will be automatically updated!"
+        configuration["selfupdate"] = True
         break
-    elif scriptupdate == "n" or scriptupdate == "N":
-        scriptupdatechoice = "Script (EmbyUpdate) will NOT be automatically updated!"
-        autoupdate = False
+    elif script_update.casefold() == "n":
+        script_update_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
+        configuration["selfupdate"] = False
         break
     else:
         print("")
@@ -140,7 +150,7 @@ while True:
         print("")
 
 print("")
-print(scriptupdatechoice)
+print(script_update_choice)
 print("")
 
 # User chooses if they want to update to beta or stable for the script
@@ -148,11 +158,11 @@ while True:
     script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? [y/N] ")
     if script_beta_choice.casefold() == "y":
         self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
-        self_beta_update = "Beta"
+        configuration["selfrelease"] = "Beta"
         break
     elif script_beta_choice.casefold() == "n" or script_beta_choice == "":
         self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated to Stable!"
-        self_beta_update = "Stable"
+        configuration["selfrelease"] = "Stable"
         break
     else:
         print("")
@@ -164,18 +174,18 @@ print(self_beta_choice)
 print("")
 
 print("Choices to write to config file...")
-print("Linux distro version to update: " + chosendistro)
-print("The chosen Emby Server install version. is: " + emby_beta_choice)
+print("Linux distro version to update: " + configuration["distro"])
+print("The chosen Emby Server install version. is: " + configuration["embyrelease"])
 print(servstopchoice)
-print(servstartchoice)
-print(scriptupdatechoice)
+print(server_start_choice)
+print(script_update_choice)
 print(self_beta_choice)
 print("")
 
 while True:
     confirm = input("Please review above choices and type CONFIRM to continue or c to cancel update "
                     "and install! [CONFIRM/c] ")
-    if confirm == "c" or confirm == "C":
+    if confirm.casefold() == "c":
         print("")
         print("Exiting config update and installer. No changes were made and nothing will be installed!")
         print("")
@@ -186,7 +196,6 @@ while True:
         print("")
         print("Invalid choice. Please type CONFIRM to continue or c to cancel!!")
         print("")
-
 
 # Setup the config interface
 config = configparser.ConfigParser()
@@ -202,22 +211,26 @@ except Exception as e:
     print("EmbyUpdate: Here's the error we got -- " + str(e))
     sys.exit(1)
 
-# If config doesn't exist (cfgexist False) it will create it with the correct values filled in and
-# if it does exist (cfgexist True) it will simply update the existing config
+# If config doesn't exist it will create it with the correct values filled in and
+# if it does exist it will simply update the existing config
 try:
     if cfgexist is False:
-        config['DISTRO'] = {'installdistro': chosendistro}
-        config['SERVER'] = {'stopserver': stopserver, 'startserver': startserver, 'embyversion': "First Run",
-                            'releaseversion': emby_beta_choice}
-        config['EmbyUpdate'] = {'autoupdate': autoupdate, 'version': "First Run", 'releaseversion': script_beta_choice}
+        config['DISTRO'] = {'installdistro': configuration["distro"]}
+        config['SERVER'] = {'stopserver': configuration["stopserver"],
+                            'startserver': configuration["startserver"],
+                            'embyversion': configuration["embyversion"],
+                            'embyrelease': configuration["embyrelease"]}
+        config['EMBYUPDATE'] = {'selfupdate': configuration["selfupdate"],
+                                'selfversion': configuration["selfversion"],
+                                'selfrelease': configuration["selfrelease"]}
     elif cfgexist is True:
         config.read('config.ini')
-        config['DISTRO']['installdistro'] = chosendistro
-        config['SERVER']['stopserver'] = str(stopserver)
-        config['SERVER']['startserver'] = str(startserver)
-        config['SERVER']['releaseversion'] = emby_beta_choice
-        config['EmbyUpdate']['autoupdate'] = str(autoupdate)
-        config['EmbyUpdate']['releaseversion'] = str(self_beta_update)
+        config['DISTRO']['installdistro'] = configuration["distro"]
+        config['SERVER']['stopserver'] = configuration["stopserver"]
+        config['SERVER']['startserver'] = configuration["startserver"]
+        config['SERVER']['embyrelease'] = configuration["embyrelease"]
+        config['EMBYUPDATE']['selfupdate'] = configuration["selfupdate"]
+        config['EMBYUPDATE']['selfrelease'] = configuration["selfrelease"]
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
 except Exception as e:
