@@ -19,25 +19,18 @@ import os.path
 import subprocess
 import sys
 import time
-import configparser
 import requests
+import urllib.request
+from config import Config
 
 # Sets the version # for the command line -v/--version response
 versionnum = "3.7 Beta"
 
 # Setting default init values
-installbeta = ""
-distro = ""
-onlineversion = ""
-config = ""
-versiontype = ""
-serverstop = False
-downloadurl = ""
-installfile = ""
-updatefile = ""
-serverstart = False
-appupdate = True
 returncode = 0
+
+# Creates the default config object
+config = Config()
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -51,27 +44,24 @@ parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + v
 args = parser.parse_args()
 
 # If the user hasn't used the -c/--config command line argument this will test to see if the config file exist.
-# If it doesn't it will prompt the user to run the config tool from the command line. This only needs done once.
+# If it doesn't it will launch the config setup process
 if args.config is False:
     if not os.path.isfile("config.ini"):
         print("")
         print("Config file doesn't exist! Likely this is your first time running the script."
-              " You MUST run the script with option -c or --config to continue. This only has to be done once.")
+              " We will now run the config creater. If your sure config exist there may be permission issues.")
         print("")
-        sys.exit()
+        config.config_setup()
 
-# Here we call configupdate to setup or update the config file
+
+# Here we call configupdate to setup or update the config file if command line option -c was invoked
 try:
-
-    config = configparser.ConfigParser()
 
     if args.config is True:
         print("")
         print("Config update started....")
         print("")
-        returncode = subprocess.call("python3 configupdate.py", shell=True)
-        if returncode > 1:
-            returncode = subprocess.call("python configupdate.py", shell=True)
+        returncode = config.config_setup()
 
         # Here we test to see if the called subprocess above got a return code. If the return code is 1 then
         # the entire process is exited and no updates will be installed. This is triggered by one of the two
@@ -79,20 +69,18 @@ try:
         if returncode == 1:
             sys.exit()
 
-        # Now we're going to open the config file reader
-        config.read("config.ini")
-
-        # Here we pull the main config params.
-        # if python == '3':
-        distro = config['DISTRO']['installdistro']
-        installbeta = config['SERVER']['releaseversion']
-        serverstop = config['SERVER']['stopserver']
-        serverstart = config['SERVER']['startserver']
-        appupdate = config['EmbyUpdate']['autoupdate']
-
 except Exception as e:
     print("EmbyUpdate: Couldn't call the Config Updater.")
     print("EmbyUpdate: Here's the error we got -- " + str(e))
+
+try:
+
+    config.read_config()
+
+except Exception as e:
+    print("EmbyUpdate: Couldn't read the Config file.")
+    print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
+    print("There appears to be a config file error, re-runing config update to fix!")
 
 
 # This is a simple timestamp function, created so each call would have a current timestamp
@@ -111,21 +99,19 @@ try:
     # Here we search the github API response for the most recent version of beta or stable depending on what was chosen
     # above.
     for i, entry in enumerate(updatejson):
-        if installbeta == 'Beta':
+        if config.emby_release == 'Beta':
 
             if entry["prerelease"] is True:
                 onlineversion = entry["tag_name"]
-                versiontype = "Beta"
                 break
-        elif installbeta == 'Stable':
+        elif config.emby_release == 'Stable':
 
             if entry["prerelease"] is False:
                 onlineversion = entry["tag_name"]
-                versiontype = "Stable"
                 break
 
         else:
-            print("Couldn't determine release requested, value is " + installbeta)
+            print("Couldn't determine release requested, value is " + config.emby_release)
 
 except Exception as e:
     print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
@@ -137,7 +123,7 @@ except Exception as e:
 ##########################################################################################################
 
 # Debian/Ubuntu/Mint amd64 *************
-if distro == "Debian X64":
+if config.distro == "Debian X64":
     downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-deb_" + onlineversion + "_amd64.deb"
     installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
@@ -145,7 +131,7 @@ if distro == "Debian X64":
 # ***************************************
 
 # Debian/Ubuntu/Mint armhf *************
-if distro == "Debian ARM":
+if config.distro == "Debian ARM":
     downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-deb_" + onlineversion + "_armhf.deb"
     installfile = "dpkg -i emby-server-deb_" + onlineversion + "_armhf.deb"
@@ -153,7 +139,7 @@ if distro == "Debian ARM":
 # ***************************************
 
 # Arch Linux ***************************
-if distro == "Arch":
+if config.distro == "Arch":
     downloadurl = "notused"
     installfile = "pacman -S emby-server"
     updatefile = "notused"
@@ -161,7 +147,7 @@ if distro == "Arch":
 
 # CentOS X64 ***************************
 # In Cent I think yum will handle the stop/start of the server, but change below if needed
-if distro == "CentOS":
+if config.distro == "CentOS":
     downloadurl = "yum --y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
     installfile = "notused"
@@ -170,7 +156,7 @@ if distro == "CentOS":
 
 # Fedora X64 ****************************
 # Pretty sure dnf will stop/start the server, but change below if needed
-if distro == "Fedora X64":
+if config.distro == "Fedora X64":
     downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
     installfile = "notused"
@@ -179,7 +165,7 @@ if distro == "Fedora X64":
 
 # Fedora Armv7hl ***********************
 # Pretty sure dnf will stop/start the server, but change below if needed
-if distro == "Fedora ARM":
+if config.distro == "Fedora ARM":
     downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
@@ -188,7 +174,7 @@ if distro == "Fedora ARM":
 
 # OpenSUSE X64 *************************
 # Pretty sure zypper will stop/start the server, but change below as needed
-if distro == "OpenSUSE X64":
+if config.distro == "OpenSUSE X64":
     downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
     installfile = "notused"
@@ -197,7 +183,7 @@ if distro == "OpenSUSE X64":
 
 # OpenSUSE Armv7hl *********************
 # Pretty sure zypper will stop/start the server, but change below as needed
-if distro == "OpenSUSE ARM":
+if config.distro == "OpenSUSE ARM":
     downloadurl = "zypper install -y https://github.com/MediaBrowser/Emby.Releases/releases/download/"\
                   + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
@@ -209,13 +195,13 @@ if distro == "OpenSUSE ARM":
 ###################################################################################################
 
 # Now were going to pull the installed version from the config file
-fileversion = config['SERVER']['embyversion']
+
 
 # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
 
-onlinefileversion = (onlineversion + "-" + versiontype)
+onlinefileversion = (onlineversion + "-" + config.emby_release)
 
-if str(onlinefileversion) in str(fileversion):
+if str(onlinefileversion) in str(config.emby_version):
     # If the latest online version matches the last installed version then we let you know and exit
     print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion +
           ". Exiting.")
@@ -224,12 +210,12 @@ else:
     # If the online version DOESN'T match the last installed version we let you know what the versions are and start
     # updating
     print(timestamp() + "EmbyUpdate: Most recent online version is "
-          + onlinefileversion + " and current installed version is " + fileversion + ". We're updating Emby.")
+          + onlinefileversion + " and current installed version is " + config.emby_version + ". We're updating Emby.")
     print("\n" + timestamp() + "EmbyUpdate: Starting update......")
 
     try:
         # This will stop the server on a systemd distro if it's been set to true above
-        if serverstop == "True":
+        if config.stop_server is True:
             print("Stopping Emby server.....")
             stopreturn = subprocess.call("systemctl stop emby-server", shell=True)
             time.sleep(3)
@@ -263,7 +249,7 @@ else:
             print("File removed!")
 
         # This will restart the server if using systemd if set to True above
-        if serverstart == "True":
+        if config.start_server is True:
             print("Restarting Emby server after update...")
             startreturn = subprocess.call("systemctl start emby-server", shell=True)
             if startreturn > 0:
@@ -272,10 +258,9 @@ else:
 
         # Lastly we write the newly installed version into the config file
         try:
-            config['SERVER']['embyversion'] = onlinefileversion
+            config.emby_version = onlinefileversion
 
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
+            config.write_config()
 
             print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlinefileversion +
                   " finished! Script exiting!")
