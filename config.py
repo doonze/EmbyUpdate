@@ -15,7 +15,7 @@ class Config:
         self.emby_release = "Stable"
         self.self_update = True
         self.self_version = "First Run"
-        self.self_release = "Stable"
+        self.self_release = "Beta"
 
     def config_fix(self):
         """ Convert to new config file if needed (for versions before 4.0)."""
