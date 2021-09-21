@@ -21,12 +21,12 @@ class Config:
                                    ]
 
     def config_fix(self):
-        """ Convert to new config file if needed (for versions before 3.7)."""
+        """ Convert to new config file if needed (for versions before 4.0)."""
         try:
             # We'll read the config file to find if it's a version that needs fixing, if so we'll copy the current
             # settings into our configuration dictionary
             self.config_file.read("config.ini")
-            if self.config_file['EmbyUpdate']['version'] in self.config_update_list:
+            if self.config_file.has_option('DISTRO', 'releaseversion'):
                 self.distro = self.config_file['DISTRO']['installdistro']
                 self.emby_release = self.config_file['DISTRO']['releaseversion']
                 self.stop_server = self.config_file['SERVER']['stopserver']
@@ -40,6 +40,10 @@ class Config:
 
                 # And now we'll recreate the new file
                 Config.create_config(self)
+                print("")
+                print("It was found you had a pre-version 4.0 config file, it's been deleted and recreated to "
+                      "conform to post 4.0 config file styles.")
+                print("")
 
         except Exception as ex:
             print("EmbyUpdate: Couldn't read the Config file.")
