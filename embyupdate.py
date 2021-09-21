@@ -36,7 +36,6 @@ config = Config()
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
 
-
 # This sets up the command line arguments
 parser = argparse.ArgumentParser(description="An updater for Emby Media Player", prog='EmbyUpdate')
 parser.add_argument('-c', '--config', action='store_true', help='Runs the config updater', required=False)
@@ -53,7 +52,6 @@ if args.config is False:
               " We will now run the config creater. If your sure config exist there may be permission issues.")
         print("")
         config.config_setup()
-
 
 # Here we call configupdate to setup or update the config file if command line option -c was invoked
 try:
@@ -87,12 +85,13 @@ try:
     # Now well try and update the app if the user chose that option
     if config.self_update is True:
         self_update = SelfUpdate(config)
-        self_update.self_update()
+        config = self_update.self_update()
 
 except Exception as e:
     print("EmbyUpdate: Couldn't read the Config file.")
     print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
     print("There appears to be a config file error, re-runing config update to fix!")
+
 
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
@@ -195,7 +194,7 @@ if config.distro == "OpenSUSE X64":
 # OpenSUSE Armv7hl *********************
 # Pretty sure zypper will stop/start the server, but change below as needed
 if config.distro == "OpenSUSE ARM":
-    downloadurl = "zypper install -y https://github.com/MediaBrowser/Emby.Releases/releases/download/"\
+    downloadurl = "zypper install -y https://github.com/MediaBrowser/Emby.Releases/releases/download/" \
                   + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
     installfile = "notused"
     updatefile = "notused"
@@ -239,7 +238,7 @@ else:
         if "notused" not in downloadurl:
             print("Starting Package download...")
             download = requests.get(downloadurl)
-            with open(updatefile, 'wb')as file:
+            with open(updatefile, 'wb') as file:
                 file.write(download.content)
             print("Package downloaded!")
 
@@ -286,5 +285,3 @@ else:
     except Exception as e:
         print(timestamp() + 'EmbyUpdate: Something failed in update. No update done, script exiting')
         print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
-
-
