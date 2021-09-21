@@ -56,19 +56,18 @@ class SelfUpdate:
             sys.exit()
 
         try:
-            # Download URL for my github page (app home page) and we'll set the name of the current zip file
+            # Download URL for my github page (app home page) and we'll set some needed variables
             downloadurl = "https://github.com/doonze/EmbyUpdate/archive/" + self.online_version + ".zip"
             zfile = self.online_version + ".zip"
-
+            online_file_version = (self.online_version + "-" + self.config.self_release)
+            zip_base_path = ("EmbyUpdate-" + self.online_version[1:] + "/")
             # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
 
-            onlinefileversion = (self.online_version + "-" + self.config.self_release)
-
-            if str(onlinefileversion) in str(self.config.self_version):
+            if str(online_file_version) in str(self.config.self_version):
 
                 # If the latest online version matches the last installed version then we let you know and exit
                 print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at "
-                      + onlinefileversion + ". Exiting!")
+                      + online_file_version + ". Exiting!")
 
             else:
 
@@ -76,7 +75,7 @@ class SelfUpdate:
                 # and start updating
                 print('')
                 print(timestamp() + "EmbyUpdate(self): Most recent app online version is "
-                      + onlinefileversion + " and current installed version is "
+                      + online_file_version + " and current installed version is "
                       + self.config.self_version + ". We're updating EmbyUpdate app.")
                 print('')
                 print("\n" + timestamp() + "EmbyUpdate(self): Starting self app update......")
@@ -97,6 +96,12 @@ class SelfUpdate:
                 #         zip_info.filename = os.path.basename(zip_info.filename)
                 #         unzip.extract(zip_info, '')
 
+                archive = zipfile.ZipFile(zfile)
+
+                for file in archive.namelist():
+                    if file.startswith(zip_base_path):
+                        archive.extract(file)
+
                 # And to keep things nice and clean, we remove the downloaded file once unzipped
                 os.remove(zfile)
 
@@ -111,11 +116,11 @@ class SelfUpdate:
 
         # Lastly we write the newly installed version into the config file
         try:
-            self.config.self_version = onlinefileversion
+            self.config.self_version = online_file_version
             self.config.write_config()
             print('')
             print(timestamp() + "EmbyUpdate(self): Updating to EmbyUpdate app version "
-                  + onlinefileversion + " finished! Script exiting!")
+                  + online_file_version + " finished! Script exiting!")
             print('')
             print("*****************************************************************************")
             print("\n")
@@ -125,5 +130,3 @@ class SelfUpdate:
             print(timestamp() + "EmbyUpdate(self): We had a problem writing to config after update!")
             print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
             sys.exit()
-
-
