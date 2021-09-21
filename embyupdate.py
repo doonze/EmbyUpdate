@@ -100,8 +100,6 @@ def timestamp():
     ts = time.strftime("%x %X", time.localtime())
     return "<" + ts + "> "
 
-print("Updated?")
-
 # The github API of releases for Emby Media Browser. This includes beta and production releases
 url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 

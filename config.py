@@ -1,5 +1,4 @@
 import sys
-
 import configparser
 from os import remove, path
 
@@ -32,8 +31,13 @@ class Config:
                 self.self_update = self.config_file['EmbyUpdate']['autoupdate']
                 self.self_version = self.config_file['EmbyUpdate']['version']
 
-                # Now that we have all the settings, we're remove the config file
-                remove("config.ini")
+                # Now that we have all the settings, we'll remove the config file
+                if path.isfile("config.ini"):
+                    remove("config.ini")
+
+                # We'll also clean up the old configupdate.py file that's no longer used
+                if path.isfile("configupdate.py"):
+                    remove("configupdate.py")
 
                 # And now we'll recreate the new file
                 Config.create_config(self)
