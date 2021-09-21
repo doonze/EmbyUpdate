@@ -89,18 +89,12 @@ class SelfUpdate:
                 print("Package downloaded!")
 
                 # Next we unzip and install it to the directory where the app was ran from
-                # with zipfile.ZipFile(zfile) as unzip:
-                #     for zip_info in unzip.infolist():
-                #         if zip_info.filename[-1] == '/':
-                #             continue
-                #         zip_info.filename = os.path.basename(zip_info.filename)
-                #         unzip.extract(zip_info, '')
-
-                archive = zipfile.ZipFile(zfile)
-
-                for file in archive.namelist():
-                    if file.startswith(zip_base_path):
-                        archive.extract(file)
+                with zipfile.ZipFile(zfile) as unzip:
+                    for zip_info in unzip.infolist():
+                        if zip_info.filename[-1] == '/':
+                            continue
+                        zip_info.filename = zip_info.filename.replace(zip_base_path, "")
+                        unzip.extract(zip_info, '')
 
                 # And to keep things nice and clean, we remove the downloaded file once unzipped
                 os.remove(zfile)
