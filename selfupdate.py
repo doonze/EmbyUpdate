@@ -26,7 +26,6 @@ class SelfUpdate:
 
     # We're going to force the working path to be where the script lives
 
-
     def self_update(self):
 
         # Now we're just going to see what the latest version is! If we get any funky response we'll exit the script.
@@ -56,64 +55,75 @@ class SelfUpdate:
             print(e)
             sys.exit()
 
-        # Download URL for my github page (app home page) and we'll set the name of the current zip file
-        downloadurl = "https://github.com/doonze/EmbyUpdate/archive/" + self.online_version + ".zip"
-        zfile = self.online_version + ".zip"
+        try:
+            # Download URL for my github page (app home page) and we'll set the name of the current zip file
+            downloadurl = "https://github.com/doonze/EmbyUpdate/archive/" + self.online_version + ".zip"
+            zfile = self.online_version + ".zip"
 
-        # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
+            # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
 
-        onlinefileversion = (self.online_version + "-" + self.config.self_release)
+            onlinefileversion = (self.online_version + "-" + self.config.self_release)
 
-        if str(onlinefileversion) in str(self.config.self_version):
-            # If the latest online version matches the last installed version then we let you know and exit
-            print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at "
-                  + onlinefileversion + ". Exiting!")
+            if str(onlinefileversion) in str(self.config.self_version):
+
+                # If the latest online version matches the last installed version then we let you know and exit
+                print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at "
+                      + onlinefileversion + ". Exiting!")
+
+            else:
+
+                # If the online version DOESN'T match the last installed version we let you know what the versions are
+                # and start updating
+                print('')
+                print(timestamp() + "EmbyUpdate(self): Most recent app online version is "
+                      + onlinefileversion + " and current installed version is "
+                      + self.config.self_version + ". We're updating EmbyUpdate app.")
+                print('')
+                print("\n" + timestamp() + "EmbyUpdate(self): Starting self app update......")
+                print('')
+
+                # Here we download the zip to install
+                print("Starting Package download...")
+                download = requests.get(downloadurl)
+                with open(zfile, 'wb') as file:
+                    file.write(download.content)
+                print("Package downloaded!")
+
+                # Next we unzip and install it to the directory where the app was ran from
+                # with zipfile.ZipFile(zfile) as unzip:
+                #     for zip_info in unzip.infolist():
+                #         if zip_info.filename[-1] == '/':
+                #             continue
+                #         zip_info.filename = os.path.basename(zip_info.filename)
+                #         unzip.extract(zip_info, '')
+
+                # And to keep things nice and clean, we remove the downloaded file once unzipped
+                os.remove(zfile)
+
+                # now we'll set the app as executable
+                st = os.stat("embyupdate.py")
+                os.chmod("embyupdate.py", st.st_mode | 0o111)
+
+        except Exception as e:
+            print(timestamp() + "EmbyUpdate(self): We had a problem installing new version of updater!")
+            print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
             sys.exit()
-        else:
-            # If the online version DOESN'T match the last installed version we let you know what the versions are
-            # and start updating
-            print('')
-            print(timestamp() + "EmbyUpdate(self): Most recent app online version is "
-                  + onlinefileversion + " and current installed version is "
-                  + self.config.self_version + ". We're updating EmbyUpdate app.")
-            print('')
-            print("\n" + timestamp() + "EmbyUpdate(self): Starting self app update......")
-            print('')
 
-            # Here we download the zip to install
-            print("Starting Package download...")
-            download = requests.get(downloadurl)
-            with open(zfile, 'wb') as file:
-                file.write(download.content)
-            print("Package downloaded!")
-
-            # Next we unzip and install it to the directory where the app was ran from
-            with zipfile.ZipFile(zfile) as unzip:
-                for zip_info in unzip.infolist():
-                    if zip_info.filename[-1] == '/':
-                        continue
-                    zip_info.filename = os.path.basename(zip_info.filename)
-                    unzip.extract(zip_info, '')
-
-            # And to keep things nice and clean, we remove the downloaded file once unzipped
-            subprocess.call("rm -f " + zfile, shell=True)
-
-            # now we'll set the app as executable
-            st = os.stat("embyupdate.py")
-            os.chmod("embyupdate.py", st.st_mode | 0o111)
-
-            # Lastly we write the newly installed version into the config file
-            try:
-                self.config.self_version = onlinefileversion
-                self.config.write_config()
-            except Exception as e:
-                print(timestamp() + "EmbyUpdate(self): We had a problem writing to config after update!")
-                print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
-                sys.exit()
-
+        # Lastly we write the newly installed version into the config file
+        try:
+            self.config.self_version = onlinefileversion
+            self.config.write_config()
             print('')
             print(timestamp() + "EmbyUpdate(self): Updating to EmbyUpdate app version "
                   + onlinefileversion + " finished! Script exiting!")
             print('')
             print("*****************************************************************************")
             print("\n")
+            return self.config
+
+        except Exception as e:
+            print(timestamp() + "EmbyUpdate(self): We had a problem writing to config after update!")
+            print(timestamp() + "EmbyUpdate(self): Here's the error we got -- " + str(e))
+            sys.exit()
+
+
