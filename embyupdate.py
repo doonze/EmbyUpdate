@@ -20,7 +20,6 @@ import subprocess
 import sys
 import time
 import requests
-import urllib.request
 from config import Config
 from selfupdate import SelfUpdate
 
@@ -32,6 +31,9 @@ returncode = 0
 
 # Creates the default config object
 config = Config()
+
+# Fixes pre version 4.0 config files
+config.config_fix()
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -98,6 +100,7 @@ def timestamp():
     ts = time.strftime("%x %X", time.localtime())
     return "<" + ts + "> "
 
+print("Updated?")
 
 # The github API of releases for Emby Media Browser. This includes beta and production releases
 url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
