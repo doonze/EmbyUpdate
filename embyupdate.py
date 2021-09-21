@@ -25,7 +25,7 @@ from config import Config
 from selfupdate import SelfUpdate
 
 # Sets the version # for the command line -v/--version response
-versionnum = "3.7 Beta"
+versionnum = "4.0 Beta"
 
 # Setting default init values
 returncode = 0
