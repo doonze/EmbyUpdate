@@ -17,8 +17,6 @@ class Config:
         self.self_version = "First Run"
         self.self_release = "Stable"
         self.config_fix_3_7 = False
-        self.config_update_list = ["v3.6-Stable", "v3.5-Stable", "v3.3-Stable", "3.2-Stable"
-                                   ]
 
     def config_fix(self):
         """ Convert to new config file if needed (for versions before 4.0)."""
