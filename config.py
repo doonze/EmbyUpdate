@@ -16,7 +16,6 @@ class Config:
         self.self_update = True
         self.self_version = "First Run"
         self.self_release = "Stable"
-        self.config_fix_3_7 = False
 
     def config_fix(self):
         """ Convert to new config file if needed (for versions before 4.0)."""
@@ -64,7 +63,6 @@ class Config:
             self.config_file['EMBYUPDATE']['selfupdate'] = str(self.self_update)
             self.config_file['EMBYUPDATE']['selfrelease'] = self.self_release
             self.config_file['EMBYUPDATE']['selfversion'] = self.self_version
-            self.config_file['EMBYUPDATE']['3.7configfixed'] = str(self.config_fix_3_7)
 
             with open('config.ini', 'w') as configfile:
                 self.config_file.write(configfile)
@@ -89,8 +87,7 @@ class Config:
                                           'embyrelease': self.emby_release}
             self.config_file['EMBYUPDATE'] = {'selfupdate': self.self_update,
                                               'selfversion': self.self_version,
-                                              'selfrelease': self.self_release,
-                                              '3.7configfixed': self.config_fix_3_7}
+                                              'selfrelease': self.self_release}
 
             with open('config.ini', 'w') as configfile:
                 self.config_file.write(configfile)
@@ -118,7 +115,6 @@ class Config:
             self.self_update = self.config_file['EMBYUPDATE'].getboolean('selfupdate')
             self.self_version = self.config_file['EMBYUPDATE']['selfversion']
             self.self_release = self.config_file['EMBYUPDATE']['selfrelease']
-            self.config_fix_3_7 = self.config_file['EMBYUPDATE'].getboolean('3.7configfixed')
 
             return self
 
