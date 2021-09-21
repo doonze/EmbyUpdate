@@ -126,7 +126,8 @@ try:
 
 except Exception as e:
     print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
-    print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
+    print(timestamp() + "EmbyUpdate: Here's the error we got -- " + repr(e))
+    print(config.emby_release)
     sys.exit()
 
 ##########################################################################################################

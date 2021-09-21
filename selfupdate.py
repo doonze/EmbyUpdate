@@ -68,7 +68,7 @@ class SelfUpdate:
                 # If the latest online version matches the last installed version then we let you know and exit
                 print(timestamp() + "EmbyUpdate(self): App is up to date!  Current and Online versions are at "
                       + online_file_version + ". Exiting!")
-                return
+                return self.config
             else:
 
                 # If the online version DOESN'T match the last installed version we let you know what the versions are
