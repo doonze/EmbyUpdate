@@ -22,6 +22,7 @@ import time
 import requests
 import urllib.request
 from config import Config
+from selfupdate import SelfUpdate
 
 # Sets the version # for the command line -v/--version response
 versionnum = "3.7 Beta"
@@ -82,6 +83,16 @@ except Exception as e:
     print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
     print("There appears to be a config file error, re-runing config update to fix!")
 
+try:
+    # Now well try and update the app if the user chose that option
+    if config.self_update is True:
+        self_update = SelfUpdate(config)
+        self_update.self_update()
+
+except Exception as e:
+    print("EmbyUpdate: Couldn't read the Config file.")
+    print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
+    print("There appears to be a config file error, re-runing config update to fix!")
 
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
@@ -124,7 +135,7 @@ except Exception as e:
 
 # Debian/Ubuntu/Mint amd64 *************
 if config.distro == "Debian X64":
-    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+    downloadurl = "https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-deb_" + onlineversion + "_amd64.deb"
     installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
     updatefile = "emby-server-deb_" + onlineversion + "_amd64.deb"
@@ -132,7 +143,7 @@ if config.distro == "Debian X64":
 
 # Debian/Ubuntu/Mint armhf *************
 if config.distro == "Debian ARM":
-    downloadurl = "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
+    downloadurl = "https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
                   "/emby-server-deb_" + onlineversion + "_armhf.deb"
     installfile = "dpkg -i emby-server-deb_" + onlineversion + "_armhf.deb"
     updatefile = "emby-server-deb_" + onlineversion + "_armhf.deb"
@@ -227,10 +238,9 @@ else:
         # Here we download the package to install if used
         if "notused" not in downloadurl:
             print("Starting Package download...")
-            downreturn = subprocess.call(downloadurl, shell=True)
-            if downreturn > 0:
-                print("Download failed!! Exiting!")
-                sys.exit()
+            download = requests.get(downloadurl)
+            with open(updatefile, 'wb')as file:
+                file.write(download.content)
             print("Package downloaded!")
 
         # Next we install it if used
@@ -277,14 +287,4 @@ else:
         print(timestamp() + 'EmbyUpdate: Something failed in update. No update done, script exiting')
         print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
 
-# Now well try and update the app if the user chose that option
-if appupdate == 'True':
-    try:
-        returncode = subprocess.call("python3 selfupdate.py", shell=True)
-        if returncode != 0:
-            print('Python 3 was not found, falling back to python 2.')
-            returncode = subprocess.call("python selfupdate.py", shell=True)
-    except Exception as err:
-        print("Couldn't launch Python for some reason: %s" % err)
 
-sys.exit()
