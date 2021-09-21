@@ -48,8 +48,7 @@ class Config:
 
     def write_config(self):
         """
-        This function is passed a copy of the config dictionary and will write that dictionary to the existing config.ini
-        file
+        This function will write (update) the current Config class object to the config.ini file
 
         """
         try:
@@ -75,10 +74,9 @@ class Config:
 
     def create_config(self):
         """
-        When passed the config dictionary this function will create the config.ini file
+         This function will create the config.ini file
 
-        :type config_create_dict: dict
-        :param config_create_dict: Pass the config dictionary to use to create the file
+
         """
         try:
 
@@ -101,7 +99,7 @@ class Config:
 
     def read_config(self):
         """
-        Used to read the entire config file
+        Used to read the entire config file into the Config class object
 
         """
         try:
@@ -127,7 +125,9 @@ class Config:
             print("EmbyUpdate: Here's the error we got -- " + str(e))
 
     def config_setup(self):
-
+        """
+        This function runs the config setup routine and creates or updates the file as needed
+        """
         # Now we'll start gathering user input
         # First user will choose their distro
 
