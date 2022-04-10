@@ -14,6 +14,7 @@
 ###############################################################################################
 
 import argparse
+from genericpath import exists
 import json
 import os.path
 from platform import python_version
@@ -40,6 +41,12 @@ elif (sys.version_info[0] == 3 and sys.version_info[1] < 6):
     sys.exit()
 else:
     print("You are running Python version " + pythonVersion + ", you're good!")
+
+# Checks if DB exist
+if not exists('./db/embyupdatedb'):
+    print("DB does NOT exist")
+else: 
+    print('DB exist, also good!')
 
 # Creates the default config object
 config = Config()
