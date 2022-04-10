@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # This Python file uses the following encoding: utf-8
 # EmbyUpdate
 
@@ -16,6 +16,7 @@
 import argparse
 import json
 import os.path
+from platform import python_version
 import subprocess
 import sys
 import time
@@ -28,6 +29,17 @@ versionnum = "4.0 Beta"
 
 # Setting default init values
 returncode = 0
+
+# Checks for python version, exit if not greater than 3.6
+pythonVersion = str(sys.version_info[0]) + "." + str(sys.version_info[1])
+if (sys.version_info[0] < 3):    
+    print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
+    sys.exit()
+elif (sys.version_info[0] == 3 and sys.version_info[1] < 6):
+    print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
+    sys.exit()
+else:
+    print("You are running Python version " + pythonVersion + ", you're good!")
 
 # Creates the default config object
 config = Config()
