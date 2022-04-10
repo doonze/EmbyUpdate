@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-
-#import sqlite3
 from .dbconnector import DBConn
 
 """ 

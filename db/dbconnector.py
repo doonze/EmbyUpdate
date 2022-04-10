@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sqlite3
 
 class DBConn:  # This class creates, opens, and closes the DB connection
