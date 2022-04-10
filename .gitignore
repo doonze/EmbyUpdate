@@ -9,3 +9,4 @@ __pycache__/config.cpython-39.pyc
 __pycache__/selfupdate.cpython-39.pyc
 db/embyupdatedb
 db/__pycache__/dbadaptor.cpython-39.pyc
+db/embyupdate.db
