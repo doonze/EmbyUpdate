@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # This Python file uses the following encoding: utf-8
 # EmbyUpdate
 
@@ -23,6 +23,7 @@ import sys
 import time
 import requests
 from config import Config
+from db.createdb import CreateDB
 from selfupdate import SelfUpdate
 
 # Sets the version # for the command line -v/--version response
@@ -43,8 +44,10 @@ else:
     print("You are running Python version " + pythonVersion + ", you're good!")
 
 # Checks if DB exist
-if not exists('./db/embyupdatedb'):
-    print("DB does NOT exist")
+if not exists('./db/embyupdate.db'):
+    print("DB does NOT exist, creating DB...")
+    CreateDB()
+    print("DB has been created.")
 else: 
     print('DB exist, also good!')
 
