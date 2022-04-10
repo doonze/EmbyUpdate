@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # This Python file uses the following encoding: utf-8
 # This program is used can called by the main program to update the app itself if needed
 import sys
