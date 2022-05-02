@@ -5,6 +5,7 @@ jsontest.py
 .vscode/*
 /.vs/*
 /.gitattributes
+.pyc
 __pycache__/config.cpython-39.pyc
 __pycache__/selfupdate.cpython-39.pyc
 db/embyupdatedb

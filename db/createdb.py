@@ -1,4 +1,4 @@
-from db_functions import db_create_connection
+from .db_functions import db_create_connection
 from contextlib import closing
 
 """ 
