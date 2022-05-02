@@ -65,6 +65,8 @@ parser = argparse.ArgumentParser(description="An updater for Emby Media Player",
 parser.add_argument('-c', '--config', action='store_true', help='Runs the config updater', required=False)
 parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + versionnum,
                     help='Displays version number')
+parser.add_argument('--db_build', action='store_true', help='Builds or rebuilds (Drops/Creates) the database')
+parser.add_argument('-cd', '--config_display', help='Displays all config options', default='all')
 args = parser.parse_args()
 
 # If the user hasn't used the -c/--config command line argument this will test to see if the config file exist.
@@ -73,7 +75,7 @@ if args.config is False:
     if not os.path.isfile("config.ini"):
         print("")
         print("Config file doesn't exist! Likely this is your first time running the script."
-              " We will now run the config creater. If your sure config exist there may be permission issues.")
+              " We will now run the config creater. If your sure a config exist there may be permission issues.")
         print("")
         config.config_setup()
 
