@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime
-from dbconnector import DBConn
-import db_functions
+
+
 
 @dataclass
 class MainConfig():
@@ -15,15 +15,47 @@ class MainConfig():
     dateupdated : date
 
 @dataclass
+class MainUpdateHistory():
+    id: int
+    date: date
+    version: str
+    success: bool
+    errorid: int
+
+@dataclass
 class SelfUpdate():
     id: int
+    dateupdated: date
+    runupdate: bool
+    version: str
+    releasetype: str
 
+@dataclass
+class SelfUpdateHistory():
+    id: int
+    date: date
+    version: str
+    success: bool
+    errorid: int
 
+@dataclass
+class DbUpdateHistory():
+    version: str
+    date: date
+    notes: str
 
+@dataclass
+class DBversion():
+    version: str
+    dateupdated: date
 
-""" t = MainConfig(1, False, "Test", False, False, "1.1", "Stable", "None")
-r = db_functions.db_update_class_in_table(db_functions.db_create_connection(), t, "MainConfig", "id", "1")
-print(r) """
+@dataclass
+class errors():
+    id: int
+    date: date
+    message: str
+    mainorself: str
+
 
 
 

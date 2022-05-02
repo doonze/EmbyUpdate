@@ -5,11 +5,11 @@ from contextlib import closing
 DB                          Tables
 ------------------------------------------------------------------------------------------------------------
 MainConfig              |  id, configran, distro, startserver, stopserver, version, releasetype, dateupdated
-MainUpdateHistory       |  id, date, version , success, errorid
-SelfUpdate              |  id, dateupdate, runupdate, version, releasetype
+MainUpdateHistory       |  id, date, version, success, errorid
+SelfUpdate              |  id, dateupdated, runupdate, version, releasetype
 SelfUpdateHistory       |  id, date, version, success, errorid
 DbUpdateHistory         |  version, date, notes
-Dbversion               |  version, dateupdated
+DBversion               |  version, dateupdated
 Errors                  |  id, date, message, mainorself
 ------------------------------------------------------------------------------------------------------------
 """
@@ -85,7 +85,7 @@ def CreateDB():
             );
             """
 
-            Dbversion = """
+            DBversion = """
             CREATE TABLE "DBversion" (
             "version"	INTEGER NOT NULL DEFAULT 1 UNIQUE,
             "dateupdated"	TEXT,
@@ -108,7 +108,7 @@ def CreateDB():
             cur.execute(SelfUpdate)
             cur.execute(SelfUpdateHistory)
             cur.execute(DbUpdateHistory)
-            cur.execute(Dbversion)
+            cur.execute(DBversion)
             cur.execute(Errors)
 
             values = (0, 'None', 0, 0, 'First Run', 'Stable')

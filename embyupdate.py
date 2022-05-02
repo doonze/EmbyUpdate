@@ -13,7 +13,6 @@
 # Should work with both python 2.7 and all flavors of 3.                                      #
 ###############################################################################################
 
-import argparse
 from genericpath import exists
 import json
 import os.path
@@ -22,9 +21,10 @@ import subprocess
 import sys
 import time
 import requests
-from config import Config
+from functions.config import Config
 from db.createdb import CreateDB
 from selfupdate import SelfUpdate
+from functions.arguments import readArgs
 
 # Sets the version # for the command line -v/--version response
 versionnum = "4.0 Beta"
@@ -34,22 +34,22 @@ returncode = 0
 
 # Checks for python version, exit if not greater than 3.6
 pythonVersion = str(sys.version_info[0]) + "." + str(sys.version_info[1])
-if (sys.version_info[0] < 3):    
+if (sys.version_info[0] < 3):
+    print("")    
     print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
     sys.exit()
 elif (sys.version_info[0] == 3 and sys.version_info[1] < 6):
+    print("")
     print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
     sys.exit()
 else:
+    print()
     print("You are running Python version " + pythonVersion + ", you're good!")
+    print()
 
-# Checks if DB exist
-if not exists('./db/embyupdate.db'):
-    print("DB does NOT exist, creating DB...")
-    CreateDB()
-    print("DB has been created.")
-else: 
-    print('DB exist, also good!')
+# Checks for command line arguments
+
+args = readArgs(versionnum)
 
 # Creates the default config object
 config = Config()
@@ -60,24 +60,22 @@ config.config_fix()
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
 
-# This sets up the command line arguments
-parser = argparse.ArgumentParser(description="An updater for Emby Media Player", prog='EmbyUpdate')
-parser.add_argument('-c', '--config', action='store_true', help='Runs the config updater', required=False)
-parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + versionnum,
-                    help='Displays version number')
-parser.add_argument('--db_build', action='store_true', help='Builds or rebuilds (Drops/Creates) the database')
-parser.add_argument('-cd', '--config_display', help='Displays all config options', default='all')
-args = parser.parse_args()
 
-# If the user hasn't used the -c/--config command line argument this will test to see if the config file exist.
+
+# If the user hasn't used the -c/--config command line argument this will test to see if the DB exist.
 # If it doesn't it will launch the config setup process
 if args.config is False:
-    if not os.path.isfile("config.ini"):
-        print("")
-        print("Config file doesn't exist! Likely this is your first time running the script."
-              " We will now run the config creater. If your sure a config exist there may be permission issues.")
-        print("")
-        config.config_setup()
+    if not exists('./db/embyupdate.db'):
+        try: 
+            print()
+            print("DB does NOT exist, creating DB...")
+            CreateDB()
+            print("DB has been created.")
+            print()
+        except Exception as e:
+            print("EmbyUpdate: Couldn't create the DataBase.")
+            print("EmbyUpdate: Here's the error we got -- " + str(e))
+    
 
 # Here we call configupdate to setup or update the config file if command line option -c was invoked
 try:

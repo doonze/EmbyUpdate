@@ -1,6 +1,11 @@
 import sys
 import configparser
 from os import remove, path
+from genericpath import exists
+from cupshelpers import missingPackagesAndExecutables
+from db.createdb import CreateDB
+from db.dbobjects import MainConfig, SelfUpdate
+from db.db_functions import db_create_connection, db_update_class_in_table 
 
 
 class Config:
@@ -17,7 +22,7 @@ class Config:
         self.self_release = "Beta"
 
     def config_fix(self):
-        """ Convert to new config file if needed (for versions before 4.0)."""
+        """ Convert to new DB config if needed (for versions before 4.0)."""
         try:
             # We'll read the config file to find if it's a version that needs fixing, if so we'll copy the current
             # settings into our configuration dictionary
@@ -53,23 +58,28 @@ class Config:
 
     def write_config(self):
         """
-        This function will write (update) the current Config class object to the config.ini file
+        This function will write (update) the current Config class object to the database
 
         """
         try:
 
-            self.config_file.read('config.ini')
-            self.config_file['DISTRO']['installdistro'] = self.distro
-            self.config_file['SERVER']['stopserver'] = str(self.stop_server)
-            self.config_file['SERVER']['startserver'] = str(self.start_server)
-            self.config_file['SERVER']['embyversion'] = self.emby_version
-            self.config_file['SERVER']['embyrelease'] = self.emby_release
-            self.config_file['EMBYUPDATE']['selfupdate'] = str(self.self_update)
-            self.config_file['EMBYUPDATE']['selfrelease'] = self.self_release
-            self.config_file['EMBYUPDATE']['selfversion'] = self.self_version
+            mainconfig = MainConfig()
+            selfupdate = SelfUpdate()
 
-            with open('config.ini', 'w') as configfile:
-                self.config_file.write(configfile)
+            # Main config 
+            mainconfig.distro = self.distro
+            mainconfig.stopserver = self.stop_server
+            mainconfig.startserver = self.start_server
+            mainconfig.version = self.emby_version
+            mainconfig.releasetype = self.emby_release
+
+            # Self update config            
+            selfupdate.runupdate = self.self_update
+            selfupdate.releasetype = self.self_release
+            selfupdate.version = self.self_version
+
+            result_main = db_update_class_in_table(db_create_connection, mainconfig, 'MainConfig', 'id', 1)
+            result_self = db_update_class_in_table(db_create_connection, selfupdate, 'SelfUpdate', 'id', 1)            
 
         except Exception as e:
             print("EmbyUpdate: Couldn't write to the config file.")
@@ -310,29 +320,27 @@ class Config:
 
         # Setup the config interface
 
-        # Test if the config file exist
-        try:
-            if not path.isfile("config.ini"):
-                cfgexist = False
-            else:
-                cfgexist = True
-        except Exception as e:
-            print("EmbyUpdate: Couldn't access the config.ini file. Permission issues? We can't continue")
-            print("EmbyUpdate: Here's the error we got -- " + str(e))
-            sys.exit(1)
+        # Test if the DB exist and creates it if it doesn't
+        if not exists('./db/embyupdate.db'):
+            try: 
+                print()
+                print("DB does NOT exist, creating DB...")
+                CreateDB()
+                print("DB has been created.")
+                print()
+            except Exception as e:
+                print("EmbyUpdate: Couldn't create the DataBase.")
+                print("EmbyUpdate: Here's the error we got -- " + str(e))
 
-        # If config doesn't exist it will create it with the correct values filled in and
-        # if it does exist it will simply update the existing config
+        # Now we write the config to the database
         try:
-            if cfgexist is False:
-                self.create_config()
-            elif cfgexist is True:
-                self.write_config()
+            self.write_config()
         except Exception as e:
-            print("EmbyUpdate: Couldn't create or update the config file.")
+            print("EmbyUpdate: Couldn't update the database.")
             print("EmbyUpdate: Here's the error we got -- " + str(e))
+            print("EmbyUpdate: Cannot continue, exiting.")
             sys.exit(1)
 
         print("")
-        print("Config written to file, install continuing!")
+        print("Config written to database, install continuing!")
         print("")
