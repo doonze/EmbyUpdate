@@ -1,5 +1,8 @@
+from site import execsitecustomize
 from .db_functions import db_create_connection
 from contextlib import closing
+from db.db_functions import db_insert_class_in_table
+import db.dbobjects
 
 """ 
 DB                          Tables
@@ -28,6 +31,7 @@ def CreateDB():
             cur.execute("DROP TABLE IF EXISTS DbUpdateHistory")
             cur.execute("DROP TABLE IF EXISTS Dbversion")
             cur.execute("DROP TABLE IF EXISTS Errors")
+            cur.execute("DROP TABLE IF EXISTS ServerInfo")
 
             MainConfig = """
             CREATE TABLE "MainConfig" (
@@ -39,7 +43,7 @@ def CreateDB():
             "version"	TEXT NOT NULL DEFAULT 'First Run',
             "releasetype"	TEXT NOT NULL DEFAULT 'Stable',
             "dateupdated"	TEXT,
-            PRIMARY KEY("id" AUTOINCREMENT)
+            PRIMARY KEY("id")
             );
             """
 
@@ -61,7 +65,7 @@ def CreateDB():
             "runupdate"	INTEGER NOT NULL DEFAULT 1,
             "version"	TEXT NOT NULL DEFAULT 'First Run',
             "releasetype"	TEXT NOT NULL DEFAULT 'Stable',
-            PRIMARY KEY("id" AUTOINCREMENT)
+            PRIMARY KEY("id")
             );    
             """    
 
@@ -103,6 +107,19 @@ def CreateDB():
             );
             """
 
+            ServerInfo = """
+            CREATE TABLE "ServerInfo" (
+            "id"	INTEGER NOT NULL UNIQUE,
+            "enablecheck"	INTEGER NOT NULL DEFAULT 1,
+            "scheme"	TEXT NOT NULL DEFAULT 'http://',
+            "address"	TEXT NOT NULL DEFAULT 'localhost',
+            "port"	TEXT NOT NULL DEFAULT 8096,
+            "portused"	INTEGER NOT NULL DEFAULT 1,
+            "apipath"	TEXT NOT NULL DEFAULT '/System/Info/Public',
+            PRIMARY KEY("id")
+            );
+            """ 
+
             cur.execute(MainConfig)
             cur.execute(MainUpdateHistory)
             cur.execute(SelfUpdate)
@@ -110,18 +127,16 @@ def CreateDB():
             cur.execute(DbUpdateHistory)
             cur.execute(DBversion)
             cur.execute(Errors)
+            cur.execute(ServerInfo)
 
-            values = (0, 'None', 0, 0, 'First Run', 'Stable')
-            sql = """ INSERT INTO MainConfig(configran, distro, startserver, stopserver, version, 
-            releasetype) VALUES (?,?,?,?,?,?) """
-            cur.execute(sql, values)
-            conn.commit()
+            mainconfig = db.dbobjects.MainConfig(1, 0, 'None', 0, 0, 'First Run', 'Stable')
+            db_insert_class_in_table(conn, mainconfig, 'MainConfig')
 
-            values = ('None', 1, 'First Run', 'Stable')
-            sql = """ INSERT INTO SelfUpdate(dateupdated, runupdate, version, releasetype)
-            VALUES (?,?,?,?) """
-            cur.execute(sql, values)
-            conn.commit()
+            selfupdate = db.dbobjects.SelfUpdate(1, 'None', 1, 'First Run', 'Stable')
+            db_insert_class_in_table(conn, selfupdate, 'SelfUpdate')
+
+            serverinfo = db.dbobjects.ServerInfo(1, 1, 'http://', 'localhost', '8096', 1, '/System/Info/Public')
+            db_insert_class_in_table(conn, serverinfo, 'ServerInfo')
 
 
 

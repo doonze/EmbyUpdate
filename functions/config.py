@@ -2,10 +2,12 @@ import sys
 import configparser
 from os import remove, path
 from genericpath import exists
+from turtle import update
 from cupshelpers import missingPackagesAndExecutables
 from db.createdb import CreateDB
 from db.dbobjects import MainConfig, SelfUpdate, ConfigObj
 from db.db_functions import db_create_connection, db_update_class_in_table, db_return_class_object
+from functions.api import GetRunningVersion
 
 
 class Config:
@@ -139,7 +141,11 @@ class Config:
         This function runs the config setup routine and creates or updates the file as needed
         """
         # Now we'll start gathering user input
-        # First user will choose their distro
+
+        # First to check if Emby is running so we can get the version #
+        print(GetRunningVersion())        
+
+        # Next user will choose their distro
 
         print("[1] Debian X64")
         print("[2] Debian ARM")

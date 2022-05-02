@@ -21,6 +21,7 @@ import subprocess
 import sys
 import time
 import requests
+from functions.api import GetRunningVersion
 from functions.config import Config
 from db.createdb import CreateDB
 from selfupdate import SelfUpdate
@@ -66,10 +67,13 @@ if args.config is False:
     if not exists('./db/embyupdate.db'):
         try: 
             print()
-            print("DB does NOT exist, creating DB...")
+            print("Database does NOT exist, creating database...")
             CreateDB()
-            print("DB has been created.")
+            print("Database has been created.")
             print()
+            print("Starting config setup...")
+            print()
+            returncode = config.config_setup()
         except Exception as e:
             print("EmbyUpdate: Couldn't create the DataBase.")
             print("EmbyUpdate: Here's the error we got -- " + str(e))
@@ -102,6 +106,8 @@ except Exception as e:
     print("EmbyUpdate: Couldn't read the Config file.")
     print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
     print("There appears to be a config file error, re-runing config update to fix!")
+
+print(GetRunningVersion()) 
 
 try:
     # Now well try and update the app if the user chose that option
