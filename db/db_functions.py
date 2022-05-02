@@ -24,6 +24,7 @@ def db_create_connection(db_file: str = 'db/embyupdate.db') -> sqlite3.Connectio
         conn = sqlite3.connect(db_file)
         conn.row_factory = sqlite3.Row
     except Error as e:
+        print("Connection error:")
         print(e)
 
     return conn
@@ -234,9 +235,10 @@ def db_return_class_object(conn: sqlite3.Connection, table, where_field, where_w
     :return: Filled dataclass instance
     :rtype: dataclass
     """
+
     sql = f'SELECT * FROM {table} WHERE {where_field} = ?'
     param = [where_what]
-    with conn:
+    with conn:        
         with closing(conn.cursor()) as cur:
             cur = conn.cursor()
             cur.execute(sql, param)
@@ -297,8 +299,8 @@ def db_insert_inventory_char_creation(conn, inv_dict):
         db_insert_class_in_table(conn, inv_dict[each], 'inventory')
 
 
-def db_create_inventory_dict(conn, player_name):
-    """
+""" def db_create_inventory_dict(conn, player_name):
+    
     Creates a dictionary with numbers for keys and Items dataclass for values.
 
     :param conn: Connection to DB
@@ -307,7 +309,7 @@ def db_create_inventory_dict(conn, player_name):
     :type player_name: str
     :return: Returns a dictionary of inventory items
     :rtype: dict
-    """
+   
     inventory_dict = {}
     with conn:
         rows = db_select_values_where(conn, 'inventory', 'id', 'player_name', player_name)
@@ -315,7 +317,7 @@ def db_create_inventory_dict(conn, player_name):
         for row in rows:
             inventory_dict[num] = db_return_class_object(conn, 'inventory', 'id', row['id'], Inventory)
             num += 1
-    return inventory_dict
+    return inventory_dict """
 
 
 def db_update_value(conn: sqlite3.Connection, table, value, update_value, where, where_what):

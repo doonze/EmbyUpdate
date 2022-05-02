@@ -60,8 +60,6 @@ config.config_fix()
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
 
-
-
 # If the user hasn't used the -c/--config command line argument this will test to see if the DB exist.
 # If it doesn't it will launch the config setup process
 if args.config is False:
@@ -98,7 +96,7 @@ except Exception as e:
 
 try:
 
-    config.read_config()
+    configobj = config.read_config()
 
 except Exception as e:
     print("EmbyUpdate: Couldn't read the Config file.")
@@ -107,9 +105,10 @@ except Exception as e:
 
 try:
     # Now well try and update the app if the user chose that option
-    if config.self_update is True:
-        self_update = SelfUpdate(config)
-        config = self_update.self_update()
+    if configobj.self_update.runupdate is True:
+        #self_update = SelfUpdate(config)
+        #config = self_update.self_update()
+        print("self update disabled")
 
 except Exception as e:
     print("EmbyUpdate: Couldn't read the Config file.")
@@ -247,7 +246,7 @@ else:
           + onlinefileversion + " and current installed version is " + config.emby_version + ". We're updating Emby.")
     print("\n" + timestamp() + "EmbyUpdate: Starting update......")
 
-    try:
+    """ try:
         # This will stop the server on a systemd distro if it's been set to true above
         if config.stop_server is True:
             print("Stopping Emby server.....")
@@ -308,4 +307,4 @@ else:
 
     except Exception as e:
         print(timestamp() + 'EmbyUpdate: Something failed in update. No update done, script exiting')
-        print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
+        print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e)) """

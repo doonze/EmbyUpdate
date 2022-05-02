@@ -4,8 +4,8 @@ from os import remove, path
 from genericpath import exists
 from cupshelpers import missingPackagesAndExecutables
 from db.createdb import CreateDB
-from db.dbobjects import MainConfig, SelfUpdate
-from db.db_functions import db_create_connection, db_update_class_in_table 
+from db.dbobjects import MainConfig, SelfUpdate, ConfigObj
+from db.db_functions import db_create_connection, db_update_class_in_table, db_return_class_object
 
 
 class Config:
@@ -92,6 +92,7 @@ class Config:
 
 
         """
+        print("create config, remove me")
         try:
 
             self.config_file['DISTRO'] = {'installdistro': self.distro}
@@ -117,20 +118,17 @@ class Config:
         """
         try:
 
-            # Now we're going to open the config file and read it
-            self.config_file.read("config.ini")
+            configobj = ConfigObj()
+            
+
+            # Now we're going to read the config from the database
+            configobj.main_config = db_return_class_object(db_create_connection(), 'MainConfig', 'id', '1', MainConfig)
+            configobj.self_update = db_return_class_object(db_create_connection(), 'SelfUpdate', 'id', '1', SelfUpdate)
 
             # Here we pull the main config params.
-            self.distro = self.config_file['DISTRO']['installdistro']
-            self.stop_server = self.config_file['SERVER'].getboolean('stopserver')
-            self.start_server = self.config_file['SERVER'].getboolean('startserver')
-            self.emby_version = self.config_file['SERVER']['embyversion']
-            self.emby_release = self.config_file['SERVER']['embyrelease']
-            self.self_update = self.config_file['EMBYUPDATE'].getboolean('selfupdate')
-            self.self_version = self.config_file['EMBYUPDATE']['selfversion']
-            self.self_release = self.config_file['EMBYUPDATE']['selfrelease']
+            
 
-            return self
+            return configobj
 
         except Exception as e:
             print("EmbyUpdate: Couldn't write to the config file.")

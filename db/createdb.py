@@ -58,7 +58,7 @@ def CreateDB():
             CREATE TABLE "SelfUpdate" (
             "id"	INTEGER NOT NULL UNIQUE,
             "dateupdated"	TEXT NOT NULL DEFAULT 'None',
-            "runupdate"	INTEGER NOT NULL DEFAULT 0,
+            "runupdate"	INTEGER NOT NULL DEFAULT 1,
             "version"	TEXT NOT NULL DEFAULT 'First Run',
             "releasetype"	TEXT NOT NULL DEFAULT 'Stable',
             PRIMARY KEY("id" AUTOINCREMENT)
@@ -117,7 +117,7 @@ def CreateDB():
             cur.execute(sql, values)
             conn.commit()
 
-            values = ('None', 0, 'First Run', 'Stable')
+            values = ('None', 1, 'First Run', 'Stable')
             sql = """ INSERT INTO SelfUpdate(dateupdated, runupdate, version, releasetype)
             VALUES (?,?,?,?) """
             cur.execute(sql, values)

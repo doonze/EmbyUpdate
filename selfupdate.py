@@ -7,7 +7,7 @@ import os.path
 import time
 import zipfile
 import subprocess
-from config import Config
+from functions.config import Config
 
 
 # This is a simple timestamp function, created so each call would have a current timestamp

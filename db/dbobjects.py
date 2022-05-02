@@ -5,14 +5,14 @@ from datetime import date, datetime
 
 @dataclass
 class MainConfig():
-    id          : int
-    configran   : bool
-    distro      : str
-    startserver : bool
-    stopserver  : bool
-    version     : str
-    releasetype : str
-    dateupdated : date
+    id          : int = None
+    configran   : bool = None
+    distro      : str = None
+    startserver : bool = False
+    stopserver  : bool = False
+    version     : str = None
+    releasetype : str = None
+    dateupdated : str = None
 
 @dataclass
 class MainUpdateHistory():
@@ -24,11 +24,11 @@ class MainUpdateHistory():
 
 @dataclass
 class SelfUpdate():
-    id: int
-    dateupdated: date
-    runupdate: bool
-    version: str
-    releasetype: str
+    id: int = None
+    dateupdated:str = None
+    runupdate: bool = True
+    version: str = None
+    releasetype: str = None
 
 @dataclass
 class SelfUpdateHistory():
@@ -50,11 +50,17 @@ class DBversion():
     dateupdated: date
 
 @dataclass
-class errors():
+class Errors():
     id: int
     date: date
     message: str
     mainorself: str
+
+@dataclass
+class ConfigObj():
+    main_config: MainConfig = None
+    self_update: SelfUpdate = None
+    
 
 
 
