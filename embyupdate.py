@@ -98,6 +98,8 @@ except Exception as e:
     print("EmbyUpdate: Couldn't call the Config Updater.")
     print("EmbyUpdate: Here's the error we got -- " + str(e))
 
+config.config_setup() # TODO remove me when done testing
+
 try:
 
     configobj = config.read_config()

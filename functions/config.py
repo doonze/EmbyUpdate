@@ -151,92 +151,106 @@ class Config:
 
         # First to check if Emby is running so we can get the version #
         runningVersion = GetRunningVersion()
+        serverinfo: ServerInfo = runningVersion['serverinfo']
 
-        if runningVersion['version'] == None:
-            print()
-            print("I didn't find a running Emby instance on this server.")
-            print(f"I tried the default address {runningVersion['url']}")
-            print("If this is correct, make sure the sever is running.")
-            print()
-            print("[1] You can skip this check for now")
-            print("[2] Permanently disable this check")
-            print("[3] Update the server address")
-            print("[4] Cancel this run (maybe to start the server?)")
-            print()
+        if serverinfo.enablecheck:
+            if runningVersion['version'] == None:                
+                print()
+                print("I didn't find a running Emby instance on this server.")
+                print(f"I tried the address {runningVersion['url']}")
+                print("If this is correct, make sure the server is running.")
+                print()
+                print("* This is not required, however the script will try to update   *")
+                print("* Emby to the lastest version as we cannot contact the server   *")
+                print("* to find what version it's currently running. It doesn't hurt  *")
+                print("* anything to do so. But saves some time on slow connections if *")
+                print("* your already running the latest version. After the first      *") 
+                print("* update we'll keep track of the version installed anyway.      *")
+                print()
+                print("[1] You can skip this check for now")
+                print("[2] Permanently disable this check")
+                print("[3] Update the server address")
+                print("[4] Cancel this run (maybe to start the server?)")
+                print()
 
-            loop = True
-            while loop:
+                loop = True
+                while loop:
 
-                r = input("Make your choice by number, use 4 or C to cancel update [?]: ")
+                    r = input("Make your choice by number, or use 4 or C to cancel update [?]: ")
+                    print()
 
-                if str(r) == "1":
-                    break
+                    if str(r) == "1":
+                        print("Skipping server check and continuing config setup...")
+                        print()
+                        loop = False
+                        break
 
-                elif str(r) == "2":
-                    db_update_value(db_create_connection, 'ServerInfo', 'enablecheck', False, 'id', 1)
-                    print("Server check has been permanently disabled.")
-                    break
+                    elif str(r) == "2":
+                        db_update_value(db_create_connection(), 'ServerInfo', 'enablecheck', False, 'id', 1)
+                        print("Server check has been permanently disabled.")
+                        loop = False
+                        break
 
-                elif str(r) == "3":                   
-                    while True:
-                        serverinfo = ServerInfo()
-                        scheme: str = "http://"
-                        
-                        ssl : bool = False
-                        portNum : str = ""
-
+                    elif str(r) == "3":                   
                         while True:
-                            r = input("Do you use a port to access your server? [Y/n]: ")
-
-                            if r.casefold() == "y" or r == "":
-                                serverinfo.portused = True
-                                break
-                            elif r.casefold() == "n":
-                                serverinfo.portused = False
-                                break
-                            else:
-                                print("Invalid response. Enter (y)es or (n)o.")
-                                print()
-                        
-                        while True:
-                            r = input("Do you use ssl to access your server (HTTPS://)? [Y/n]: ")
-
-                            if r.casefold() == "y" or r == "":
-                                serverinfo.scheme = "https://"
-                                break
-                            elif r.casefold() == "n":
-                                serverinfo.scheme = "http://"
-                                break
-                            else:
-                                print("Invalid response. Enter (y)es or (n)o.")
                             
-                        if serverinfo.portused: 
-                            serverinfo.port = input("Please enter port number: ")
-                        
-                        serverinfo.address = input("Please enter address: ")
-                        
-                        while True:
-                            if serverinfo.portused:
-                                print()
-                                print(f"Here's what I have: {serverinfo.scheme}{serverinfo.address}:{serverinfo.port}")
-                                print()
-                            else:
-                                print()
-                                print(f"Here's what I have: {serverinfo.scheme}{serverinfo.address}")
-                                print()
+                            scheme: str = "http://"
+                            
+                            ssl : bool = False
+                            portNum : str = ""
 
-                            r = input("Is this correct? [Y/n]: ")
-                            if r.casefold() == "y" or r == "":
-                                db_insert_class_in_table(db_create_connection, serverinfo, 'ServerInfo')
+                            while True:
+                                r = input("Do you use a port to access your server? [Y/n]: ")
 
-                                # TODO: Needs to pull the existing serverinfo data first before all this
-                                # in case this is a config update and not a new install. Also need to display the 
-                                # current values and ask if the need changed first
-                                # TODO: At this point It's writing the changes to the DB, but we need to check FIRST
-                                # that the settings work before writing the info
-                                # TODO: Add a cancel if the new setting don't work, and another chance to disable
-                                # the server check
-                                # 
+                                if r.casefold() == "y" or r == "":
+                                    serverinfo.portused = True
+                                    break
+                                elif r.casefold() == "n":
+                                    serverinfo.portused = False
+                                    break
+                                else:
+                                    print("Invalid response. Enter (y)es or (n)o.")
+                                    print()
+                            
+                            while True:
+                                r = input("Do you use ssl to access your server (HTTPS://)? [Y/n]: ")
+
+                                if r.casefold() == "y" or r == "":
+                                    serverinfo.scheme = "https://"
+                                    break
+                                elif r.casefold() == "n":
+                                    serverinfo.scheme = "http://"
+                                    break
+                                else:
+                                    print("Invalid response. Enter (y)es or (n)o.")
+                                
+                            if serverinfo.portused: 
+                                serverinfo.port = input("Please enter port number: ")
+                            
+                            serverinfo.address = input("Please enter address: ")
+                            
+                            while True:
+                                if serverinfo.portused:
+                                    print()
+                                    print(f"Here's what I have: {serverinfo.scheme}{serverinfo.address}:{serverinfo.port}")
+                                    print()
+                                else:
+                                    print()
+                                    print(f"Here's what I have: {serverinfo.scheme}{serverinfo.address}")
+                                    print()
+
+                                r = input("Is this correct? [Y/n]: ")
+                                if r.casefold() == "y" or r == "":
+                                    db_insert_class_in_table(db_create_connection, serverinfo, 'ServerInfo')
+
+                                    # TODO: Needs to pull the existing serverinfo data first before all this
+                                    # in case this is a config update and not a new install. Also need to display the 
+                                    # current values and ask if the need changed first
+                                    # TODO: At this point It's writing the changes to the DB, but we need to check FIRST
+                                    # that the settings work before writing the info
+                                    # TODO: Add a cancel if the new setting don't work, and another chance to disable
+                                    # the server check
+                                    # 
                                 
 
                         

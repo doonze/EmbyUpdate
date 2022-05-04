@@ -1,20 +1,7 @@
+from turtle import update
 import requests
 import json
 from functions.urlbuilder import buildServerURL
-
-def GetServerInfo():
-    """
-    The GetServerInfo function is used to get the server name and IP address from the user.
-    It will then return a tuple containing these two pieces of information.
-    
-    :return: A string of the server name, ip address and port number
-    :doc-author: Trelent
-    """
-    while True:
-        r = input('Do you have a running instance of Emby on this server? Y/n: ')
-        if r.casefold() == 'n':
-            break
-
 
 
 def GetRunningVersion() -> dict:
@@ -27,11 +14,14 @@ def GetRunningVersion() -> dict:
     """
 
     while True:    
-        try:           
-            response = requests.get(buildServerURL())
+        try:
+            URLinfoDict = buildServerURL()           
+            response = requests.get(URLinfoDict['url'])
             updatejson = json.loads(response.text)
             if "Version" in updatejson:
-                return { 'version' : updatejson['Version'], 'url' : buildServerURL()}
+                URLinfoDict['version'] = updatejson['Version']
+                return URLinfoDict
 
         except:
-            return { 'version' : None, 'url' : buildServerURL()}
+            URLinfoDict['version'] = None
+            return URLinfoDict
