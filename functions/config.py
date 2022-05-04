@@ -192,42 +192,46 @@ class Config:
                         break
 
                     elif str(r) == "3":                   
-                        while True:
-                            
-                            scheme: str = "http://"
-                            
-                            ssl : bool = False
-                            portNum : str = ""
+                        while True:  
+                            while loop:                                
+                                print("*** Just hitting enter will retain current values. ***")
+                                print()
+                                r = input(f"Do you use a port to access your server? Current value is ({serverinfo.portused}) [y/n]: ")
 
-                            while True:
-                                r = input("Do you use a port to access your server? [Y/n]: ")
-
-                                if r.casefold() == "y" or r == "":
+                                if r.casefold() == "y":
                                     serverinfo.portused = True
                                     break
                                 elif r.casefold() == "n":
                                     serverinfo.portused = False
+                                    break
+                                elif r == "":
                                     break
                                 else:
                                     print("Invalid response. Enter (y)es or (n)o.")
                                     print()
                             
                             while True:
-                                r = input("Do you use ssl to access your server (HTTPS://)? [Y/n]: ")
+                                r = input(f"Do you use ssl to access your server? [Example: HTTPS://] Current value is ({serverinfo.scheme}) [y/n]: ")
 
-                                if r.casefold() == "y" or r == "":
+                                if r.casefold() == "y":
                                     serverinfo.scheme = "https://"
                                     break
                                 elif r.casefold() == "n":
                                     serverinfo.scheme = "http://"
                                     break
+                                elif r == "":
+                                    break
                                 else:
                                     print("Invalid response. Enter (y)es or (n)o.")
                                 
                             if serverinfo.portused: 
-                                serverinfo.port = input("Please enter port number: ")
+                                r = input(f"Please enter port number. Current value is ({serverinfo.port}): ")
+                                if r != "":
+                                    serverinfo.port = r
                             
-                            serverinfo.address = input("Please enter address: ")
+                            r = input(f"Please enter address. Current value is ({serverinfo.address}): ")
+                            if r != "":
+                                serverinfo.address = r
                             
                             while True:
                                 if serverinfo.portused:
@@ -241,11 +245,42 @@ class Config:
 
                                 r = input("Is this correct? [Y/n]: ")
                                 if r.casefold() == "y" or r == "":
-                                    db_insert_class_in_table(db_create_connection, serverinfo, 'ServerInfo')
-
-                                    # TODO: Needs to pull the existing serverinfo data first before all this
-                                    # in case this is a config update and not a new install. Also need to display the 
-                                    # current values and ask if the need changed first
+                                    db_update_class_in_table(db_create_connection(), serverinfo, 'ServerInfo', 'id', 1)
+                                    runningVersion = GetRunningVersion()                                
+                                    if runningVersion["version"] == None:
+                                        print()
+                                        r = input("I'm still not able to connect. Try with different settings? [Y/n]: ")
+                                        print()
+                                        if r.casefold() == 'y' or r == "":
+                                            break
+                                        elif r.casefold() == 'n':
+                                            loop = False
+                                            break
+                                        else:
+                                            print()
+                                            print("Invalid response. Enter (y)es or (n)o.")
+                                            continue
+                                    else:
+                                        print()
+                                        print(f"I was able to connect. Current version is {runningVersion['version']}")
+                                        print()
+                                        loop = False
+                                        break
+                                elif r.casefold() == "n":
+                                    print()
+                                    break        
+                            if loop:
+                                continue
+                            else:
+                                break        
+                    elif str(r) == '4' or str(r.casefold()) == 'c':
+                        sys.exit()
+                    else:
+                        print()
+                        print("Input invalid. Please enter 1-4 or (c)ancel.")
+                        print()
+                        continue
+                
                                     # TODO: At this point It's writing the changes to the DB, but we need to check FIRST
                                     # that the settings work before writing the info
                                     # TODO: Add a cancel if the new setting don't work, and another chance to disable
