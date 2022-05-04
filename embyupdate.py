@@ -107,8 +107,6 @@ except Exception as e:
     print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
     print("There appears to be a config file error, re-runing config update to fix!")
 
-print(GetRunningVersion()) 
-
 try:
     # Now well try and update the app if the user chose that option
     if configobj.self_update.runupdate is True:

@@ -1,5 +1,5 @@
 import sqlite3
-from dataclasses import fields
+from dataclasses import dataclass, fields
 from sqlite3 import Error
 from pickle import dumps, loads
 from typing import List
@@ -257,7 +257,7 @@ def db_return_class_object(conn: sqlite3.Connection, table, where_field, where_w
     return dataclass
 
 
-def db_delete_row(conn: sqlite3.Connection, table, where, where_what):
+def db_delete_row(conn: sqlite3.Connection, table, where, where_what) -> int:
     """
     Delete row(s) from table with a singe where clause.
 
@@ -283,41 +283,6 @@ def db_delete_row(conn: sqlite3.Connection, table, where, where_what):
             result = cur.execute(sql, param)
 
     return result.rowcount
-
-
-def db_insert_inventory_char_creation(conn, inv_dict):
-    """
-    Special function used only in initial character creation. Inserts the class items into player inventory.
-    No other uses.
-
-    :param conn: Connection to DB
-    :type conn: sqlite3.Connection
-    :param inv_dict: Dictionary built during character creation
-    :type inv_dict: dict
-    """
-    for each in inv_dict:
-        db_insert_class_in_table(conn, inv_dict[each], 'inventory')
-
-
-""" def db_create_inventory_dict(conn, player_name):
-    
-    Creates a dictionary with numbers for keys and Items dataclass for values.
-
-    :param conn: Connection to DB
-    :type conn: sqlite3.Connection
-    :param player_name: Name of player to pull data for
-    :type player_name: str
-    :return: Returns a dictionary of inventory items
-    :rtype: dict
-   
-    inventory_dict = {}
-    with conn:
-        rows = db_select_values_where(conn, 'inventory', 'id', 'player_name', player_name)
-        num = 0
-        for row in rows:
-            inventory_dict[num] = db_return_class_object(conn, 'inventory', 'id', row['id'], Inventory)
-            num += 1
-    return inventory_dict """
 
 
 def db_update_value(conn: sqlite3.Connection, table, value, update_value, where, where_what):
