@@ -1,7 +1,10 @@
+"""
+dbobjects
+"""
 from dataclasses import dataclass
-from datetime import date, datetime
-from pprint import pp 
-import db.db_functions
+from datetime import date
+from pprint import pp
+import db.db_functions as db
 
 
 @dataclass
@@ -28,6 +31,24 @@ class MainConfig:
     releasetype : str = 'Stable'
     dateupdated : str = None
 
+    def write_to_db(self):
+        """
+        Writes object to DB
+        """
+        db.db_update_class_in_table(db.db_conn(), self, 'mainconfig', 'id', 1)
+
+    def pull_from_db(self):
+        """
+        Pulls object table from DB
+        """
+        db.db_return_class_object(db.db_conn(),'mainconfig', 'id', 1, self)
+
+    def print_me(self):
+        """
+        Prints opject to ouput
+        """    
+        pp(self, depth=1, indent=4)
+
 @dataclass
 class MainUpdateHistory():
     id: int
@@ -43,6 +64,24 @@ class SelfUpdate():
     runupdate: bool = True
     version: str = "First Run"
     releasetype: str = "Stable"
+    
+    def write_to_db(self):
+        """
+        Writes object to DB
+        """
+        db.db_update_class_in_table(db.db_conn(), self, 'selfupdate', 'id', 1)
+
+    def pull_from_db(self):
+        """
+        Pulls object table from DB
+        """
+        db.db_return_class_object(db.db_conn(),'selfupdate', 'id', 1, self)
+
+    def print_me(self):
+        """
+        Prints opject to ouput
+        """
+        print(self, depth=1, indent=4)
 
 @dataclass
 class SelfUpdateHistory():
@@ -82,32 +121,21 @@ class ServerInfo:
     fullurl: str = None
     version: str = None
 
-    def write_to_db(self):        
-        db.db_functions.db_update_class_in_table(db.db_functions.db_conn(), self, 'ServerInfo', 'id', 1)
+    def write_to_db(self):
+        """
+        Writes object to DB
+        """
+        db.db_update_class_in_table(db.db_conn(), self, 'serverinfo', 'id', 1)
 
     def pull_from_db(self):
-        db.db_functions.db_return_class_object(db.db_functions.db_conn(),'ServerInfo', 'id', 1, self)
-
-    def print_me(self):        
-        pp(self, depth=1, indent=4)    
-    
-        
-
-
-@dataclass
-class ConfigObj():
-    main_config: MainConfig = MainConfig()
-    self_update: SelfUpdate = SelfUpdate()
-    
-@dataclass
-class UrlObj:
-    server_info: ServerInfo = ServerInfo()
-    url: str = None
-    version: str = None
+        """
+        Pulls object table from DB
+        """
+        db.db_return_class_object(db.db_conn(),'serverinfo', 'id', 1, self)
 
     def print_me(self):
+        """
+        Prints opject to ouput
+        """
         print(self)
-
-
-
-
+        

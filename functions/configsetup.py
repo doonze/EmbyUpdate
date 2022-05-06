@@ -1,376 +1,411 @@
-from genericpath import exists
+"""
+Config setup module
+
+"""
 import sys
+from sqlite3 import Error
+from genericpath import exists
 from db.createdb import CreateDB
-from db.dbobjects import MainConfig, SelfUpdate, ConfigObj, ServerInfo, UrlObj
-from db.db_functions import *
+from db.dbobjects import MainConfig, SelfUpdate, ServerInfo
 from functions.api import GetRunningVersion
 
 def config_setup():
-        """
-        The config_setup function will gather user input and write it to the database.
-        This function will also be used to read from the database when needed.
-        
-        
-        Args:
-            self: Access variables that belongs to the class
-     
-        """
-        
-        # Now we'll start gathering user input
+    """
+    The config_setup function will gather user input and write it to the database.
+    This function will also be used to read from the database when needed.
 
-        # First to check if Emby is running so we can get the version #
-        serverinfo = GetRunningVersion()          
-        serverinfo.print_me()
-        # If the option to check server is True, and the sever is not reachable, we'll run the server setup
-        if serverinfo.enablecheck:
-            if serverinfo.version == None:                
-                print()
-                print("I didn't find a running Emby instance on this server.")
-                print(f"I tried the address {serverinfo.fullurl}")
-                print("If this is correct, make sure the server is running.")
-                print()
-                print("* This is not required, however the script will try to update   *")
-                print("* Emby to the lastest version as we cannot contact the server   *")
-                print("* to find what version it's currently running. It doesn't hurt  *")
-                print("* anything to do so. But saves some time on slow connections if *")
-                print("* your already running the latest version. After the first      *") 
-                print("* update we'll keep track of the version installed anyway.      *")
-                print()
-                print("[1] You can skip this check for now")
-                print("[2] Permanently disable this check")
-                print("[3] Update the server address")
-                print("[4] Cancel this run (maybe to start the server?)")
+    Args:
+        self: Access variables that belongs to the class
+
+    """
+
+    # Now we'll start gathering user input
+
+    # First to check if Emby is running so we can get the version #
+    serverinfo: ServerInfo = GetRunningVersion()
+    serverinfo.print_me()
+    # If the option to check server is True, and the sever is not reachable, we'll run the server
+    # setup
+    if serverinfo.enablecheck:
+        if serverinfo.version is None:
+            print()
+            print("I didn't find a running Emby instance on this server.")
+            print(f"I tried the address {serverinfo.fullurl}")
+            print("If this is correct, make sure the server is running.")
+            print()
+            print("* This is not required, however the script will try to update   *")
+            print("* Emby to the lastest version as we cannot contact the server   *")
+            print("* to find what version it's currently running. It doesn't hurt  *")
+            print("* anything to do so. But saves some time on slow connections if *")
+            print("* your already running the latest version. After the first      *") 
+            print("* update we'll keep track of the version installed anyway.      *")
+            print()
+            print("[1] You can skip this check for now")
+            print("[2] Permanently disable this check")
+            print("[3] Update the server address")
+            print("[4] Cancel this run (maybe to start the server?)")
+            print()
+
+            loop = True
+            while loop:
+
+                response = input("Make your choice by number, or use 4 or C to cancel update [?]: ")
                 print()
 
-                loop = True
-                while loop:
-
-                    r = input("Make your choice by number, or use 4 or C to cancel update [?]: ")
+                if str(response) == "1":
+                    print("Skipping server check and continuing config setup...")
                     print()
+                    loop = False
+                    break
 
-                    if str(r) == "1":
-                        print("Skipping server check and continuing config setup...")
-                        print()
-                        loop = False
-                        break
+                if str(response) == "2":
+                    serverinfo.enablecheck = False
+                    serverinfo.write_to_db()
+                    print()
+                    print("Server check has been permanently disabled.")
+                    print()
+                    loop = False
+                    break
 
-                    elif str(r) == "2":
-                        serverinfo.enablecheck = False
-                        serverinfo.write_to_db()
-                        print()
-                        print("Server check has been permanently disabled.")
-                        print()
-                        loop = False
-                        break
+                if str(response) == "3":
+                    while True:
+                        while loop:
+                            print("*** Just hitting enter will retain current values. ***")
+                            print()
+                            response = input(f"Do you use a port to access your server? \
+                                Current value is ({serverinfo.portused}) [y/n]: ")
+                            if response.casefold() == "y":
+                                serverinfo.portused = True
+                                break
 
-                    elif str(r) == "3":                   
-                        while True:  
-                            while loop:                                
-                                print("*** Just hitting enter will retain current values. ***")
+                            if response.casefold() == "n":
+                                serverinfo.portused = False
+                                break
+
+                            if response == "":
+                                break
+
+                            print("Invalid response. Enter (y)es or (n)o.")
+                            print()
+
+                        while True:
+                            response = input(f"Do you use ssl to access your server? \
+                                [Example: HTTPS://] Current value is ({serverinfo.scheme}) [y/n]: ")
+
+                            if response.casefold() == "y":
+                                serverinfo.scheme = "https://"
+                                break
+
+                            if response.casefold() == "n":
+                                serverinfo.scheme = "http://"
+                                break
+
+                            if response == "":
+                                break
+
+                            print("Invalid response. Enter (y)es or (n)o.")
+
+                        if serverinfo.portused:
+                            response = input(f"Please enter port number. \
+                                Current value is ({serverinfo.port}): ")
+                            if response != "":
+                                serverinfo.port = response
+
+                        response = input(f"Please enter address. Current value is \
+                            ({serverinfo.address}): ")
+                        if response != "":
+                            serverinfo.address = response
+
+                        while True:
+                            if serverinfo.portused:
                                 print()
-                                r = input(f"Do you use a port to access your server? Current value is ({serverinfo.portused}) [y/n]: ")
-
-                                if r.casefold() == "y":
-                                    serverinfo.portused = True
-                                    break
-                                elif r.casefold() == "n":
-                                    serverinfo.portused = False
-                                    break
-                                elif r == "":
-                                    break
-                                else:
-                                    print("Invalid response. Enter (y)es or (n)o.")
-                                    print()
-                            
-                            while True:
-                                r = input(f"Do you use ssl to access your server? [Example: HTTPS://] Current value is ({serverinfo.scheme}) [y/n]: ")
-
-                                if r.casefold() == "y":
-                                    serverinfo.scheme = "https://"
-                                    break
-                                elif r.casefold() == "n":
-                                    serverinfo.scheme = "http://"
-                                    break
-                                elif r == "":
-                                    break
-                                else:
-                                    print("Invalid response. Enter (y)es or (n)o.")
-                                
-                            if serverinfo.portused: 
-                                r = input(f"Please enter port number. Current value is ({serverinfo.port}): ")
-                                if r != "":
-                                    serverinfo.port = r
-                            
-                            r = input(f"Please enter address. Current value is ({serverinfo.address}): ")
-                            if r != "":
-                                serverinfo.address = r
-                            
-                            while True:
-                                if serverinfo.portused:
-                                    print()
-                                    print(f"Here's what I have: {serverinfo.scheme}{serverinfo.address}:{serverinfo.port}")
-                                    print()
-                                else:
-                                    print()
-                                    print(f"Here's what I have: {serverinfo.scheme}{serverinfo.address}")
-                                    print()
-
-                                r = input("Is this correct? [Y/n]: ")                                
-                                if r.casefold() == "y" or r == "":
-                                    serverinfo.write_to_db()
-                                    serverrecheck = GetRunningVersion()                                
-                                    if serverrecheck.version == None:
-                                        print()
-                                        r = input("I'm still not able to connect. Try with different settings? [Y/n]: ")
-                                        print()
-                                        if r.casefold() == 'y' or r == "":
-                                            break
-                                        elif r.casefold() == 'n':
-                                            while True:
-                                                print()
-                                                r = input("Would you like to disable this check? [Y/n]: ")
-                                                if r.casefold() == 'y' or r == "":
-                                                    serverinfo.enablecheck = False
-                                                    serverinfo.write_to_db()
-                                                    break
-                                                elif r.casefold() == 'n':
-                                                    break
-                                                else:
-                                                    print()
-                                                    print("That was an invalid selection, try again.")
-                                                    print()
-                                                    continue
-                                            break
-                                        else:
-                                            print()
-                                            print("Invalid response. Enter (y)es or (n)o.")
-                                            continue
-                                    else:
-                                        print()
-                                        print(f"I was able to connect. Current version is {serverrecheck.version}")
-                                        serverrecheck.write_to_db()
-                                        print()
-                                        loop = False
-                                        break
-                                elif r.casefold() == "n":
-                                    print()
-                                    break        
-                            if loop:
-                                continue
+                                print(f"Here's what I have: \
+                                    {serverinfo.scheme}{serverinfo.address}:{serverinfo.port}")
+                                print()
                             else:
-                                break        
-                    elif str(r) == '4' or str(r.casefold()) == 'c':
-                        sys.exit()
-                    else:
-                        print()
-                        print("Input invalid. Please enter 1-4 or (c)ancel.")
-                        print()
-                        continue
+                                print()
+                                print(f"Here's what I have: \
+                                    {serverinfo.scheme}{serverinfo.address}")
+                                print()
+
+                            response = input("Is this correct? [Y/n]: ")
+                            if response.casefold() == "y" or response == "":
+                                serverinfo.write_to_db()
+                                serverrecheck = GetRunningVersion()
+                                if serverrecheck.version is None:
+                                    print()
+                                    response = input("I'm still not able to connect. \
+                                        Try with different settings? [Y/n]: ")
+                                    print()
+
+                                    if response.casefold() == 'y' or response == "":
+                                        break
+
+                                    if response.casefold() == 'n':
+                                        while True:
+                                            print()
+                                            response = input("Would you like to disable this \
+                                                check? [Y/n]: ")
+                                            if response.casefold() == 'y' or response == "":
+                                                serverinfo.enablecheck = False
+                                                serverinfo.write_to_db()
+                                                break
+
+                                            if response.casefold() == 'n':
+                                                break
+
+
+                                            print()
+                                            print("That was an invalid selection, try again.")
+                                            print()
+
+                                        break
+
+                                    print()
+                                    print("Invalid response. Enter (y)es or (n)o.")
+
+                                else:
+                                    print()
+                                    print(f"I was able to connect. Current version is \
+                                        {serverrecheck.version}")
+                                    serverrecheck.write_to_db()
+                                    print()
+                                    loop = False
+                                    break
+                            elif response.casefold() == "n":
+                                print()
+                                break
+                        if loop:
+                            continue
+                        break
+                elif str(response) == '4' or str(response.casefold()) == 'c':
+                    sys.exit()
+                else:
+                    print()
+                    print("Input invalid. Please enter 1-4 or (c)ancel.")
+                    print()
+                    continue
+    else:
+        print()
+        print("Server check disabled, skipping...")
+        print()
+
+    mainconfig: MainConfig = MainConfig()
+    selfupdate: SelfUpdate = SelfUpdate()
+    # Next user will choose their distro
+
+    print("[1] Debian X64")
+    print("[2] Debian ARM")
+    print("[3] Arch")
+    print("[4] CentOS")
+    print("[5] Fedora X64")
+    print("[6] Fedora ARM")
+    print("[7] OpenSUSE X64")
+    print("[8] OpenSUSE ARM")
+    print("[C] Cancel config update")
+
+    while True:
+        distro_choice = input("Choose your distro by number or C to cancel update [?]: ")
+        if str(distro_choice) == "1":
+            mainconfig.distro = "Debian X64"
+            break
+        elif str(distro_choice) == "2":
+            mainconfig.distro = "Debian ARM"
+            break
+        elif str(distro_choice) == "3":
+            mainconfig.distro = "Arch"
+            break
+        elif str(distro_choice) == "4":
+            mainconfig.distro = "CentOS"
+            break
+        elif str(distro_choice) == "5":
+            mainconfig.distro = "Fedora X64"
+            break
+        elif str(distro_choice) == "6":
+            mainconfig.distro = "Fedora ARM"
+            break
+        elif str(distro_choice) == "7":
+            mainconfig.distro = "OpenSUSE X64"
+            break
+        elif str(distro_choice) == "8":
+            mainconfig.distro = "OpenSUSE ARM"
+            break
+        elif str(distro_choice.casefold()) == "c":
+            print("")
+            print("Exiting config update and installer....")
+            print("")
+            sys.exit()
         else:
-            print()
-            print("Server check disabled, skipping...")
-            print()
+            print("")
+            print("Invalid Choice! Valid choices are 1-8 or C to cancel. Please Try again.")
+            print("")
 
-        # Next user will choose their distro
+    print("")
+    print(mainconfig.distro + " Chosen")
+    print("")
 
-        print("[1] Debian X64")
-        print("[2] Debian ARM")
-        print("[3] Arch")
-        print("[4] CentOS")
-        print("[5] Fedora X64")
-        print("[6] Fedora ARM")
-        print("[7] OpenSUSE X64")
-        print("[8] OpenSUSE ARM")
-        print("[C] Cancel config update")
+    # Now user chooses beta or Stable releases
 
-        while True:
-            distro_choice = input("Choose your distro by number or C to cancel update [?]: ")
-            if str(distro_choice) == "1":
-                self.distro = "Debian X64"
-                break
-            elif str(distro_choice) == "2":
-                self.distro = "Debian ARM"
-                break
-            elif str(distro_choice) == "3":
-                self.distro = "Arch"
-                break
-            elif str(distro_choice) == "4":
-                self.distro = "CentOS"
-                break
-            elif str(distro_choice) == "5":
-                self.distro = "Fedora X64"
-                break
-            elif str(distro_choice) == "6":
-                self.distro = "Fedora ARM"
-                break
-            elif str(distro_choice) == "7":
-                self.distro = "OpenSUSE X64"
-                break
-            elif str(distro_choice) == "8":
-                self.distro = "OpenSUSE ARM"
-                break
-            elif str(distro_choice.casefold()) == "c":
-                print("")
-                print("Exiting config update and installer....")
-                print("")
-                sys.exit()
-            else:
-                print("")
-                print("Invalid Choice! Valid choices are 1-8 or C to cancel. Please Try again.")
-                print("")
+    while True:
+        choose_beta = input("Do you want to install the beta version of Emby Server? [y/N] ")
+        if choose_beta.casefold() == "y":
+            mainconfig.releasetype = "Beta"
+            break
+
+        if choose_beta in ("n", "N", ""):
+            mainconfig.releasetype = "Stable"
+            break
 
         print("")
-        print(self.distro + " Chosen")
+        print("Invalid choice. Please choose y or n")
         print("")
 
-        # Now user chooses beta or Stable releases
+    print("")
+    print(mainconfig.releasetype + " version of Emby has been chosen for install.")
+    print("")
 
-        while True:
-            choose_beta = input("Do you want to install the beta version of Emby Server? [y/N] ")
-            if choose_beta.casefold() == "y":
-                self.emby_release = "Beta"
-                break
-            elif choose_beta == "n" or choose_beta == "N" or choose_beta == "":
-                self.emby_release = "Stable"
-                break
-            else:
-                print("")
-                print("Invalid choice. Please choose y or n")
-                print("")
+    # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
-        print("")
-        print(self.emby_release + " version of Emby has been chosen for install.")
-        print("")
+    while True:
+        servstop = input("Do we need to manually stop the server to install? \
+            (Likely only needed for Arch.) [y/N] ")
+        if servstop.casefold() == "y":
+            servstopchoice = "Server will be manually stopped on install."
+            mainconfig.stop_server = True
+            break
 
-        # User chooses if they wish to stop the server before installing updates. Not normally needed.
-
-        while True:
-            servstop = input("Do we need to manually stop the server to install? (Likely only needed for Arch.) [y/N] ")
-            if servstop.casefold() == "y":
-                servstopchoice = "Server will be manually stopped on install."
-                self.stop_server = True
-                break
-            elif servstop == "n" or servstop == "N" or servstop == "":
-                servstopchoice = "Server will NOT be manually stopped on install."
-                self.stop_server = False
-                break
-            else:
-                print("")
-                print("Invalid choice. Please choose y or n")
-                print("")
+        if servstop in ("n", "N", ""):
+            servstopchoice = "Server will NOT be manually stopped on install."
+            mainconfig.stop_server = False
+            break
 
         print("")
-        print(servstopchoice)
+        print("Invalid choice. Please choose y or n")
         print("")
 
-        # User chooses if they wish to start the server again after updates. Not normally needed.
-        while True:
-            servstart = input(
-                "Do we need to manually start the server after install? (Likely only needed for Arch.) [y/N] ")
-            if servstart.casefold() == "y":
-                server_start_choice = "Server will be manually started after install."
-                self.start_server = True
-                break
-            elif servstart == "n" or servstart == "N" or servstart == "":
-                server_start_choice = "Server will NOT be manually started after install."
-                self.start_server = False
-                break
-            else:
-                print("")
-                print("Invalid choice. Please choose y or n")
-                print("")
+    print("")
+    print(servstopchoice)
+    print("")
+
+    # User chooses if they wish to start the server again after updates. Not normally needed.
+    while True:
+        servstart = input(
+            "Do we need to manually start the server after install? \
+                (Likely only needed for Arch.) [y/N] ")
+        if servstart.casefold() == "y":
+            server_start_choice = "Server will be manually started after install."
+            mainconfig.startserver = True
+            break
+
+        if servstart in ("n", "N", ""):
+            server_start_choice = "Server will NOT be manually started after install."
+            mainconfig.startserver = False
+            break
 
         print("")
-        print(server_start_choice)
+        print("Invalid choice. Please choose y or n")
         print("")
 
-        # User chooses if they wish to autoupdate the Update app (this program)
-        while True:
-            script_update = input("Keep EmbyUpdate (this script) up to date with latest version? [Y/n] ")
-            if script_update.casefold() == "y" or script_update == "":
-                script_update_choice = "Script (EmbyUpdate) will be automatically updated!"
-                self.self_update = True
-                break
-            elif script_update.casefold() == "n":
-                script_update_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
-                self.self_update = False
-                break
-            else:
-                print("")
-                print("Invalid choice. Please choose y or n")
-                print("")
+    print("")
+    print(server_start_choice)
+    print("")
+
+    # User chooses if they wish to autoupdate the Update app (this program)
+    while True:
+        script_update = input("Keep EmbyUpdate (this script) up to date with latest version? \
+            [Y/n] ")
+
+        if script_update in ("y", "Y", ""):
+            script_update_choice = "Script (EmbyUpdate) will be automatically updated!"
+            selfupdate.runupdate = True
+            break
+
+        if script_update.casefold() == "n":
+            script_update_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
+            selfupdate.runupdate = False
+            break
 
         print("")
-        print(script_update_choice)
+        print("Invalid choice. Please choose y or n")
         print("")
 
-        # User chooses if they want to update to beta or stable for the script
-        while True:
-            script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? [y/N] ")
-            if script_beta_choice.casefold() == "y":
-                self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
-                self.self_release = "Beta"
-                break
-            elif script_beta_choice.casefold() == "n" or script_beta_choice == "":
-                self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated to Stable!"
-                self.self_release = "Stable"
-                break
-            else:
-                print("")
-                print("Invalid choice. Please choose y or n")
-                print("")
+    print("")
+    print(script_update_choice)
+    print("")
+
+    # User chooses if they want to update to beta or stable for the script
+    while True:
+
+        script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? [y/N] ")
+
+        if script_beta_choice.casefold() == "y":
+            self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
+            selfupdate.releasetype = "Beta"
+            break
+
+        if script_beta_choice in ("n", "N", ""):
+            self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated to Stable!"
+            selfupdate.releasetype = "Stable"
+            break
 
         print("")
-        print(self_beta_choice)
+        print("Invalid choice. Please choose (y)es or (n)o")
         print("")
 
-        print("Choices to write to config file...")
-        print("Linux distro version to update: " + self.distro)
-        print("The chosen Emby Server install version. is: " + self.emby_release)
-        print(servstopchoice)
-        print(server_start_choice)
-        print(script_update_choice)
-        print(self_beta_choice)
+    print("")
+    print(self_beta_choice)
+    print("")
+
+    print("Choices to write to config file...")
+    print("Linux distro version to update: " + mainconfig.distro)
+    print("The chosen Emby Server install version. is: " + mainconfig.releasetype)
+    print(mainconfig.stopserver)
+    print(mainconfig.startserver)
+    print(selfupdate.runupdate)
+    print(selfupdate.releasetype)
+    print("")
+
+    while True:
+        confirm = input("Please review above choices and type CONFIRM to continue or c to \
+            cancel update and install! [CONFIRM/c] ")
+        if confirm.casefold() == "c":
+            print("")
+            print("Exiting config update and installer. No changes were made and nothing \
+                will be installed!")
+            print("")
+            sys.exit()
+        elif confirm == "CONFIRM":
+            break
+
+        print("")
+        print("Invalid choice. Please type CONFIRM to continue or (c)ancel!!")
         print("")
 
-        while True:
-            confirm = input("Please review above choices and type CONFIRM to continue or c to cancel update "
-                            "and install! [CONFIRM/c] ")
-            if confirm.casefold() == "c":
-                print("")
-                print("Exiting config update and installer. No changes were made and nothing will be installed!")
-                print("")
-                sys.exit(1)
-            elif confirm == "CONFIRM":
-                break
-            else:
-                print("")
-                print("Invalid choice. Please type CONFIRM to continue or c to cancel!!")
-                print("")
+    # Setup the config interface
 
-        # Setup the config interface
-
-        # Test if the DB exist and creates it if it doesn't
-        if not exists('./db/embyupdate.db'):
-            try: 
-                print()
-                print("DB does NOT exist, creating DB...")
-                CreateDB()
-                print("DB has been created.")
-                print()
-            except Exception as e:
-                print("EmbyUpdate: Couldn't create the DataBase.")
-                print("EmbyUpdate: Here's the error we got -- " + str(e))
-
-        # Now we write the config to the database
+    # Test if the DB exist and creates it if it doesn't
+    if not exists('./db/embyupdate.db'):
         try:
-            self.write_config()
-        except Exception as e:
-            print("EmbyUpdate: Couldn't update the database.")
-            print("EmbyUpdate: Here's the error we got -- " + str(e))
-            print("EmbyUpdate: Cannot continue, exiting.")
-            sys.exit(1)
+            print()
+            print("DB does NOT exist, creating DB...")
+            CreateDB()
+            print("DB has been created.")
+            print()
+        except Error as exception:
+            print("EmbyUpdate: Couldn't create the DataBase.")
+            print("EmbyUpdate: Here's the error we got -- " + str(exception))
 
-        print("")
-        print("Config written to database, install continuing!")
-        print("")
+    # Now we write the config to the database
+    try:
+        mainconfig.write_to_db()
+        selfupdate.write_to_db()
+    except Error as exception:
+        print("EmbyUpdate: Couldn't update the database.")
+        print("EmbyUpdate: Here's the error we got -- " + str(exception))
+        print("EmbyUpdate: Cannot continue, exiting.")
+        sys.exit(1)
+
+    print("")
+    print("Config written to database, install continuing!")
+    print("")
+    
