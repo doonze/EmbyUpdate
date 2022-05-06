@@ -1,7 +1,7 @@
 import traceback
 
 
-def execptTrace(string, tracebk):
+def execpt_trace(string, tracebk):
     """
     The execptTrace function takes a string and traceback object as arguments.
     It prints the string, then for each line in the traceback, it prints:
@@ -17,8 +17,8 @@ def execptTrace(string, tracebk):
     Doc Author:
         Trelent
     """
-    type, value, ex_traceback = tracebk
+    ex_type, value, ex_traceback = tracebk
     print(string)
     print()
-    for trace in traceback.format_exception(type, value, ex_traceback):
+    for trace in traceback.format_exception(ex_type, value, ex_traceback):
         print(trace)

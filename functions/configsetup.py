@@ -5,9 +5,9 @@ Config setup module
 import sys
 from sqlite3 import Error
 from genericpath import exists
-from db.createdb import CreateDB
+from db.createdb import create_db
 from db.dbobjects import ConfigObj, ServerInfo
-from functions.api import GetRunningVersion
+from functions import api, exceptrace
 
 def config_setup():
     """
@@ -22,8 +22,8 @@ def config_setup():
     # Now we'll start gathering user input
 
     # First to check if Emby is running so we can get the version #
-    serverinfo: ServerInfo = GetRunningVersion()
-    serverinfo.print_me()
+    serverinfo: ServerInfo = api.get_running_version()
+
     # If the option to check server is True, and the sever is not reachable, we'll run the server
     # setup
     if serverinfo.enablecheck:
@@ -131,7 +131,7 @@ def config_setup():
                             response = input("Is this correct? [Y/n]: ")
                             if response.casefold() == "y" or response == "":
                                 serverinfo.write_to_db()
-                                serverrecheck = GetRunningVersion()
+                                serverrecheck = api.get_running_version()
                                 if serverrecheck.version is None:
                                     print()
                                     response = input("I'm still not able to connect. "
@@ -190,7 +190,6 @@ def config_setup():
         print("Server check disabled, skipping...")
         print()
 
-    
     config: ConfigObj = ConfigObj()
     # Next user will choose their distro
 
@@ -268,7 +267,7 @@ def config_setup():
 
     while True:
         servstop = input("Do we need to manually stop the server to install? "
-                         "Likely only needed for Arch.) [y/N] ")
+                         "(Likely only needed for Arch.) [y/N] ")
         if servstop.casefold() == "y":
             servstopchoice = "Server will be manually stopped on install."
             config.mainconfig.stopserver = True
@@ -388,20 +387,21 @@ def config_setup():
         try:
             print()
             print("DB does NOT exist, creating DB...")
-            CreateDB()
+            create_db()
             print("DB has been created.")
             print()
-        except Error as exception:
-            print("EmbyUpdate: Couldn't create the DataBase.")
-            print("EmbyUpdate: Here's the error we got -- " + str(exception))
+        except Error:
+            exceptrace.execpt_trace("*** EmbyUpdate: Couldn't create the database. ***", \
+                sys.exc_info())
+            print("EmbyUpdate: Cannot continue, exiting.")
+            sys.exit()
 
     # Now we write the config to the database
     try:
         config.mainconfig.write_to_db()
         config.selfupdate.write_to_db()
-    except Error as exception:
-        print("EmbyUpdate: Couldn't update the database.")
-        print("EmbyUpdate: Here's the error we got -- " + str(exception))
+    except Error:
+        exceptrace.execpt_trace("*** EmbyUpdate: Couldn't update the database. ***", sys.exc_info())
         print("EmbyUpdate: Cannot continue, exiting.")
         sys.exit()
 

@@ -4,13 +4,12 @@ from db.dbobjects import ServerInfo
 
 
 
-def GetRunningVersion():
+def get_running_version():
     """
     The GetRunningVersion function returns the version number of the latest build on the server.
     It is used to determine if a user's local copy of Emby is out-of-date.
 
     :return: The server info of the running Emby server
-    
     """
 
     while True:    

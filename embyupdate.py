@@ -19,38 +19,26 @@ import sys
 import time
 from genericpath import exists
 import requests
-from functions.config import Config
-from db.createdb import CreateDB
+from functions import pythonversion, config, arguments, configsetup
+from db.createdb import create_db
 from selfupdate import SelfUpdate
-from functions.arguments import read_args
-from functions.configsetup import config_setup
+
 
 # Sets the version # for the command line -v/--version response
-versionnum = "4.0 Beta"
+VESRIONNUM = "4.0 Beta"
 
 # Setting default init values
-returncode = 0
+returncode = None # pylint: disable=C0103
 
 # Checks for python version, exit if not greater than 3.6
-pythonVersion = str(sys.version_info[0]) + "." + str(sys.version_info[1])
-if (sys.version_info[0] < 3):
-    print("")    
-    print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
-    sys.exit()
-elif (sys.version_info[0] == 3 and sys.version_info[1] < 6):
-    print()
-    print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
-    sys.exit()
-else:
-    print()
-    print("You are running Python version " + pythonVersion + ", you're good!")
+pythonversion.python_version_check()
 
 # Checks for command line arguments
 
-args = read_args(versionnum)
+args = arguments.read_args(VESRIONNUM)
 
 # Creates the default config object
-config = Config()
+config = config.Config()
 
 # Fixes pre version 4.0 config files
 config.config_fix()
@@ -61,41 +49,27 @@ os.chdir(sys.path[0])
 # If the user hasn't used the -c/--config command line argument this will test to see if the DB exist.
 # If it doesn't it will launch the config setup process
 if args.config is False:
+
     if not exists('./db/embyupdate.db'):
-        try: 
-            print()
-            print("Database does NOT exist, creating database...")
-            CreateDB()
-            print("Database has been created.")
-            print()
-            print("Starting config setup...")
-            print()
-            config_setup()
-        except Exception as e:
-            print("EmbyUpdate: Couldn't create the DataBase.")
-            print("EmbyUpdate: Here's the error we got -- " + str(e))
-    
+
+        print()
+        print("Database does NOT exist, creating database...")
+        create_db()
+        print("Database has been created.")
+        print()
+        print("Starting config setup...")
+        print()
+        configsetup.config_setup()
 
 # Here we call configupdate to setup or update the config file if command line option -c was invoked
-try:
 
-    if args.config is True:
-        print("")
-        print("Config update started....")
-        print("")
-        config_setup()
+if args.config is True:
+    print("")
+    print("Config update started....")
+    print("")
+    configsetup.config_setup()
 
-        # Here we test to see if the called subprocess above got a return code. If the return code is 1 then
-        # the entire process is exited and no updates will be installed. This is triggered by one of the two
-        # cancel prompts in the configupdate.py script
-        if returncode == 1:
-            sys.exit()
-
-except Exception as e:
-    print("EmbyUpdate: Couldn't call the Config Updater.")
-    print("EmbyUpdate: Here's the error we got -- " + str(e))
-
-config_setup() # TODO remove me when done testing
+configsetup.config_setup() # TODO remove me when done testing
 
 try:
 
@@ -108,7 +82,7 @@ except Exception as e:
 
 try:
     # Now well try and update the app if the user chose that option
-    if configobj.self_update.runupdate is True:
+    if configobj.selfupdate.runupdate is True:
         #self_update = SelfUpdate(config)
         #config = self_update.self_update()
         print("self update disabled")
@@ -121,15 +95,24 @@ except Exception as e:
 
 # This is a simple timestamp function, created so each call would have a current timestamp
 def timestamp():
+    """
+    The timestamp function returns the current date and time.
+    
+    :returns: The current date and time.
+    
+    
+    :return: The date and time of the current moment in this format: month/day/year
+    :doc-author: Trelent
+    """
     ts = time.strftime("%x %X", time.localtime())
     return "<" + ts + "> "
 
 # The github API of releases for Emby Media Browser. This includes beta and production releases
-url = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
+URL = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
 # Now we're just going to see what the latest version is! If we get any funky response we'll exit the script.
 try:
-    response = requests.get(url)
+    response = requests.get(URL)
     updatejson = json.loads(response.text)
     # Here we search the github API response for the most recent version of beta or stable depending on what was chosen
     # above.

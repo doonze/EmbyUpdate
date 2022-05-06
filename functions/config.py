@@ -2,10 +2,10 @@ import sys
 import configparser
 from os import remove, path
 from genericpath import exists
-from db.createdb import CreateDB
+from db.createdb import create_db
 from db.dbobjects import MainConfig, SelfUpdate, ConfigObj
 from db.db_functions import *
-from functions.api import GetRunningVersion
+from functions.api import get_running_version
 
 
 class Config:
