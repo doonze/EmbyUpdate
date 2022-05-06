@@ -1,5 +1,5 @@
 from site import execsitecustomize
-from .db_functions import db_create_connection
+from .db_functions import db_conn
 from contextlib import closing
 from db.db_functions import db_insert_class_in_table
 import db.dbobjects
@@ -20,7 +20,7 @@ Errors                  |  id, date, message, mainorself
 
 
 def CreateDB():
-    conn = db_create_connection()    
+    conn = db_conn()    
     with conn:
         with closing(conn.cursor()) as cur:
 
@@ -116,6 +116,8 @@ def CreateDB():
             "port"	TEXT NOT NULL DEFAULT 8096,
             "portused"	INTEGER NOT NULL DEFAULT 1,
             "apipath"	TEXT NOT NULL DEFAULT '/System/Info/Public',
+            "fullurl"	TEXT DEFAULT '',
+            "version"	TEXT DEFAULT '',
             PRIMARY KEY("id")
             );
             """ 

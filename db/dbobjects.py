@@ -1,10 +1,24 @@
 from dataclasses import dataclass
 from datetime import date, datetime
-
+from pprint import pp 
+import db.db_functions
 
 
 @dataclass
-class MainConfig():
+class MainConfig:
+    """
+    Class for interfacing with the MainConfig table
+
+    Attributes: 
+    id          : int = 1
+    configran   : bool = False
+    distro      : str = None
+    startserver : bool = False
+    stopserver  : bool = False
+    version     : str = 'First Run'
+    releasetype : str = 'Stable'
+    dateupdated : str = None
+    """
     id          : int = 1
     configran   : bool = False
     distro      : str = None
@@ -57,7 +71,7 @@ class Errors():
     mainorself: str
 
 @dataclass
-class ServerInfo():
+class ServerInfo:
     id: int = 1
     enablecheck: bool = True
     scheme: str = 'https://'
@@ -65,14 +79,34 @@ class ServerInfo():
     port: str = '8096'
     portused: bool = True
     apipath: str = '/System/Info/Public'
+    fullurl: str = None
+    version: str = None
+
+    def write_to_db(self):        
+        db.db_functions.db_update_class_in_table(db.db_functions.db_conn(), self, 'ServerInfo', 'id', 1)
+
+    def pull_from_db(self):
+        db.db_functions.db_return_class_object(db.db_functions.db_conn(),'ServerInfo', 'id', 1, self)
+
+    def print_me(self):        
+        pp(self, depth=1, indent=4)    
+    
+        
+
 
 @dataclass
 class ConfigObj():
-    main_config: MainConfig = None
-    self_update: SelfUpdate = None
+    main_config: MainConfig = MainConfig()
+    self_update: SelfUpdate = SelfUpdate()
     
+@dataclass
+class UrlObj:
+    server_info: ServerInfo = ServerInfo()
+    url: str = None
+    version: str = None
 
-
+    def print_me(self):
+        print(self)
 
 
 

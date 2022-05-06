@@ -1,9 +1,10 @@
 import sys
-from db.db_functions import db_return_class_object, db_create_connection
-from db.dbobjects import ServerInfo
+from xmlrpc.client import Server
+from db.db_functions import db_return_class_object, db_conn
+from db.dbobjects import ServerInfo, UrlObj
 from functions.exceptrace import execptTrace
 
-def buildServerURL() -> dict:
+def buildServerURL() -> ServerInfo:
     """
     The buildServerURL function is used to build the URL for the server.
     It takes no arguments and returns a string containing the full URL of 
@@ -18,14 +19,15 @@ def buildServerURL() -> dict:
     """       
 
     try:
-        serverinfo = db_return_class_object(db_create_connection(), 'ServerInfo', 'id', 1, ServerInfo)
+        serverinfo = ServerInfo()
+        serverinfo = db_return_class_object(db_conn(), 'ServerInfo', 'id', 1, ServerInfo)
 
         if serverinfo.portused:
-            urlString = f'{serverinfo.scheme}{serverinfo.address}:{serverinfo.port}{serverinfo.apipath}'
-            return {'url' : urlString, 'serverinfo' : serverinfo}
+            serverinfo.fullurl = f'{serverinfo.scheme}{serverinfo.address}:{serverinfo.port}{serverinfo.apipath}'
+            return serverinfo
         else:
-            urlString = f'{serverinfo.scheme}{serverinfo.address}{serverinfo.apipath}'
-            return {'url' : urlString, 'serverinfo' : serverinfo}
+            serverinfo.fullurl = f'{serverinfo.scheme}{serverinfo.address}{serverinfo.apipath}'
+            return serverinfo
 
     except Exception as e:
         execptTrace("******urlbuilder: There was an error building the Server URL******", sys.exc_info())

@@ -16,8 +16,6 @@
 from genericpath import exists
 import json
 import os.path
-from platform import python_version
-import subprocess
 import sys
 import time
 import requests
@@ -25,7 +23,8 @@ from functions.api import GetRunningVersion
 from functions.config import Config
 from db.createdb import CreateDB
 from selfupdate import SelfUpdate
-from functions.arguments import readArgs
+from functions.arguments import read_args
+from functions.configsetup import config_setup
 
 # Sets the version # for the command line -v/--version response
 versionnum = "4.0 Beta"
@@ -40,17 +39,16 @@ if (sys.version_info[0] < 3):
     print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
     sys.exit()
 elif (sys.version_info[0] == 3 and sys.version_info[1] < 6):
-    print("")
+    print()
     print("You are running Python version " + pythonVersion + " Python 3.6+ is required! Exiting!!")
     sys.exit()
 else:
     print()
     print("You are running Python version " + pythonVersion + ", you're good!")
-    print()
 
 # Checks for command line arguments
 
-args = readArgs(versionnum)
+args = read_args(versionnum)
 
 # Creates the default config object
 config = Config()
@@ -86,7 +84,7 @@ try:
         print("")
         print("Config update started....")
         print("")
-        returncode = config.config_setup()
+        config_setup()
 
         # Here we test to see if the called subprocess above got a return code. If the return code is 1 then
         # the entire process is exited and no updates will be installed. This is triggered by one of the two
@@ -98,7 +96,7 @@ except Exception as e:
     print("EmbyUpdate: Couldn't call the Config Updater.")
     print("EmbyUpdate: Here's the error we got -- " + str(e))
 
-config.config_setup() # TODO remove me when done testing
+config_setup() # TODO remove me when done testing
 
 try:
 

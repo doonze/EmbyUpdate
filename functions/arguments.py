@@ -1,7 +1,7 @@
 import argparse
 
 # This sets up the command line arguments
-def readArgs(verNum):
+def read_args(verNum):
     parser = argparse.ArgumentParser(description="An updater for Emby Media Player", prog='EmbyUpdate')
     parser.add_argument('-c', '--config', action='store_true', help='Runs the config updater', required=False)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + verNum,

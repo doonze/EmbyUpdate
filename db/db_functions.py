@@ -4,13 +4,14 @@ from sqlite3 import Error
 from pickle import dumps, loads
 from typing import List
 from contextlib import closing
+from db.dbobjects import *
 
 
 
 not_pickle_list = [str, int, float, bool]
 
 
-def db_create_connection(db_file: str = 'db/embyupdate.db') -> sqlite3.Connection:
+def db_conn(db_file: str = 'db/embyupdate.db') -> sqlite3.Connection:
     """
     create a database connection to a SQLite database
 
@@ -70,7 +71,9 @@ def db_select_values_where(conn: sqlite3.Connection, table, value, where, where_
 
     SELECT {value(s)} FROM {table} WHERE {where} = {where_what}
 
-    EX: SELECT name FROM races WHERE mob = False
+    Example:
+        
+        SELECT name FROM races WHERE mob = False
 
     Returns a sqlite3 addressable list of rows ex: row['name']
 
@@ -246,7 +249,7 @@ def db_return_class_object(conn: sqlite3.Connection, table, where_field, where_w
 
     # We have to do some special stuff to fill the dataclass. We have to know to unpickle certain fields and to
     # swap the bool values from int back to bool.
-    for field in fields(dataclass):
+    for field in fields(dataclass):        
         if field.type == bool:
             setattr(dataclass, field.name, False if row[field.name.lower()] == 0 else True)
         elif field.type in not_pickle_list:
