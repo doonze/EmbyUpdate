@@ -3,7 +3,7 @@ import configparser
 from os import remove, path
 from genericpath import exists
 from db.createdb import CreateDB
-from db.dbobjects import MainConfig, SelfUpdate, ConfigObj, ServerInfo
+from db.dbobjects import MainConfig, SelfUpdate, ConfigObj
 from db.db_functions import *
 from functions.api import GetRunningVersion
 
@@ -122,8 +122,8 @@ class Config:
             
 
             # Now we're going to read the config from the database
-            configobj.main_config = db_return_class_object(db_conn(), 'MainConfig', 'id', '1', MainConfig)
-            configobj.self_update = db_return_class_object(db_conn(), 'SelfUpdate', 'id', '1', SelfUpdate)
+            configobj.mainconfig.pull_from_db()
+            configobj.selfupdate.pull_from_db()
 
             # Here we pull the main config params.
             

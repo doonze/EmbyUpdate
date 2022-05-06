@@ -1,21 +1,20 @@
-from site import execsitecustomize
 from .db_functions import db_conn
 from contextlib import closing
 from db.db_functions import db_insert_class_in_table
 import db.dbobjects
 
-""" 
-DB                          Tables
-------------------------------------------------------------------------------------------------------------
-MainConfig              |  id, configran, distro, startserver, stopserver, version, releasetype, dateupdated
-MainUpdateHistory       |  id, date, version, success, errorid
-SelfUpdate              |  id, dateupdated, runupdate, version, releasetype
-SelfUpdateHistory       |  id, date, version, success, errorid
-DbUpdateHistory         |  version, date, notes
-DBversion               |  version, dateupdated
-Errors                  |  id, date, message, mainorself
-------------------------------------------------------------------------------------------------------------
-"""
+ 
+# DB                          Tables
+# ------------------------------------------------------------------------------------------------------------
+# MainConfig              |  id, configran, distro, startserver, stopserver, version, releasetype, dateupdated
+# MainUpdateHistory       |  id, date, version, success, errorid
+# SelfUpdate              |  id, dateupdated, runupdate, version, releasetype
+# SelfUpdateHistory       |  id, date, version, success, errorid
+# DbUpdateHistory         |  version, date, notes
+# DBversion               |  version, dateupdated
+# Errors                  |  id, date, message, mainorself
+# ------------------------------------------------------------------------------------------------------------
+
 
 
 
@@ -61,7 +60,7 @@ def CreateDB():
             SelfUpdate = """
             CREATE TABLE "SelfUpdate" (
             "id"	INTEGER NOT NULL UNIQUE,
-            "dateupdated"	TEXT NOT NULL DEFAULT 'None',
+            "dateupdated"	TEXT DEFAULT 'None',
             "runupdate"	INTEGER NOT NULL DEFAULT 1,
             "version"	TEXT NOT NULL DEFAULT 'First Run',
             "releasetype"	TEXT NOT NULL DEFAULT 'Stable',

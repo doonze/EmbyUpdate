@@ -10,9 +10,9 @@ import db.db_functions as db
 @dataclass
 class MainConfig:
     """
-    Class for interfacing with the MainConfig table
+    Class for interfacing with the mainconfig table
 
-    Attributes: 
+    Attributes:
     id          : int = 1
     configran   : bool = False
     distro      : str = None
@@ -35,13 +35,13 @@ class MainConfig:
         """
         Writes object to DB
         """
-        db.db_update_class_in_table(db.db_conn(), self, 'mainconfig', 'id', 1)
+        db.db_update_class_in_table(db.db_conn(), self, 'MainConfig', 'id', 1)
 
     def pull_from_db(self):
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(),'mainconfig', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(),'MainConfig', 'id', 1, self)
 
     def print_me(self):
         """
@@ -51,6 +51,7 @@ class MainConfig:
 
 @dataclass
 class MainUpdateHistory():
+    
     id: int
     date: date
     version: str
@@ -69,13 +70,13 @@ class SelfUpdate():
         """
         Writes object to DB
         """
-        db.db_update_class_in_table(db.db_conn(), self, 'selfupdate', 'id', 1)
+        db.db_update_class_in_table(db.db_conn(), self, 'SelfUpdate', 'id', 1)
 
     def pull_from_db(self):
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(),'selfupdate', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(),'SelfUpdate', 'id', 1, self)
 
     def print_me(self):
         """
@@ -125,17 +126,22 @@ class ServerInfo:
         """
         Writes object to DB
         """
-        db.db_update_class_in_table(db.db_conn(), self, 'serverinfo', 'id', 1)
+        db.db_update_class_in_table(db.db_conn(), self, 'ServerInfo', 'id', 1)
 
     def pull_from_db(self):
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(),'serverinfo', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(),'ServerInfo', 'id', 1, self)
 
     def print_me(self):
         """
         Prints opject to ouput
         """
         print(self)
+
+@dataclass
+class ConfigObj:
+    mainconfig: MainConfig = MainConfig()
+    selfupdate: SelfUpdate = SelfUpdate()
         

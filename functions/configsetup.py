@@ -6,7 +6,7 @@ import sys
 from sqlite3 import Error
 from genericpath import exists
 from db.createdb import CreateDB
-from db.dbobjects import MainConfig, SelfUpdate, ServerInfo
+from db.dbobjects import ConfigObj, ServerInfo
 from functions.api import GetRunningVersion
 
 def config_setup():
@@ -37,7 +37,7 @@ def config_setup():
             print("* Emby to the lastest version as we cannot contact the server   *")
             print("* to find what version it's currently running. It doesn't hurt  *")
             print("* anything to do so. But saves some time on slow connections if *")
-            print("* your already running the latest version. After the first      *") 
+            print("* your already running the latest version. After the first      *")
             print("* update we'll keep track of the version installed anyway.      *")
             print()
             print("[1] You can skip this check for now")
@@ -72,8 +72,8 @@ def config_setup():
                         while loop:
                             print("*** Just hitting enter will retain current values. ***")
                             print()
-                            response = input(f"Do you use a port to access your server? \
-                                Current value is ({serverinfo.portused}) [y/n]: ")
+                            response = input("Do you use a port to access your server? "
+                                f"Current value is ({serverinfo.portused}) [y/n]: ")
                             if response.casefold() == "y":
                                 serverinfo.portused = True
                                 break
@@ -89,8 +89,8 @@ def config_setup():
                             print()
 
                         while True:
-                            response = input(f"Do you use ssl to access your server? \
-                                [Example: HTTPS://] Current value is ({serverinfo.scheme}) [y/n]: ")
+                            response = input("Do you use ssl to access your server? "
+                                f"[Example: HTTPS://] Current value is ({serverinfo.scheme}) [y/n]: ")
 
                             if response.casefold() == "y":
                                 serverinfo.scheme = "https://"
@@ -106,26 +106,26 @@ def config_setup():
                             print("Invalid response. Enter (y)es or (n)o.")
 
                         if serverinfo.portused:
-                            response = input(f"Please enter port number. \
-                                Current value is ({serverinfo.port}): ")
+                            response = input("Please enter port number. "
+                                f"Current value is ({serverinfo.port}): ")
                             if response != "":
                                 serverinfo.port = response
 
-                        response = input(f"Please enter address. Current value is \
-                            ({serverinfo.address}): ")
+                        response = input(f"Please enter address. Current value is "
+                            f"({serverinfo.address}): ")
                         if response != "":
                             serverinfo.address = response
 
                         while True:
                             if serverinfo.portused:
                                 print()
-                                print(f"Here's what I have: \
-                                    {serverinfo.scheme}{serverinfo.address}:{serverinfo.port}")
+                                print("Here's what I have: "
+                                    f"{serverinfo.scheme}{serverinfo.address}:{serverinfo.port}")
                                 print()
                             else:
                                 print()
-                                print(f"Here's what I have: \
-                                    {serverinfo.scheme}{serverinfo.address}")
+                                print(f"Here's what I have: "
+                                    f"{serverinfo.scheme}{serverinfo.address}")
                                 print()
 
                             response = input("Is this correct? [Y/n]: ")
@@ -134,8 +134,8 @@ def config_setup():
                                 serverrecheck = GetRunningVersion()
                                 if serverrecheck.version is None:
                                     print()
-                                    response = input("I'm still not able to connect. \
-                                        Try with different settings? [Y/n]: ")
+                                    response = input("I'm still not able to connect. "
+                                        "Try with different settings? [Y/n]: ")
                                     print()
 
                                     if response.casefold() == 'y' or response == "":
@@ -144,8 +144,8 @@ def config_setup():
                                     if response.casefold() == 'n':
                                         while True:
                                             print()
-                                            response = input("Would you like to disable this \
-                                                check? [Y/n]: ")
+                                            response = input("Would you like to disable this "
+                                                "check? [Y/n]: ")
                                             if response.casefold() == 'y' or response == "":
                                                 serverinfo.enablecheck = False
                                                 serverinfo.write_to_db()
@@ -166,8 +166,8 @@ def config_setup():
 
                                 else:
                                     print()
-                                    print(f"I was able to connect. Current version is \
-                                        {serverrecheck.version}")
+                                    print("I was able to connect. Current version is "
+                                        f"{serverrecheck.version}")
                                     serverrecheck.write_to_db()
                                     print()
                                     loop = False
@@ -190,8 +190,8 @@ def config_setup():
         print("Server check disabled, skipping...")
         print()
 
-    mainconfig: MainConfig = MainConfig()
-    selfupdate: SelfUpdate = SelfUpdate()
+    
+    config: ConfigObj = ConfigObj()
     # Next user will choose their distro
 
     print("[1] Debian X64")
@@ -207,28 +207,28 @@ def config_setup():
     while True:
         distro_choice = input("Choose your distro by number or C to cancel update [?]: ")
         if str(distro_choice) == "1":
-            mainconfig.distro = "Debian X64"
+            config.mainconfig.distro = "Debian X64"
             break
         elif str(distro_choice) == "2":
-            mainconfig.distro = "Debian ARM"
+            config.mainconfig.distro = "Debian ARM"
             break
         elif str(distro_choice) == "3":
-            mainconfig.distro = "Arch"
+            config.mainconfig.distro = "Arch"
             break
         elif str(distro_choice) == "4":
-            mainconfig.distro = "CentOS"
+            config.mainconfig.distro = "CentOS"
             break
         elif str(distro_choice) == "5":
-            mainconfig.distro = "Fedora X64"
+            config.mainconfig.distro = "Fedora X64"
             break
         elif str(distro_choice) == "6":
-            mainconfig.distro = "Fedora ARM"
+            config.mainconfig.distro = "Fedora ARM"
             break
         elif str(distro_choice) == "7":
-            mainconfig.distro = "OpenSUSE X64"
+            config.mainconfig.distro = "OpenSUSE X64"
             break
         elif str(distro_choice) == "8":
-            mainconfig.distro = "OpenSUSE ARM"
+            config.mainconfig.distro = "OpenSUSE ARM"
             break
         elif str(distro_choice.casefold()) == "c":
             print("")
@@ -241,7 +241,7 @@ def config_setup():
             print("")
 
     print("")
-    print(mainconfig.distro + " Chosen")
+    print(config.mainconfig.distro + " Chosen")
     print("")
 
     # Now user chooses beta or Stable releases
@@ -249,11 +249,11 @@ def config_setup():
     while True:
         choose_beta = input("Do you want to install the beta version of Emby Server? [y/N] ")
         if choose_beta.casefold() == "y":
-            mainconfig.releasetype = "Beta"
+            config.mainconfig.releasetype = "Beta"
             break
 
         if choose_beta in ("n", "N", ""):
-            mainconfig.releasetype = "Stable"
+            config.mainconfig.releasetype = "Stable"
             break
 
         print("")
@@ -261,22 +261,22 @@ def config_setup():
         print("")
 
     print("")
-    print(mainconfig.releasetype + " version of Emby has been chosen for install.")
+    print(config.mainconfig.releasetype + " version of Emby has been chosen for install.")
     print("")
 
     # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
     while True:
-        servstop = input("Do we need to manually stop the server to install? \
-            (Likely only needed for Arch.) [y/N] ")
+        servstop = input("Do we need to manually stop the server to install? "
+                         "Likely only needed for Arch.) [y/N] ")
         if servstop.casefold() == "y":
             servstopchoice = "Server will be manually stopped on install."
-            mainconfig.stop_server = True
+            config.mainconfig.stopserver = True
             break
 
         if servstop in ("n", "N", ""):
             servstopchoice = "Server will NOT be manually stopped on install."
-            mainconfig.stop_server = False
+            config.mainconfig.stopserver = False
             break
 
         print("")
@@ -290,16 +290,16 @@ def config_setup():
     # User chooses if they wish to start the server again after updates. Not normally needed.
     while True:
         servstart = input(
-            "Do we need to manually start the server after install? \
-                (Likely only needed for Arch.) [y/N] ")
+            "Do we need to manually start the server after install? "
+                "(Likely only needed for Arch.) [y/N] ")
         if servstart.casefold() == "y":
             server_start_choice = "Server will be manually started after install."
-            mainconfig.startserver = True
+            config.mainconfig.startserver = True
             break
 
         if servstart in ("n", "N", ""):
             server_start_choice = "Server will NOT be manually started after install."
-            mainconfig.startserver = False
+            config.mainconfig.startserver = False
             break
 
         print("")
@@ -312,17 +312,17 @@ def config_setup():
 
     # User chooses if they wish to autoupdate the Update app (this program)
     while True:
-        script_update = input("Keep EmbyUpdate (this script) up to date with latest version? \
-            [Y/n] ")
+        script_update = input("Keep EmbyUpdate (this script) up to date with latest version? "
+            "[Y/n] ")
 
         if script_update in ("y", "Y", ""):
             script_update_choice = "Script (EmbyUpdate) will be automatically updated!"
-            selfupdate.runupdate = True
+            config.selfupdate.runupdate = True
             break
 
         if script_update.casefold() == "n":
             script_update_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
-            selfupdate.runupdate = False
+            config.selfupdate.runupdate = False
             break
 
         print("")
@@ -340,12 +340,12 @@ def config_setup():
 
         if script_beta_choice.casefold() == "y":
             self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
-            selfupdate.releasetype = "Beta"
+            config.selfupdate.releasetype = "Beta"
             break
 
         if script_beta_choice in ("n", "N", ""):
             self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated to Stable!"
-            selfupdate.releasetype = "Stable"
+            config.selfupdate.releasetype = "Stable"
             break
 
         print("")
@@ -357,21 +357,21 @@ def config_setup():
     print("")
 
     print("Choices to write to config file...")
-    print("Linux distro version to update: " + mainconfig.distro)
-    print("The chosen Emby Server install version. is: " + mainconfig.releasetype)
-    print(mainconfig.stopserver)
-    print(mainconfig.startserver)
-    print(selfupdate.runupdate)
-    print(selfupdate.releasetype)
+    print("Linux distro version to update: " + config.mainconfig.distro)
+    print("The chosen Emby Server install version. is: " + config.mainconfig.releasetype)
+    print(config.mainconfig.stopserver)
+    print(config.mainconfig.startserver)
+    print(config.selfupdate.runupdate)
+    print(config.selfupdate.releasetype)
     print("")
 
     while True:
-        confirm = input("Please review above choices and type CONFIRM to continue or c to \
-            cancel update and install! [CONFIRM/c] ")
+        confirm = input("Please review above choices and type CONFIRM to continue or c to "
+            "cancel update and install! [CONFIRM/c] ")
         if confirm.casefold() == "c":
             print("")
-            print("Exiting config update and installer. No changes were made and nothing \
-                will be installed!")
+            print("Exiting config update and installer. No changes were made and nothing "
+                "will be installed!")
             print("")
             sys.exit()
         elif confirm == "CONFIRM":
@@ -397,13 +397,13 @@ def config_setup():
 
     # Now we write the config to the database
     try:
-        mainconfig.write_to_db()
-        selfupdate.write_to_db()
+        config.mainconfig.write_to_db()
+        config.selfupdate.write_to_db()
     except Error as exception:
         print("EmbyUpdate: Couldn't update the database.")
         print("EmbyUpdate: Here's the error we got -- " + str(exception))
         print("EmbyUpdate: Cannot continue, exiting.")
-        sys.exit(1)
+        sys.exit()
 
     print("")
     print("Config written to database, install continuing!")

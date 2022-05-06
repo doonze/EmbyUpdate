@@ -13,13 +13,12 @@
 # Should work with both python 2.7 and all flavors of 3.                                      #
 ###############################################################################################
 
-from genericpath import exists
 import json
 import os.path
 import sys
 import time
+from genericpath import exists
 import requests
-from functions.api import GetRunningVersion
 from functions.config import Config
 from db.createdb import CreateDB
 from selfupdate import SelfUpdate
@@ -71,7 +70,7 @@ if args.config is False:
             print()
             print("Starting config setup...")
             print()
-            returncode = config.config_setup()
+            config_setup()
         except Exception as e:
             print("EmbyUpdate: Couldn't create the DataBase.")
             print("EmbyUpdate: Here's the error we got -- " + str(e))
