@@ -4,8 +4,6 @@ Config setup module
 """
 import sys
 from sqlite3 import Error
-from genericpath import exists
-from db.createdb import create_db
 from db.dbobjects import ConfigObj, ServerInfo
 from functions import api, exceptrace
 
@@ -205,7 +203,8 @@ def config_setup():
     print("[C] Cancel config update")
 
     while True:
-        distro_choice = input("Choose your distro by number or C to cancel update [?]: ")
+        distro_choice = input(f"Choose your distro by number or C to cancel update. "
+                              f"Current distro is ({config.mainconfig.distro}): [?] ")
         if str(distro_choice) == "1":
             config.mainconfig.distro = "Debian X64"
             break
@@ -247,7 +246,8 @@ def config_setup():
     # Now user chooses beta or Stable releases
 
     while True:
-        choose_beta = input("Do you want to install the beta version of Emby Server? [y/N] ")
+        choose_beta = input("Do you want to install the beta version of Emby Server? "
+                            f"Current release setting is ({config.mainconfig.releasetype}): [y/N] ")
         if choose_beta.casefold() == "y":
             config.mainconfig.releasetype = "Beta"
             break
@@ -267,8 +267,8 @@ def config_setup():
     # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
     while True:
-        servstop = input("Do we need to manually stop the server to install? "
-                         "(Likely only needed for Arch.) [y/N] ")
+        servstop = input("Do we need to manually stop the server to install? *RARELY NEEDED* "
+                         f"Current setting is ({config.mainconfig.stopserver}): [y/N] ")
         if servstop.casefold() == "y":
             servstopchoice = "Server will be manually stopped on install."
             config.mainconfig.stopserver = True
@@ -289,9 +289,8 @@ def config_setup():
 
     # User chooses if they wish to start the server again after updates. Not normally needed.
     while True:
-        servstart = input(
-            "Do we need to manually start the server after install? "
-                "(Likely only needed for Arch.) [y/N] ")
+        servstart = input("Do we need to manually start the server after install? *RARELY NEEDED* "
+                f"Current setting is ({config.mainconfig.startserver}): [y/N] ")
         if servstart.casefold() == "y":
             server_start_choice = "Server will be manually started after install."
             config.mainconfig.startserver = True
@@ -313,7 +312,7 @@ def config_setup():
     # User chooses if they wish to autoupdate the Update app (this program)
     while True:
         script_update = input("Keep EmbyUpdate (this script) up to date with latest version? "
-            "[Y/n] ")
+            f"Current setting is ({config.selfupdate.runupdate}): [Y/n] ")
 
         if script_update in ("y", "Y", ""):
             script_update_choice = "Script (EmbyUpdate) will be automatically updated!"
@@ -336,7 +335,8 @@ def config_setup():
     # User chooses if they want to update to beta or stable for the script
     while True:
 
-        script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? [y/N] ")
+        script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? "
+            f"Current release setting is {config.selfupdate.releasetype}: [y/N] ")
 
         if script_beta_choice.casefold() == "y":
             self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
@@ -357,17 +357,17 @@ def config_setup():
     print("")
 
     print("Choices to write to config file...")
-    print("Linux distro version to update: " + config.mainconfig.distro)
-    print("The chosen Emby Server install version. is: " + config.mainconfig.releasetype)
-    print(config.mainconfig.stopserver)
-    print(config.mainconfig.startserver)
-    print(config.selfupdate.runupdate)
-    print(config.selfupdate.releasetype)
+    print(f"Linux distro version to update: {config.mainconfig.distro}")
+    print(f"The chosen Emby Server release version is: {config.mainconfig.releasetype}")
+    print(f"Server set to be manually stopped: {config.mainconfig.stopserver}")
+    print(f"Server set to be manually started: {config.mainconfig.startserver}")
+    print(f"EmbyUpdate app set to autoupdate: {config.selfupdate.runupdate}")
+    print(f"EmbyUpdate app set to update to relase: {config.selfupdate.releasetype}")
     print("")
 
     while True:
         confirm = input("Please review above choices and type CONFIRM to continue or c to "
-            "cancel update and install! [CONFIRM/c] ")
+            "cancel the application! [CONFIRM/c] ")
         if confirm.casefold() == "c":
             print("")
             print("Exiting config update and installer. No changes were made and nothing "
@@ -375,38 +375,23 @@ def config_setup():
             print("")
             sys.exit()
         elif confirm == "CONFIRM":
-            break
+            # Now we write the config to the database
+            try:
+                config.mainconfig.write_to_db()
+                config.selfupdate.write_to_db()
+                print("")
+                print("Config written to database, install continuing!")
+                print("")
+                break
+            except Error:
+                exceptrace.execpt_trace("*** EmbyUpdate: Couldn't update the database. ***",
+                    sys.exc_info())
+                print()
+                print("EmbyUpdate: Cannot continue, exiting.")
+                sys.exit()
 
         print("")
         print("Invalid choice. Please type CONFIRM to continue or (c)ancel!!")
         print("")
-
-    # Setup the config interface
-
-    # Test if the DB exist and creates it if it doesn't
-    if not exists('./db/embyupdate.db'):
-        try:
-            print()
-            print("DB does NOT exist, creating DB...")
-            create_db()
-            print("DB has been created.")
-            print()
-        except Error:
-            exceptrace.execpt_trace("*** EmbyUpdate: Couldn't create the database. ***", \
-                sys.exc_info())
-            print("EmbyUpdate: Cannot continue, exiting.")
-            sys.exit()
-
-    # Now we write the config to the database
-    try:
-        config.mainconfig.write_to_db()
-        config.selfupdate.write_to_db()
-    except Error:
-        exceptrace.execpt_trace("*** EmbyUpdate: Couldn't update the database. ***", sys.exc_info())
-        print("EmbyUpdate: Cannot continue, exiting.")
-        sys.exit()
-
-    print("")
-    print("Config written to database, install continuing!")
-    print("")
+        
     

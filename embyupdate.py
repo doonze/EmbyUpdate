@@ -46,20 +46,18 @@ config.config_fix()
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
 
-# If the user hasn't used the -c/--config command line argument this will test to see if the DB exist.
-# If it doesn't it will launch the config setup process
-if args.config is False:
+# This will test to see if the DB exist.If it doesn't it will launch the config setup process
 
-    if not exists('./db/embyupdate.db'):
+if not exists('./db/embyupdate.db'):
 
-        print()
-        print("Database does NOT exist, creating database...")
-        create_db()
-        print("Database has been created.")
-        print()
-        print("Starting config setup...")
-        print()
-        configsetup.config_setup()
+    print()
+    print("Database does NOT exist, creating database...")
+    create_db()
+    print("Database has been created.")
+    print()
+    print("Starting config setup...")
+    print()
+    configsetup.config_setup()
 
 # Here we call configupdate to setup or update the config file if command line option -c was invoked
 

@@ -25,13 +25,13 @@ class MainConfig:
     """
     id          : int = 1
     configran   : bool = False
-    distro      : str = None
+    distro      : str = "None Chosen"
     startserver : bool = False
     stopserver  : bool = False
     version     : str = 'First Run'
     releasetype : str = 'Stable'
     dateupdated : str = None
-    embygithubaip: str = None
+    embygithubaip: str = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
     def write_to_db(self):
         """
