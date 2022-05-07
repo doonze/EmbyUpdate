@@ -90,7 +90,8 @@ def config_setup():
 
                         while True:
                             response = input("Do you use ssl to access your server? "
-                                f"[Example: HTTPS://] Current value is ({serverinfo.scheme}) [y/n]: ")
+                                f"[Example: HTTPS://] Current value is ({serverinfo.scheme}) "
+                                "[y/n]: ")
 
                             if response.casefold() == "y":
                                 serverinfo.scheme = "https://"

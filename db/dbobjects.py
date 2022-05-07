@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import date
 from pprint import pp
 import db.db_functions as db
+from embyupdate import VESRIONNUM
 
 
 @dataclass
@@ -30,6 +31,7 @@ class MainConfig:
     version     : str = 'First Run'
     releasetype : str = 'Stable'
     dateupdated : str = None
+    embygithubaip: str = None
 
     def write_to_db(self):
         """
@@ -63,8 +65,11 @@ class SelfUpdate():
     id: int = 1
     dateupdated:str = None
     runupdate: bool = True
-    version: str = "First Run"
-    releasetype: str = "Stable"
+    version: str = VESRIONNUM
+    releasetype: str = 'Stable'
+    selfgithubapi: str = 'https://api.github.com/repos/doonze/Embyupdate/releases'
+    downloadurl: str = 'https://github.com/doonze/EmbyUpdate/archive/'
+    zipzile: str = f'{VESRIONNUM}.zip'
     
     def write_to_db(self):
         """

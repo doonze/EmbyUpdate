@@ -4,28 +4,9 @@ Creates DB tables
 import sys
 from contextlib import closing
 from sqlite3 import Error
-import db.dbobjects
+import db.dbobjects as db
 from db.db_functions import db_conn
 from functions import exceptrace
-
-
-
-# Tables                     Columns
-# -------------------------------------------------------------------------------------------------
-# MainConfig              |  id, configran, distro, startserver, stopserver, version, releasetype,
-#                         |  dateupdated, embygithubapi
-# MainUpdateHistory       |  id, date, version, success, errorid
-# SelfUpdate              |  id, dateupdated, runupdate, version, releasetype
-# SelfUpdateHistory       |  id, date, version, success, errorid
-# DbUpdateHistory         |  version, date, notes
-# DBversion               |  version, dateupdated
-# Errors                  |  id, date, message, mainorself
-# ServerInfo              |  id, enablecheck, scheme, addresss, port, portused, apipath, fullurl,
-#                         |  version
-# -------------------------------------------------------------------------------------------------
-
-
-
 
 def create_db():
     """
@@ -48,14 +29,15 @@ def create_db():
                 main_config_sql = """
                 CREATE TABLE "MainConfig" (
                 "id"	INTEGER NOT NULL UNIQUE,
-                "configran"	INTEGER NOT NULL DEFAULT 0,
-                "distro"	TEXT NOT NULL DEFAULT 'None',
-                "startserver"	INTEGER NOT NULL DEFAULT 0,
-                "stopserver"	INTEGER NOT NULL DEFAULT 0,
-                "version"	TEXT NOT NULL DEFAULT 'First Run',
-                "releasetype"	TEXT NOT NULL DEFAULT 'Stable',
+                "configran"	INTEGER NOT NULL,
+                "distro"	TEXT NOT NULL,
+                "startserver"	INTEGER NOT NULL,
+                "stopserver"	INTEGER NOT NULL,
+                "version"	TEXT NOT NULL DEFAULT,
+                "releasetype"	TEXT NOT NULL DEFAULT,
                 "dateupdated"	TEXT,
                 "embygithubapi" TEXT NOT NULL DEFAULT 'https://api.github.com/repos/mediabrowser/Emby.releases/releases',
+                "downloadurl" TEXT NOT NULL DEFUALT 'Not setup',
                 PRIMARY KEY("id")
                 );
                 """
@@ -74,10 +56,13 @@ def create_db():
                 self_update_sql = """
                 CREATE TABLE "SelfUpdate" (
                 "id"	INTEGER NOT NULL UNIQUE,
-                "dateupdated"	TEXT DEFAULT 'None',
-                "runupdate"	INTEGER NOT NULL DEFAULT 1,
-                "version"	TEXT NOT NULL DEFAULT 'First Run',
-                "releasetype"	TEXT NOT NULL DEFAULT 'Stable',
+                "dateupdated"	TEXT,
+                "runupdate"	INTEGER NOT NULL,
+                "version"	TEXT NOT NULL DEFAULT,
+                "releasetype"	TEXT NOT NULL,
+                "selfgithubapi" TEXT NOT NULL,
+                "downloadurl" TEXT NOT NULL,
+                "zipfile" TEXT NOT NULL,
                 PRIMARY KEY("id")
                 );    
                 """
@@ -144,14 +129,13 @@ def create_db():
                 cur.execute(errors_sql)
                 cur.execute(server_info_sql)
 
-                mainconfig = db.dbobjects.MainConfig(1, 0, 'None', 0, 0, 'First Run', 'Stable')
+                mainconfig = db.MainConfig()
                 mainconfig.write_to_db()
 
-                selfupdate = db.dbobjects.SelfUpdate(1, 'None', 1, 'First Run', 'Stable')
+                selfupdate = db.SelfUpdate()
                 selfupdate.write_to_db()
 
-                serverinfo = db.dbobjects.ServerInfo(1, 1, 'http://', 'localhost', '8096', 1, \
-                    '/System/Info/Public')
+                serverinfo = db.ServerInfo()
                 serverinfo.write_to_db()
 
     except Error:
