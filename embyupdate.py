@@ -21,7 +21,7 @@ from genericpath import exists
 import requests
 from functions import pythonversion, config, arguments, configsetup
 from db.createdb import create_db
-from selfupdate import SelfUpdate
+from functions.selfupdate import SelfUpdate
 
 
 # Sets the version # for the command line -v/--version response
