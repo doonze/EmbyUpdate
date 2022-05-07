@@ -7,12 +7,12 @@ Returns:
 import sys
 import json
 import requests
-from db.dbobjects import ServerInfo, SelfUpdate
+import db.dbobjects as db_obj
 from functions import exceptrace
 
 
 
-def get_running_version() -> ServerInfo:
+def get_running_version() -> db_obj.ServerInfo:
     """
     The GetRunningVersion function returns the version number of the latest build on the server.
     It is used to determine if a user's local copy of Emby is out-of-date.
@@ -23,7 +23,7 @@ def get_running_version() -> ServerInfo:
     while True:
         try:
 
-            serverinfo = ServerInfo()
+            serverinfo = db_obj.ServerInfo()
             serverinfo.pull_from_db()
 
             if serverinfo.portused:
@@ -43,7 +43,7 @@ def get_running_version() -> ServerInfo:
             return serverinfo
 
 
-def get_self_version() -> SelfUpdate:
+def get_self_version() -> db_obj.SelfUpdate:
     """
     The get_self_version function is used to get the most recent version of this script from GitHub.
     It is called by the selfupdate function and returns a SelfUpdate object with two attributes:
@@ -62,7 +62,7 @@ def get_self_version() -> SelfUpdate:
 
     try:
         
-        selfupdate: SelfUpdate = SelfUpdate()
+        selfupdate: db_obj.SelfUpdate = db_obj.SelfUpdate()
         selfupdate.pull_from_db()
         
         response = requests.get(selfupdate.selfgithubapi)
@@ -73,15 +73,15 @@ def get_self_version() -> SelfUpdate:
             if selfupdate.releasetype == "Beta":
 
                 if entry["prerelease"] is True:
-                    selfupdate.version = entry["tag_name"]
+                    selfupdate.onlineversion = entry["tag_name"]
             else:
                 if entry["prerelease"] is False:
-                    selfupdate.version = entry["tag_name"]
+                    selfupdate.onlineversion = entry["tag_name"]
         
         return selfupdate
 
     except requests.exceptions.RequestException:
         exceptrace.execpt_trace("*** Selfupdate: Could get git version from GitHub. "
                                "We will not be able update this script for now!", sys.exc_info())
-        selfupdate.version = None
+        selfupdate.onlineversion = None
         return selfupdate

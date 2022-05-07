@@ -19,13 +19,12 @@ import sys
 import time
 from genericpath import exists
 import requests
-from functions import pythonversion, config, arguments, configsetup
+from functions import pythonversion, config, arguments, configsetup, selfupdate
 from db.createdb import create_db
-from functions.selfupdate import SelfUpdate
 
 
 # Sets the version # for the command line -v/--version response
-VESRIONNUM = "4.0 Beta"
+VERSIONNUM = "4.0 Beta"
 
 # Setting default init values
 returncode = None # pylint: disable=C0103
@@ -35,7 +34,7 @@ pythonversion.python_version_check()
 
 # Checks for command line arguments
 
-args = arguments.read_args(VESRIONNUM)
+args = arguments.read_args(VERSIONNUM)
 
 # Creates the default config object
 config = config.Config()
@@ -67,7 +66,9 @@ if args.config is True:
     print("")
     configsetup.config_setup()
 
-configsetup.config_setup() # TODO remove me when done testing
+# configsetup.config_setup() # TODO remove me when done testing
+selfupdate.self_update() # TODO remove me when down testing
+
 
 try:
 

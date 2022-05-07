@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import date
 from pprint import pp
 import db.db_functions as db
-from embyupdate import VESRIONNUM
+# import embyupdate
 
 
 @dataclass
@@ -22,6 +22,8 @@ class MainConfig:
     version     : str = 'First Run'
     releasetype : str = 'Stable'
     dateupdated : str = None
+    embygithubapi: str
+    downloadurl: str
     """
     id          : int = 1
     configran   : bool = False
@@ -31,13 +33,22 @@ class MainConfig:
     version     : str = 'First Run'
     releasetype : str = 'Stable'
     dateupdated : str = None
-    embygithubaip: str = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
+    embygithubapi: str = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
+    downloadurl: str = None
 
-    def write_to_db(self):
+    def update_db(self):
         """
         Writes object to DB
         """
         db.db_update_class_in_table(db.db_conn(), self, 'MainConfig', 'id', 1)
+        
+    def insert_to_db(self):
+        """
+        The insert_to_db function inserts the data into a database.
+        It takes in the self object and uses it to insert data into a database.
+        """
+        
+        db.db_insert_class_in_table(db.db_conn(), self, 'MainConfig')
 
     def pull_from_db(self):
         """
@@ -65,17 +76,22 @@ class SelfUpdate():
     id: int = 1
     dateupdated:str = None
     runupdate: bool = True
-    version: str = VESRIONNUM
+    version: str = "test"
+    onlineversion: str = None
     releasetype: str = 'Stable'
     selfgithubapi: str = 'https://api.github.com/repos/doonze/Embyupdate/releases'
     downloadurl: str = 'https://github.com/doonze/EmbyUpdate/archive/'
-    zipzile: str = f'{VESRIONNUM}.zip'
+    zipfile: str = None
     
-    def write_to_db(self):
+    
+    def update_db(self):
         """
         Writes object to DB
         """
         db.db_update_class_in_table(db.db_conn(), self, 'SelfUpdate', 'id', 1)
+        
+    def insert_to_db(self):
+        db.db_insert_class_in_table(db.db_conn(), self, 'SelfUpdate')
 
     def pull_from_db(self):
         """
@@ -127,11 +143,14 @@ class ServerInfo:
     fullurl: str = None
     version: str = None
 
-    def write_to_db(self):
+    def update_db(self):
         """
         Writes object to DB
         """
         db.db_update_class_in_table(db.db_conn(), self, 'ServerInfo', 'id', 1)
+        
+    def insert_to_db(self):
+        db.db_insert_class_in_table(db.db_conn(), self, 'ServerInfo')
 
     def pull_from_db(self):
         """

@@ -1,10 +1,9 @@
 import sqlite3
-from dataclasses import dataclass, fields
+from dataclasses import fields
 from sqlite3 import Error
 from pickle import dumps, loads
 from typing import List
 from contextlib import closing
-from db.dbobjects import *
 
 
 

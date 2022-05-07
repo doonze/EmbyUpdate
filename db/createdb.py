@@ -4,9 +4,19 @@ Creates DB tables
 import sys
 from contextlib import closing
 from sqlite3 import Error
-import db.dbobjects as db
+import db.dbobjects as db_obj
 from db.db_functions import db_conn
 from functions import exceptrace
+
+def populate_db():
+    mainconfig = db_obj.MainConfig()
+    mainconfig.insert_to_db()
+
+    selfupdate = db_obj.SelfUpdate()
+    selfupdate.insert_to_db()
+
+    serverinfo = db_obj.ServerInfo()
+    serverinfo.insert_to_db()
 
 def create_db():
     """
@@ -33,11 +43,11 @@ def create_db():
                 "distro"	TEXT NOT NULL,
                 "startserver"	INTEGER NOT NULL,
                 "stopserver"	INTEGER NOT NULL,
-                "version"	TEXT NOT NULL DEFAULT,
-                "releasetype"	TEXT NOT NULL DEFAULT,
+                "version"	TEXT NOT NULL,
+                "releasetype"	TEXT NOT NULL,
                 "dateupdated"	TEXT,
-                "embygithubapi" TEXT NOT NULL DEFAULT 'https://api.github.com/repos/mediabrowser/Emby.releases/releases',
-                "downloadurl" TEXT NOT NULL DEFUALT 'Not setup',
+                "embygithubapi" TEXT NOT NULL,
+                "downloadurl" TEXT,
                 PRIMARY KEY("id")
                 );
                 """
@@ -58,11 +68,12 @@ def create_db():
                 "id"	INTEGER NOT NULL UNIQUE,
                 "dateupdated"	TEXT,
                 "runupdate"	INTEGER NOT NULL,
-                "version"	TEXT NOT NULL DEFAULT,
+                "version"	TEXT NOT NULL,
+                "onlineversion"	TEXT,
                 "releasetype"	TEXT NOT NULL,
                 "selfgithubapi" TEXT NOT NULL,
                 "downloadurl" TEXT NOT NULL,
-                "zipfile" TEXT NOT NULL,
+                "zipfile" TEXT,
                 PRIMARY KEY("id")
                 );    
                 """
@@ -128,15 +139,8 @@ def create_db():
                 cur.execute(db_version_sql)
                 cur.execute(errors_sql)
                 cur.execute(server_info_sql)
-
-                mainconfig = db.MainConfig()
-                mainconfig.write_to_db()
-
-                selfupdate = db.SelfUpdate()
-                selfupdate.write_to_db()
-
-                serverinfo = db.ServerInfo()
-                serverinfo.write_to_db()
+                
+                populate_db()
 
     except Error:
         exceptrace.execpt_trace("***create_db: An error was enountered creating the DB", \

@@ -4,7 +4,7 @@ Config setup module
 """
 import sys
 from sqlite3 import Error
-from db.dbobjects import ConfigObj, ServerInfo
+import db.dbobjects as db_obj
 from functions import api, exceptrace
 
 def config_setup():
@@ -20,7 +20,7 @@ def config_setup():
     # Now we'll start gathering user input
 
     # First to check if Emby is running so we can get the version #
-    serverinfo: ServerInfo = api.get_running_version()
+    serverinfo: db_obj.ServerInfo = api.get_running_version()
 
     # If the option to check server is True, and the sever is not reachable, we'll run the server
     # setup
@@ -167,7 +167,7 @@ def config_setup():
                                     print()
                                     print("I was able to connect. Current version is "
                                         f"{serverrecheck.version}")
-                                    serverrecheck.write_to_db()
+                                    serverrecheck.update_db()
                                     print()
                                     loop = False
                                     break
@@ -189,7 +189,7 @@ def config_setup():
         print("Server check disabled, skipping...")
         print()
 
-    config: ConfigObj = ConfigObj()
+    config: db_obj.ConfigObj = db_obj.ConfigObj()
     # Next user will choose their distro
 
     print("[1] Debian X64")
@@ -377,8 +377,8 @@ def config_setup():
         elif confirm == "CONFIRM":
             # Now we write the config to the database
             try:
-                config.mainconfig.write_to_db()
-                config.selfupdate.write_to_db()
+                config.mainconfig.update_db()
+                config.selfupdate.update_db()
                 print("")
                 print("Config written to database, install continuing!")
                 print("")
@@ -393,5 +393,4 @@ def config_setup():
         print("")
         print("Invalid choice. Please type CONFIRM to continue or (c)ancel!!")
         print("")
-        
-    
+           
