@@ -67,6 +67,7 @@ def get_self_version() -> db_obj.SelfUpdate:
         
         response = requests.get(selfupdate.selfgithubapi)
         updatejson = json.loads(response.text)
+        
         # Here we search the github API response for the most recent version of beta or stable
         # depending on what was chosen by the user
         for i, entry in enumerate(updatejson):
@@ -74,9 +75,11 @@ def get_self_version() -> db_obj.SelfUpdate:
 
                 if entry["prerelease"] is True:
                     selfupdate.onlineversion = entry["tag_name"]
+                    break
             else:
                 if entry["prerelease"] is False:
                     selfupdate.onlineversion = entry["tag_name"]
+                    break
         
         return selfupdate
 

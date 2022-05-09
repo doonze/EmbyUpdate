@@ -92,20 +92,6 @@ except Exception as e:
     print("There appears to be a config file error, re-runing config update to fix!")
 
 
-# This is a simple timestamp function, created so each call would have a current timestamp
-def timestamp():
-    """
-    The timestamp function returns the current date and time.
-    
-    :returns: The current date and time.
-    
-    
-    :return: The date and time of the current moment in this format: month/day/year
-    :doc-author: Trelent
-    """
-    ts = time.strftime("%x %X", time.localtime())
-    return "<" + ts + "> "
-
 # The github API of releases for Emby Media Browser. This includes beta and production releases
 URL = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
