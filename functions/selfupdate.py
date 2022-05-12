@@ -34,7 +34,7 @@ def self_update():
         selfupdate = api.get_self_version()
 
         # Build the zip file name
-        selfupdate.zipzile = f"{selfupdate.onlineversion}.zip"
+        selfupdate.zipfile = f"{selfupdate.onlineversion}.zip"
 
         # Build path for unziping
         zip_base_path = ("EmbyUpdate-" + selfupdate.onlineversion[1:] + "/")
@@ -64,8 +64,8 @@ def self_update():
         # Here we download the zip to install
         print("Starting Package download...")
         download = requests.get(
-            f"{selfupdate.downloadurl}{selfupdate.zipzile}")
-        with open(selfupdate.zipzile, 'wb') as file:
+            f"{selfupdate.downloadurl}{selfupdate.zipfile}")
+        with open(selfupdate.zipfile, 'wb') as file:
             file.write(download.content)
         print("Package downloaded!")
 

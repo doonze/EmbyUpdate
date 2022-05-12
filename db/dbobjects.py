@@ -25,14 +25,14 @@ class MainConfig:
     embygithubapi: str
     downloadurl: str
     """
-    id          : int = 1
-    configran   : bool = False
-    distro      : str = "None Chosen"
-    startserver : bool = False
-    stopserver  : bool = False
-    version     : str = 'First Run'
-    releasetype : str = 'Stable'
-    dateupdated : str = None
+    id: int = 1
+    configran: bool = False
+    distro: str = "None Chosen"
+    startserver: bool = False
+    stopserver: bool = False
+    version: str = 'First Run'
+    releasetype: str = 'Stable'
+    dateupdated: str = None
     embygithubapi: str = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
     downloadurl: str = None
 
@@ -41,40 +41,42 @@ class MainConfig:
         Writes object to DB
         """
         db.db_update_class_in_table(db.db_conn(), self, 'MainConfig', 'id', 1)
-        
+
     def insert_to_db(self):
         """
         The insert_to_db function inserts the data into a database.
         It takes in the self object and uses it to insert data into a database.
         """
-        
+
         db.db_insert_class_in_table(db.db_conn(), self, 'MainConfig')
 
     def pull_from_db(self):
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(),'MainConfig', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(), 'MainConfig', 'id', 1, self)
 
     def print_me(self):
         """
-        Prints opject to ouput
-        """    
+        Prints object to output
+        """
         pp(self, depth=1, indent=4)
+
 
 @dataclass
 class MainUpdateHistory():
-    
+
     id: int
     date: date
     version: str
     success: bool
     errorid: int
 
+
 @dataclass
 class SelfUpdate():
     id: int = 1
-    dateupdated:str = None
+    dateupdated: str = None
     runupdate: bool = True
     version: str = "test"
     onlineversion: str = None
@@ -82,14 +84,13 @@ class SelfUpdate():
     selfgithubapi: str = 'https://api.github.com/repos/doonze/Embyupdate/releases'
     downloadurl: str = 'https://github.com/doonze/EmbyUpdate/archive/'
     zipfile: str = None
-    
-    
+
     def update_db(self):
         """
         Writes object to DB
         """
         db.db_update_class_in_table(db.db_conn(), self, 'SelfUpdate', 'id', 1)
-        
+
     def insert_to_db(self):
         db.db_insert_class_in_table(db.db_conn(), self, 'SelfUpdate')
 
@@ -97,13 +98,14 @@ class SelfUpdate():
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(),'SelfUpdate', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(), 'SelfUpdate', 'id', 1, self)
 
     def print_me(self):
         """
-        Prints opject to ouput
+        Prints object to output
         """
         print(self, depth=1, indent=4)
+
 
 @dataclass
 class SelfUpdateHistory():
@@ -113,16 +115,19 @@ class SelfUpdateHistory():
     success: bool
     errorid: int
 
+
 @dataclass
 class DbUpdateHistory():
     version: str
     date: date
     notes: str
 
+
 @dataclass
 class DBversion():
     version: str
     dateupdated: date
+
 
 @dataclass
 class Errors():
@@ -130,6 +135,7 @@ class Errors():
     date: date
     message: str
     mainorself: str
+
 
 @dataclass
 class ServerInfo:
@@ -148,7 +154,7 @@ class ServerInfo:
         Writes object to DB
         """
         db.db_update_class_in_table(db.db_conn(), self, 'ServerInfo', 'id', 1)
-        
+
     def insert_to_db(self):
         db.db_insert_class_in_table(db.db_conn(), self, 'ServerInfo')
 
@@ -156,16 +162,57 @@ class ServerInfo:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(),'ServerInfo', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(), 'ServerInfo', 'id', 1, self)
 
     def print_me(self):
         """
-        Prints opject to ouput
+        Prints object to output
         """
         print(self)
+
 
 @dataclass
 class ConfigObj:
     mainconfig: MainConfig = MainConfig()
     selfupdate: SelfUpdate = SelfUpdate()
+    
+    def get_config(self):
+        self.mainconfig.pull_from_db()
+        self.selfupdate.pull_from_db()
         
+        return self
+
+
+@dataclass
+class DistroConfig:
+    distro: str
+    downloadurl: str
+    installcommand: str
+    installfile: str
+
+    def update_db(self):
+        """
+        Writes object to DB
+        """
+        db.db_update_class_in_table(
+            db.db_conn(), self, 'DistroConfig', 'distro', self.distro)
+
+    def insert_to_db(self):
+        """
+        The insert_to_db function inserts the data into a database.
+        It takes in the self object and uses it to insert data into a database.
+        """
+        db.db_insert_class_in_table(db.db_conn(), self, 'DistroConfig')
+
+    def pull_from_db(self, what):
+        """
+        Pulls object table from DB
+        """
+        db.db_return_class_object(
+            db.db_conn(), 'DistroConfig', 'distro', what, self)
+
+    def print_me(self):
+        """
+        Prints object to output
+        """
+        pp(self, depth=1, indent=4)

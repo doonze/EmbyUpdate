@@ -11,3 +11,4 @@ __pycache__/selfupdate.cpython-39.pyc
 db/__pycache__/*
 db/embyupdate.db
 *.zip
+*.db-journal

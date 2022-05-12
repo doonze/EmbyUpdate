@@ -362,7 +362,7 @@ def config_setup():
     print(f"Server set to be manually stopped: {config.mainconfig.stopserver}")
     print(f"Server set to be manually started: {config.mainconfig.startserver}")
     print(f"EmbyUpdate app set to autoupdate: {config.selfupdate.runupdate}")
-    print(f"EmbyUpdate app set to update to relase: {config.selfupdate.releasetype}")
+    print(f"EmbyUpdate app set to update to release: {config.selfupdate.releasetype}")
     print("")
 
     while True:

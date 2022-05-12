@@ -16,18 +16,18 @@
 import json
 import os.path
 import sys
-import time
 from genericpath import exists
 import requests
-from functions import pythonversion, config, arguments, configsetup, selfupdate
-from db.createdb import create_db
+from functions import pythonversion, config, arguments, configsetup, selfupdate, timestamp
+from db import createdb, dbobjects
 
+# pylint: disable=C0103
 
 # Sets the version # for the command line -v/--version response
 VERSIONNUM = "4.0 Beta"
 
 # Setting default init values
-returncode = None # pylint: disable=C0103
+returncode = None
 
 # Checks for python version, exit if not greater than 3.6
 pythonversion.python_version_check()
@@ -37,10 +37,10 @@ pythonversion.python_version_check()
 args = arguments.read_args(VERSIONNUM)
 
 # Creates the default config object
-config = config.Config()
+configfix = config.Config()
 
 # Fixes pre version 4.0 config files
-config.config_fix()
+configfix.config_fix()
 
 # First we're going to force the working path to be where the script lives
 os.chdir(sys.path[0])
@@ -51,7 +51,7 @@ if not exists('./db/embyupdate.db'):
 
     print()
     print("Database does NOT exist, creating database...")
-    create_db()
+    createdb.create_db()
     print("Database has been created.")
     print()
     print("Starting config setup...")
@@ -59,48 +59,32 @@ if not exists('./db/embyupdate.db'):
     configsetup.config_setup()
 
 # Here we call configupdate to setup or update the config file if command line option -c was invoked
-
 if args.config is True:
     print("")
     print("Config update started....")
     print("")
     configsetup.config_setup()
 
-# configsetup.config_setup() # TODO remove me when done testing
-selfupdate.self_update() # TODO remove me when down testing
+# We'll get the config from the DB
+configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
 
+# Now well try and update the app if the user chose that option
+if configobj.selfupdate.runupdate is True:
+    selfupdate.self_update()
+        
 
-try:
-
-    configobj = config.read_config()
-
-except Exception as e:
-    print("EmbyUpdate: Couldn't read the Config file.")
-    print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
-    print("There appears to be a config file error, re-runing config update to fix!")
-
-try:
-    # Now well try and update the app if the user chose that option
-    if configobj.selfupdate.runupdate is True:
-        #self_update = SelfUpdate(config)
-        #config = self_update.self_update()
-        print("self update disabled")
-
-except Exception as e:
-    print("EmbyUpdate: Couldn't read the Config file.")
-    print("EmbyUpdate: Here's the error we got -- " + str(e) + " not found in config file!")
-    print("There appears to be a config file error, re-runing config update to fix!")
 
 
 # The github API of releases for Emby Media Browser. This includes beta and production releases
 URL = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
 
-# Now we're just going to see what the latest version is! If we get any funky response we'll exit the script.
+# Now we're just going to see what the latest version is! If we get any funky response we'll exit
+# the script.
 try:
     response = requests.get(URL)
     updatejson = json.loads(response.text)
-    # Here we search the github API response for the most recent version of beta or stable depending on what was chosen
-    # above.
+    # Here we search the github API response for the most recent version of beta or stable
+    # depending on what was chosen above.
     for i, entry in enumerate(updatejson):
         if config.emby_release == 'Beta':
 
@@ -117,19 +101,21 @@ try:
             print("Couldn't determine release requested, value is " + config.emby_release)
 
 except Exception as e:
-    print(timestamp() + "EmbyUpdate: We didn't get an expected response from the github api, script is exiting!")
-    print(timestamp() + "EmbyUpdate: Here's the error we got -- " + repr(e))
+    print(timestamp.time_stamp() + "EmbyUpdate: We didn't get an expected response from the github "
+          "api, script  is exiting!")
+    print(timestamp.time_stamp() + "EmbyUpdate: Here's the error we got -- " + repr(e))
     print(config.emby_release)
     sys.exit()
 
-##########################################################################################################
-# This block is just setting up the variables for your selected distro. These can be updated as needed.  #
-##########################################################################################################
+####################################################################################################
+# This block is just setting up the variables for your selected distro. These can be updated as
+# needed.
+####################################################################################################
 
 # Debian/Ubuntu/Mint amd64 *************
 if config.distro == "Debian X64":
-    downloadurl = "https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
-                  "/emby-server-deb_" + onlineversion + "_amd64.deb"
+    downloadurl = "https://github.com/MediaBrowser/Emby.Releases/releases/download/" + \
+    onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb"
     installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
     updatefile = "emby-server-deb_" + onlineversion + "_amd64.deb"
 # ***************************************
@@ -217,7 +203,7 @@ else:
           + onlinefileversion + " and current installed version is " + config.emby_version + ". We're updating Emby.")
     print("\n" + timestamp() + "EmbyUpdate: Starting update......")
 
-    """ try:
+    try:
         # This will stop the server on a systemd distro if it's been set to true above
         if config.stop_server is True:
             print("Stopping Emby server.....")
@@ -278,4 +264,4 @@ else:
 
     except Exception as e:
         print(timestamp() + 'EmbyUpdate: Something failed in update. No update done, script exiting')
-        print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e)) """
+        print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
