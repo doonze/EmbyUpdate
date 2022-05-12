@@ -46,8 +46,8 @@ def self_update():
             # If the latest online version matches the last installed version then we let you know
             # and exit
             print(f"{timestamp.time_stamp()} EmbyUpdate(self): App is up to date!  Current and "
-                  f"Online versions are at v{selfupdate.onlineversion} - {selfupdate.releasetype}. "
-                  "Exiting!")
+                  f"Online versions are at {selfupdate.onlineversion} - {selfupdate.releasetype}. "
+                  "Continuing...")
             return selfupdate
 
         # If the online version DOESN'T match the last installed version we let you know what the

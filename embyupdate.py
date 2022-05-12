@@ -15,11 +15,15 @@
 
 import json
 import os.path
+import subprocess
 import sys
 from genericpath import exists
+import time
 import requests
-from functions import pythonversion, config, arguments, configsetup, selfupdate, timestamp, api
+from functions import (pythonversion, config, arguments, configsetup, selfupdate,
+                       timestamp, api, updatecheck, install)
 from db import createdb, dbobjects
+import functions
 
 # pylint: disable=C0103
 
@@ -75,81 +79,10 @@ if configobj.selfupdate.runupdate is True:
 configobj = api.get_main_online_version(configobj)
 
 
-# Ok, we've got all the info we need. Now we'll test if we even need to update or not.
+# Ok, we've got all the info we need. Now we'll test if we even need to update or not
 
-onlinefileversion = (onlineversion + "-" + config.emby_release)
+update_needed = updatecheck.check_for_update(configobj) # pylint: disable=E1111
 
-if str(onlinefileversion) in str(config.emby_version):
-    # If the latest online version matches the last installed version then we let you know and exit
-    print(timestamp() + "EmbyUpdate: We're up to date!  Current and Online versions are at " + onlinefileversion +
-          ". Exiting.")
-    print('***')
-else:
-    # If the online version DOESN'T match the last installed version we let you know what the versions are and start
-    # updating
-    print(timestamp() + "EmbyUpdate: Most recent online version is "
-          + onlinefileversion + " and current installed version is " + config.emby_version + ". We're updating Emby.")
-    print("\n" + timestamp() + "EmbyUpdate: Starting update......")
-
-    try:
-        # This will stop the server on a systemd distro if it's been set to true above
-        if config.stop_server is True:
-            print("Stopping Emby server.....")
-            stopreturn = subprocess.call("systemctl stop emby-server", shell=True)
-            time.sleep(3)
-            if stopreturn > 0:
-                print("Server Stop failed! Non-critical error! Investigate if needed.")
-
-            print("Emby Server Stopped...")
-
-        # Here we download the package to install if used
-        if "notused" not in downloadurl:
-            print("Starting Package download...")
-            download = requests.get(downloadurl)
-            with open(updatefile, 'wb') as file:
-                file.write(download.content)
-            print("Package downloaded!")
-
-        # Next we install it if used
-        if "notused" not in installfile:
-            print("Installing/Updating Emby server....")
-            installreturn = subprocess.call(installfile, shell=True)
-            if installreturn > 0:
-                print("Install/Update failed! Exiting!")
-                sys.exit()
-            print("Install/Update Finished!")
-
-        # And to keep things nice and clean, we remove the downloaded file once installed if needed
-        if "notused" not in updatefile:
-            print("Removing install file...")
-            subprocess.call("rm -f " + updatefile, shell=True)
-            print("File removed!")
-
-        # This will restart the server if using systemd if set to True above
-        if config.start_server is True:
-            print("Restarting Emby server after update...")
-            startreturn = subprocess.call("systemctl start emby-server", shell=True)
-            if startreturn > 0:
-                print("Server start failed. Non-critical to update but server may not be running. Investigate.")
-            print("Server restarted!")
-
-        # Lastly we write the newly installed version into the config file
-        try:
-            config.emby_version = onlinefileversion
-
-            config.write_config()
-
-            print(timestamp() + "EmbyUpdate: Updating to Emby version " + onlinefileversion +
-                  " finished! Script exiting!")
-            print('')
-            print("*****************************************************************************")
-            print("\n")
-
-        except Exception as e:
-            print(timestamp() + "EmbyUpdate: We had a problem writing to config after update!")
-            print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
-            sys.exit()
-
-    except Exception as e:
-        print(timestamp() + 'EmbyUpdate: Something failed in update. No update done, script exiting')
-        print(timestamp() + "EmbyUpdate: Here's the error we got -- " + str(e))
+if update_needed:
+    install.update_emby(configobj)
+    

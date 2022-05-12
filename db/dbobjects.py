@@ -198,10 +198,10 @@ class ConfigObj:
 
 @dataclass
 class DistroConfig:
-    distro: str
-    downloadurl: str
-    installcommand: str
-    installfile: str
+    distro: str = None
+    downloadurl: str = None
+    installcommand: str = None
+    installfile: str = None
 
     def update_db(self):
         """
@@ -221,8 +221,7 @@ class DistroConfig:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(
-            db.db_conn(), 'DistroConfig', 'distro', what, self)
+        db.db_return_class_object(db.db_conn(), 'DistroConfig', 'distro', what, self)
 
     def print_me(self):
         """

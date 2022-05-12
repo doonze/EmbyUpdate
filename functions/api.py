@@ -11,7 +11,6 @@ import db.dbobjects as db_obj
 from functions import exceptrace
 
 
-
 def get_running_version() -> db_obj.ServerInfo:
     """
     The GetRunningVersion function returns the version number of the latest build on the server.
@@ -28,7 +27,7 @@ def get_running_version() -> db_obj.ServerInfo:
 
             if serverinfo.portused:
                 serverinfo.fullurl = f'{serverinfo.scheme}{serverinfo.address}:{serverinfo.port}'\
-                f'{serverinfo.apipath}'
+                    f'{serverinfo.apipath}'
             else:
                 serverinfo.fullurl = f'{serverinfo.scheme}{serverinfo.address}{serverinfo.apipath}'
 
@@ -39,7 +38,7 @@ def get_running_version() -> db_obj.ServerInfo:
                 return serverinfo
 
         except requests.exceptions.RequestException:
-            serverinfo.version = None
+            serverinfo.version = "None"
             return serverinfo
 
 
@@ -61,12 +60,13 @@ def get_self_online_version() -> db_obj.SelfUpdate:
     """
 
     try:
-        
-        selfupdate: db_obj.SelfUpdate = db_obj.SelfUpdate().pull_from_db()
-        
+
+        selfupdate: db_obj.SelfUpdate = db_obj.SelfUpdate()
+        selfupdate.pull_from_db()
+
         response = requests.get(selfupdate.selfgithubapi)
         updatejson = json.loads(response.text)
-        
+
         # Here we search the github API response for the most recent version of beta or stable
         # depending on what was chosen by the user
         for i, entry in enumerate(updatejson):
@@ -79,33 +79,34 @@ def get_self_online_version() -> db_obj.SelfUpdate:
                 if entry["prerelease"] is False:
                     selfupdate.onlineversion = entry["tag_name"]
                     break
-        
+
         return selfupdate
 
     except requests.exceptions.RequestException:
         exceptrace.execpt_trace("*** Selfupdate: Could get git version from GitHub. "
-                               "We will not be able update this script for now!", sys.exc_info())
+                                "We will not be able update this script for now!", sys.exc_info())
         selfupdate.onlineversion = None
         return selfupdate
-    
+
+
 def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
     """
     We first check the running server version and record that. We then pull the latest online version
     from github to know if we need to update. 
-    
+
     Args:
         configobj:db_obj.ConfigObj: Pass the configobj object
-    
+
     Returns:
         The online version of the script
     """
-    
+
     # Now we're just going to see what the latest version is! If we get any funky response we'll exit
     # the script.
     try:
         configobj.serverinfo = get_running_version()
         if configobj.serverinfo.enablecheck:
-            if configobj.serverinfo.version is None:
+            if configobj.serverinfo.version == "None":
                 print()
                 print("Running Emby server check is enabled, however, I was not able to "
                       "reach the server. Have you changed the port or address of your "
@@ -116,7 +117,7 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
                       "we may waste some resources updateing to a version you already have. "
                       "Won't hurt nothin'.")
                 print()
-                
+
         response = requests.get(configobj.mainconfig.embygithubapi)
         updatejson = json.loads(response.text)
         # Here we search the github API response for the most recent version of beta or stable
@@ -127,17 +128,18 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
                 if entry["prerelease"] is True:
                     configobj.onlineversion = entry["tag_name"]
                     return configobj
-                
-            elif configobj.mainconfig.releasetype == 'Stable':
+
+            if configobj.mainconfig.releasetype == 'Stable':
 
                 if entry["prerelease"] is False:
                     configobj.onlineversion = entry["tag_name"]
                     return configobj
 
-            else:
-                print(f"Couldn't determine release requested, value is {configobj.mainconfig.releasetype}")
-                configobj.onlineversion = None
-                return configobj
+            
+            print("Couldn't determine release requested, value is "
+                  f"{configobj.mainconfig.releasetype}")
+            configobj.onlineversion = None
+            return configobj
 
     except requests.exceptions.RequestException:
         exceptrace.execpt_trace("*** EmbyUpdate: Couldn't get git version from GitHub. "

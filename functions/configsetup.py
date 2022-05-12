@@ -19,13 +19,13 @@ def config_setup():
 
     # Now we'll start gathering user input
 
-    # First to check if Emby is running so we can get the version #
+    # First to check if Emby is running so we can get the version 
     serverinfo: db_obj.ServerInfo = api.get_running_version()
 
     # If the option to check server is True, and the sever is not reachable, we'll run the server
     # setup
     if serverinfo.enablecheck:
-        if serverinfo.version is None:
+        if serverinfo.version == "None":
             print()
             print("I didn't find a running Emby instance on this server.")
             print(f"I tried the address {serverinfo.fullurl}")
@@ -43,7 +43,7 @@ def config_setup():
             print("[3] Update the server address")
             print("[4] Cancel this run (maybe to start the server?)")
             print()
-
+            
             loop = True
             while loop:
 
@@ -58,7 +58,7 @@ def config_setup():
 
                 if str(response) == "2":
                     serverinfo.enablecheck = False
-                    serverinfo.write_to_db()
+                    serverinfo.update_db()
                     print()
                     print("Server check has been permanently disabled.")
                     print()
@@ -129,7 +129,7 @@ def config_setup():
 
                             response = input("Is this correct? [Y/n]: ")
                             if response.casefold() == "y" or response == "":
-                                serverinfo.write_to_db()
+                                serverinfo.update_db()
                                 serverrecheck = api.get_running_version()
                                 if serverrecheck.version is None:
                                     print()
@@ -147,7 +147,7 @@ def config_setup():
                                                 "check? [Y/n]: ")
                                             if response.casefold() == 'y' or response == "":
                                                 serverinfo.enablecheck = False
-                                                serverinfo.write_to_db()
+                                                serverinfo.update_db()
                                                 break
 
                                             if response.casefold() == 'n':
@@ -247,7 +247,8 @@ def config_setup():
 
     while True:
         choose_beta = input("Do you want to install the beta version of Emby Server? "
-                            f"Current release setting is ({configobj.mainconfig.releasetype}): [y/N] ")
+                            f"Current release setting is ({configobj.mainconfig.releasetype}): "
+                            "[y/N] ")
         if choose_beta.casefold() == "y":
             configobj.mainconfig.releasetype = "Beta"
             break
