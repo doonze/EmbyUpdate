@@ -31,7 +31,7 @@ def self_update():
 
     try:
         # Download the latest version for the requested release
-        selfupdate = api.get_self_version()
+        selfupdate = api.get_self_online_version()
 
         # Build the zip file name
         selfupdate.zipfile = f"{selfupdate.onlineversion}.zip"
@@ -41,12 +41,12 @@ def self_update():
 
         # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
 
-        if str(selfupdate.onlineversion) in str(selfupdate.version):
+        if str(selfupdate.onlineversion[1:]) == str(selfupdate.version):
 
             # If the latest online version matches the last installed version then we let you know
             # and exit
             print(f"{timestamp.time_stamp()} EmbyUpdate(self): App is up to date!  Current and "
-                  f"Online versions are at {selfupdate.onlineversion} - {selfupdate.releasetype}. "
+                  f"Online versions are at v{selfupdate.onlineversion} - {selfupdate.releasetype}. "
                   "Exiting!")
             return selfupdate
 

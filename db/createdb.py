@@ -115,7 +115,6 @@ def create_db():
                 "releasetype"	TEXT NOT NULL,
                 "dateupdated"	TEXT,
                 "embygithubapi" TEXT NOT NULL,
-                "downloadurl"   TEXT,
                 PRIMARY KEY("id")
                 );
                 """
@@ -223,6 +222,6 @@ def create_db():
                 create_distros()
 
     except Error:
-        exceptrace.execpt_trace("***create_db: An error was enountered creating the DB", \
+        exceptrace.execpt_trace("***create_db: An error was encountered creating the DB", \
             sys.exc_info())
         

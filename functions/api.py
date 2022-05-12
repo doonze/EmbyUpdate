@@ -43,7 +43,7 @@ def get_running_version() -> db_obj.ServerInfo:
             return serverinfo
 
 
-def get_self_version() -> db_obj.SelfUpdate:
+def get_self_online_version() -> db_obj.SelfUpdate:
     """
     The get_self_version function is used to get the most recent version of this script from GitHub.
     It is called by the selfupdate function and returns a SelfUpdate object with two attributes:
@@ -62,8 +62,7 @@ def get_self_version() -> db_obj.SelfUpdate:
 
     try:
         
-        selfupdate: db_obj.SelfUpdate = db_obj.SelfUpdate()
-        selfupdate.pull_from_db()
+        selfupdate: db_obj.SelfUpdate = db_obj.SelfUpdate().pull_from_db()
         
         response = requests.get(selfupdate.selfgithubapi)
         updatejson = json.loads(response.text)
@@ -88,3 +87,60 @@ def get_self_version() -> db_obj.SelfUpdate:
                                "We will not be able update this script for now!", sys.exc_info())
         selfupdate.onlineversion = None
         return selfupdate
+    
+def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
+    """
+    We first check the running server version and record that. We then pull the latest online version
+    from github to know if we need to update. 
+    
+    Args:
+        configobj:db_obj.ConfigObj: Pass the configobj object
+    
+    Returns:
+        The online version of the script
+    """
+    
+    # Now we're just going to see what the latest version is! If we get any funky response we'll exit
+    # the script.
+    try:
+        configobj.serverinfo = get_running_version()
+        if configobj.serverinfo.enablecheck:
+            if configobj.serverinfo.version is None:
+                print()
+                print("Running Emby server check is enabled, however, I was not able to "
+                      "reach the server. Have you changed the port or address of your "
+                      "Emby server? Is it down? If you feel this is incorrect rerun config "
+                      "setup and update the server info. I'm going to make assumptions based "
+                      "on the last good update I was able to run (I track such things). But if "
+                      "you used a method other than myself to update (or this is a first run), "
+                      "we may waste some resources updateing to a version you already have. "
+                      "Won't hurt nothin'.")
+                print()
+                
+        response = requests.get(configobj.mainconfig.embygithubapi)
+        updatejson = json.loads(response.text)
+        # Here we search the github API response for the most recent version of beta or stable
+        # depending on what was chosen above.
+        for i, entry in enumerate(updatejson):
+            if configobj.mainconfig.releasetype == 'Beta':
+
+                if entry["prerelease"] is True:
+                    configobj.onlineversion = entry["tag_name"]
+                    return configobj
+                
+            elif configobj.mainconfig.releasetype == 'Stable':
+
+                if entry["prerelease"] is False:
+                    configobj.onlineversion = entry["tag_name"]
+                    return configobj
+
+            else:
+                print(f"Couldn't determine release requested, value is {configobj.mainconfig.releasetype}")
+                configobj.onlineversion = None
+                return configobj
+
+    except requests.exceptions.RequestException:
+        exceptrace.execpt_trace("*** EmbyUpdate: Couldn't get git version from GitHub. "
+                                "We will not be able update this script for now!", sys.exc_info())
+        configobj.onlineversion = None
+        return configobj

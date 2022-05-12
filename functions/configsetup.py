@@ -189,7 +189,7 @@ def config_setup():
         print("Server check disabled, skipping...")
         print()
 
-    config: db_obj.ConfigObj = db_obj.ConfigObj()
+    configobj: db_obj.ConfigObj = db_obj.ConfigObj()
     # Next user will choose their distro
 
     print("[1] Debian X64")
@@ -204,30 +204,30 @@ def config_setup():
 
     while True:
         distro_choice = input(f"Choose your distro by number or C to cancel update. "
-                              f"Current distro is ({config.mainconfig.distro}): [?] ")
+                              f"Current distro is ({configobj.mainconfig.distro}): [?] ")
         if str(distro_choice) == "1":
-            config.mainconfig.distro = "Debian X64"
+            configobj.mainconfig.distro = "Debian X64"
             break
         elif str(distro_choice) == "2":
-            config.mainconfig.distro = "Debian ARM"
+            configobj.mainconfig.distro = "Debian ARM"
             break
         elif str(distro_choice) == "3":
-            config.mainconfig.distro = "Arch"
+            configobj.mainconfig.distro = "Arch"
             break
         elif str(distro_choice) == "4":
-            config.mainconfig.distro = "CentOS"
+            configobj.mainconfig.distro = "CentOS"
             break
         elif str(distro_choice) == "5":
-            config.mainconfig.distro = "Fedora X64"
+            configobj.mainconfig.distro = "Fedora X64"
             break
         elif str(distro_choice) == "6":
-            config.mainconfig.distro = "Fedora ARM"
+            configobj.mainconfig.distro = "Fedora ARM"
             break
         elif str(distro_choice) == "7":
-            config.mainconfig.distro = "OpenSUSE X64"
+            configobj.mainconfig.distro = "OpenSUSE X64"
             break
         elif str(distro_choice) == "8":
-            config.mainconfig.distro = "OpenSUSE ARM"
+            configobj.mainconfig.distro = "OpenSUSE ARM"
             break
         elif str(distro_choice.casefold()) == "c":
             print("")
@@ -240,20 +240,20 @@ def config_setup():
             print("")
 
     print("")
-    print(config.mainconfig.distro + " Chosen")
+    print(configobj.mainconfig.distro + " Chosen")
     print("")
 
     # Now user chooses beta or Stable releases
 
     while True:
         choose_beta = input("Do you want to install the beta version of Emby Server? "
-                            f"Current release setting is ({config.mainconfig.releasetype}): [y/N] ")
+                            f"Current release setting is ({configobj.mainconfig.releasetype}): [y/N] ")
         if choose_beta.casefold() == "y":
-            config.mainconfig.releasetype = "Beta"
+            configobj.mainconfig.releasetype = "Beta"
             break
 
         if choose_beta in ("n", "N", ""):
-            config.mainconfig.releasetype = "Stable"
+            configobj.mainconfig.releasetype = "Stable"
             break
 
         print("")
@@ -261,22 +261,22 @@ def config_setup():
         print("")
 
     print("")
-    print(config.mainconfig.releasetype + " version of Emby has been chosen for install.")
+    print(configobj.mainconfig.releasetype + " version of Emby has been chosen for install.")
     print("")
 
     # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
     while True:
         servstop = input("Do we need to manually stop the server to install? *RARELY NEEDED* "
-                         f"Current setting is ({config.mainconfig.stopserver}): [y/N] ")
+                         f"Current setting is ({configobj.mainconfig.stopserver}): [y/N] ")
         if servstop.casefold() == "y":
             servstopchoice = "Server will be manually stopped on install."
-            config.mainconfig.stopserver = True
+            configobj.mainconfig.stopserver = True
             break
 
         if servstop in ("n", "N", ""):
             servstopchoice = "Server will NOT be manually stopped on install."
-            config.mainconfig.stopserver = False
+            configobj.mainconfig.stopserver = False
             break
 
         print("")
@@ -290,15 +290,15 @@ def config_setup():
     # User chooses if they wish to start the server again after updates. Not normally needed.
     while True:
         servstart = input("Do we need to manually start the server after install? *RARELY NEEDED* "
-                f"Current setting is ({config.mainconfig.startserver}): [y/N] ")
+                f"Current setting is ({configobj.mainconfig.startserver}): [y/N] ")
         if servstart.casefold() == "y":
             server_start_choice = "Server will be manually started after install."
-            config.mainconfig.startserver = True
+            configobj.mainconfig.startserver = True
             break
 
         if servstart in ("n", "N", ""):
             server_start_choice = "Server will NOT be manually started after install."
-            config.mainconfig.startserver = False
+            configobj.mainconfig.startserver = False
             break
 
         print("")
@@ -312,16 +312,16 @@ def config_setup():
     # User chooses if they wish to autoupdate the Update app (this program)
     while True:
         script_update = input("Keep EmbyUpdate (this script) up to date with latest version? "
-            f"Current setting is ({config.selfupdate.runupdate}): [Y/n] ")
+            f"Current setting is ({configobj.selfupdate.runupdate}): [Y/n] ")
 
         if script_update in ("y", "Y", ""):
             script_update_choice = "Script (EmbyUpdate) will be automatically updated!"
-            config.selfupdate.runupdate = True
+            configobj.selfupdate.runupdate = True
             break
 
         if script_update.casefold() == "n":
             script_update_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
-            config.selfupdate.runupdate = False
+            configobj.selfupdate.runupdate = False
             break
 
         print("")
@@ -336,16 +336,16 @@ def config_setup():
     while True:
 
         script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? "
-            f"Current release setting is {config.selfupdate.releasetype}: [y/N] ")
+            f"Current release setting is {configobj.selfupdate.releasetype}: [y/N] ")
 
         if script_beta_choice.casefold() == "y":
             self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
-            config.selfupdate.releasetype = "Beta"
+            configobj.selfupdate.releasetype = "Beta"
             break
 
         if script_beta_choice in ("n", "N", ""):
             self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated to Stable!"
-            config.selfupdate.releasetype = "Stable"
+            configobj.selfupdate.releasetype = "Stable"
             break
 
         print("")
@@ -357,12 +357,12 @@ def config_setup():
     print("")
 
     print("Choices to write to config file...")
-    print(f"Linux distro version to update: {config.mainconfig.distro}")
-    print(f"The chosen Emby Server release version is: {config.mainconfig.releasetype}")
-    print(f"Server set to be manually stopped: {config.mainconfig.stopserver}")
-    print(f"Server set to be manually started: {config.mainconfig.startserver}")
-    print(f"EmbyUpdate app set to autoupdate: {config.selfupdate.runupdate}")
-    print(f"EmbyUpdate app set to update to release: {config.selfupdate.releasetype}")
+    print(f"Linux distro version to update: {configobj.mainconfig.distro}")
+    print(f"The chosen Emby Server release version is: {configobj.mainconfig.releasetype}")
+    print(f"Server set to be manually stopped: {configobj.mainconfig.stopserver}")
+    print(f"Server set to be manually started: {configobj.mainconfig.startserver}")
+    print(f"EmbyUpdate app set to autoupdate: {configobj.selfupdate.runupdate}")
+    print(f"EmbyUpdate app set to update to release: {configobj.selfupdate.releasetype}")
     print("")
 
     while True:
@@ -377,8 +377,9 @@ def config_setup():
         elif confirm == "CONFIRM":
             # Now we write the config to the database
             try:
-                config.mainconfig.update_db()
-                config.selfupdate.update_db()
+                configobj.mainconfig.update_db()
+                configobj.selfupdate.update_db()
+                serverinfo.update_db()
                 print("")
                 print("Config written to database, install continuing!")
                 print("")

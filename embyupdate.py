@@ -18,7 +18,7 @@ import os.path
 import sys
 from genericpath import exists
 import requests
-from functions import pythonversion, config, arguments, configsetup, selfupdate, timestamp
+from functions import pythonversion, config, arguments, configsetup, selfupdate, timestamp, api
 from db import createdb, dbobjects
 
 # pylint: disable=C0103
@@ -72,119 +72,7 @@ configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
 if configobj.selfupdate.runupdate is True:
     selfupdate.self_update()
         
-
-
-
-# The github API of releases for Emby Media Browser. This includes beta and production releases
-URL = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
-
-# Now we're just going to see what the latest version is! If we get any funky response we'll exit
-# the script.
-try:
-    response = requests.get(URL)
-    updatejson = json.loads(response.text)
-    # Here we search the github API response for the most recent version of beta or stable
-    # depending on what was chosen above.
-    for i, entry in enumerate(updatejson):
-        if config.emby_release == 'Beta':
-
-            if entry["prerelease"] is True:
-                onlineversion = entry["tag_name"]
-                break
-        elif config.emby_release == 'Stable':
-
-            if entry["prerelease"] is False:
-                onlineversion = entry["tag_name"]
-                break
-
-        else:
-            print("Couldn't determine release requested, value is " + config.emby_release)
-
-except Exception as e:
-    print(timestamp.time_stamp() + "EmbyUpdate: We didn't get an expected response from the github "
-          "api, script  is exiting!")
-    print(timestamp.time_stamp() + "EmbyUpdate: Here's the error we got -- " + repr(e))
-    print(config.emby_release)
-    sys.exit()
-
-####################################################################################################
-# This block is just setting up the variables for your selected distro. These can be updated as
-# needed.
-####################################################################################################
-
-# Debian/Ubuntu/Mint amd64 *************
-if config.distro == "Debian X64":
-    downloadurl = "https://github.com/MediaBrowser/Emby.Releases/releases/download/" + \
-    onlineversion + "/emby-server-deb_" + onlineversion + "_amd64.deb"
-    installfile = "dpkg -i -E emby-server-deb_" + onlineversion + "_amd64.deb"
-    updatefile = "emby-server-deb_" + onlineversion + "_amd64.deb"
-# ***************************************
-
-# Debian/Ubuntu/Mint armhf *************
-if config.distro == "Debian ARM":
-    downloadurl = "https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
-                  "/emby-server-deb_" + onlineversion + "_armhf.deb"
-    installfile = "dpkg -i emby-server-deb_" + onlineversion + "_armhf.deb"
-    updatefile = "emby-server-deb_" + onlineversion + "_armhf.deb"
-# ***************************************
-
-# Arch Linux ***************************
-if config.distro == "Arch":
-    downloadurl = "notused"
-    installfile = "pacman -S emby-server"
-    updatefile = "notused"
-# ***************************************
-
-# CentOS X64 ***************************
-# In Cent I think yum will handle the stop/start of the server, but change below if needed
-if config.distro == "CentOS":
-    downloadurl = "yum --y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
-                  "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
-    installfile = "notused"
-    updatefile = "notused"
-# ****************************************
-
-# Fedora X64 ****************************
-# Pretty sure dnf will stop/start the server, but change below if needed
-if config.distro == "Fedora X64":
-    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
-                  "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
-    installfile = "notused"
-    updatefile = "notused"
-# ***************************************
-
-# Fedora Armv7hl ***********************
-# Pretty sure dnf will stop/start the server, but change below if needed
-if config.distro == "Fedora ARM":
-    downloadurl = "dnf -y install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
-                  "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
-    installfile = "notused"
-    updatefile = "notused"
-# ***************************************
-
-# OpenSUSE X64 *************************
-# Pretty sure zypper will stop/start the server, but change below as needed
-if config.distro == "OpenSUSE X64":
-    downloadurl = "zypper install https://github.com/MediaBrowser/Emby.Releases/releases/download/" + onlineversion + \
-                  "/emby-server-rpm_" + onlineversion + "_x86_64.rpm"
-    installfile = "notused"
-    updatefile = "notused"
-# ***************************************
-
-# OpenSUSE Armv7hl *********************
-# Pretty sure zypper will stop/start the server, but change below as needed
-if config.distro == "OpenSUSE ARM":
-    downloadurl = "zypper install -y https://github.com/MediaBrowser/Emby.Releases/releases/download/" \
-                  + onlineversion + "/emby-server-rpm_" + onlineversion + "_armv7hl.rpm"
-    installfile = "notused"
-    updatefile = "notused"
-# **************************************
-
-###################################################################################################
-# End distro setup block. End of user configurable sections. Don't change anything below this line. #
-###################################################################################################
-
-# Now were going to pull the installed version from the config file
+configobj = api.get_main_online_version(configobj)
 
 
 # Ok, we've got all the info we need. Now we'll test if we even need to update or not.

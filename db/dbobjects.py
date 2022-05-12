@@ -34,7 +34,6 @@ class MainConfig:
     releasetype: str = 'Stable'
     dateupdated: str = None
     embygithubapi: str = "https://api.github.com/repos/mediabrowser/Emby.releases/releases"
-    downloadurl: str = None
 
     def update_db(self):
         """
@@ -175,10 +174,24 @@ class ServerInfo:
 class ConfigObj:
     mainconfig: MainConfig = MainConfig()
     selfupdate: SelfUpdate = SelfUpdate()
+    serverinfo: ServerInfo = ServerInfo()
+    onlineversion: str = None
     
     def get_config(self):
+        """
+        The get_config function pulls the configuration from the database and returns it as a dataclass object.
+        
+        
+        Args:
+            self: Reference the class object itself
+        
+        Returns:
+            The config dataclass object
+        """
+        
         self.mainconfig.pull_from_db()
         self.selfupdate.pull_from_db()
+        self.serverinfo.pull_from_db()
         
         return self
 
