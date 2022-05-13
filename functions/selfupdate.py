@@ -1,5 +1,7 @@
-# This Python file uses the following encoding: utf-8
-# This program is used can called by the main program to update the app itself if needed
+"""
+This module is used when a self-update of the script is needed
+"""
+
 from sqlite3 import Error
 import sys
 import os.path

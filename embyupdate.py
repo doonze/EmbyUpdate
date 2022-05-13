@@ -1,3 +1,6 @@
+"""
+This is the "main" program for embyupdate. It is the only file that can be ran on it's own.
+"""
 #!/usr/bin/env python3
 # This Python file uses the following encoding: utf-8
 # EmbyUpdate
@@ -71,14 +74,14 @@ configobj.selfupdate.version = VERSIONNUM
 # Now well try and update the app if the user chose that option
 if configobj.selfupdate.runupdate is True:
     selfupdate.self_update(configobj)
-        
+
 configobj = api.get_main_online_version(configobj)
 
 
 # Ok, we've got all the info we need. Now we'll test if we even need to update or not
 
-update_needed = updatecheck.check_for_update(configobj) # pylint: disable=E1111
+update_needed = updatecheck.check_for_update(
+    configobj)  # pylint: disable=E1111
 
 if update_needed:
     install.update_emby(configobj)
-    

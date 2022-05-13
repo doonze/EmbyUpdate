@@ -1,6 +1,10 @@
 """
 module for getting info from api's
+
+Currently for the Emby server running on the system, the GitHub for this app, and the Emby
+GitHub.
 """
+
 import sys
 import json
 import requests

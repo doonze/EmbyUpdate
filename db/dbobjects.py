@@ -1,6 +1,8 @@
 """
-dbobjects
+This module is a collection of dataclasses that reflect the tables in the database.
+All database functions happen within these classes.
 """
+
 from contextlib import closing
 from dataclasses import dataclass
 from datetime import date

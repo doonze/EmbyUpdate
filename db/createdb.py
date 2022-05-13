@@ -1,6 +1,7 @@
 """
-Creates DB tables
+Creates DB tables and does initial data loads
 """
+
 import sys
 from contextlib import closing
 from sqlite3 import Error
