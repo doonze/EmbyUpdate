@@ -67,11 +67,42 @@ class MainConfig:
 @dataclass
 class MainUpdateHistory():
 
-    id: int
-    date: date
-    version: str
-    success: bool
-    errorid: int
+    id: int = None
+    date: date = None
+    version: str = None
+    success: bool = None
+    errorid: int = None
+    
+    def insert_to_db(self):
+        """
+        The insert_to_db function inserts a new row into the DBVersion table with the version number.
+        
+        
+        Args:
+            self: Access the variables in the class
+        """
+        
+        sql = f"""INSERT into MainUpdateHistory (date, version, success, errorid)
+                  VALUES({self.date, self.version, self.success, self.errorid})"""
+        
+        conn = db.db_conn()
+        with conn:
+            with closing(conn.cursor()) as cur:
+                cur = conn.cursor()
+                cur.execute(sql)
+        
+
+    def pull_from_db(self):
+        """
+        Pulls object table from DB
+        """
+        db.db_return_class_object(db.db_conn(), 'MainUpdateHistory', 'id', '(SELECT MAX(ID)  FROM TABLE)', self)
+
+    def print_me(self):
+        """
+        Prints object to output
+        """
+        print(self)
 
 
 @dataclass
