@@ -1,8 +1,5 @@
 """
 module for getting info from api's
-
-Returns:
-    object: config object updated from api
 """
 import sys
 import json
@@ -54,9 +51,6 @@ def get_self_online_version() -> db_obj.SelfUpdate:
 
     Returns:
         The version of the current script from github
-
-    Doc Author:
-        Trelent
     """
 
     try:
@@ -123,6 +117,7 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
         # Here we search the github API response for the most recent version of beta or stable
         # depending on what was chosen above.
         for i, entry in enumerate(updatejson):
+            i = i
             if configobj.mainconfig.releasetype == 'Beta':
 
                 if entry["prerelease"] is True:

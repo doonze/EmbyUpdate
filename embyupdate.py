@@ -13,17 +13,12 @@
 # Should work with both python 2.7 and all flavors of 3.                                      #
 ###############################################################################################
 
-import json
 import os.path
-import subprocess
 import sys
 from genericpath import exists
-import time
-import requests
 from functions import (pythonversion, config, arguments, configsetup, selfupdate,
-                       timestamp, api, updatecheck, install)
+                       api, updatecheck, install)
 from db import createdb, dbobjects
-import functions
 
 # pylint: disable=C0103
 
