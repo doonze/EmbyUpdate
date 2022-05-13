@@ -134,7 +134,7 @@ def create_db(version_num):
                 "date"	    TEXT,
                 "version"	TEXT,
                 "success"	INTEGER NOT NULL,
-                "errorid"	INTEGER,
+                "errorid"	TEXT,
                 PRIMARY KEY("id" AUTOINCREMENT)
                 );
                 """
