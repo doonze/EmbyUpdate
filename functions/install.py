@@ -2,11 +2,13 @@
 The main module to update and install Emby
 """
 
+import os
 from sqlite3 import Error
 import subprocess
 import sys
 import time
 import requests
+from genericpath import exists
 import db.dbobjects as db
 from functions import exceptrace, timestamp
 
@@ -43,9 +45,10 @@ def update_emby(configobj: db.ConfigObj):
 
         # Here we download the package to install if used
         if "notused" not in distroconfig.downloadurl:
-            print("Starting Package download...")
-            download = requests.get(distroconfig.downloadurl)
-            with open(distroconfig.installfile, 'wb') as file:
+            print("Starting Package download... Please wait, this can take several minutes.")
+            download = requests.get(distroconfig.downloadurl.format(
+                configobj.onlineversion, distroconfig.installfile.format(configobj.onlineversion)))
+            with open(distroconfig.installfile.format(configobj.onlineversion), 'wb') as file:
                 file.write(download.content)
             print("Package downloaded!")
 
@@ -53,7 +56,8 @@ def update_emby(configobj: db.ConfigObj):
         if "notused" not in distroconfig.installfile:
             print("Installing/Updating Emby server....")
             installreturn = subprocess.call(
-                distroconfig.installfile, shell=True)
+                distroconfig.installcommand.format(
+                    distroconfig.installfile.format(configobj.onlineversion)), shell=True)
             if installreturn > 0:
                 print("Install/Update failed! Exiting!")
                 sys.exit()
@@ -62,14 +66,15 @@ def update_emby(configobj: db.ConfigObj):
         # And to keep things nice and clean, we remove the downloaded file once installed if needed
         if "notused" not in distroconfig.installfile:
             print("Removing install file...")
-            subprocess.call("rm -f " + distroconfig.installfile, shell=True)
+            if exists(distroconfig.installfile.format(configobj.onlineversion)):
+                os.remove(distroconfig.installfile.format(configobj.onlineversion))
+            subprocess.call("rm -f " + distroconfig.installfile.format(configobj.onlineversion), shell=True)
             print("File removed!")
 
         # This will restart the server if using systemd if set to True above
         if configobj.mainconfig.stopserver:
             print("Restarting Emby server after update...")
-            startreturn = subprocess.call(
-                "systemctl start emby-server", shell=True)
+            startreturn = subprocess.call("systemctl start emby-server", shell=True)
             if startreturn > 0:
                 print(
                     "Server start failed. Non-critical to update but server may not be running. Investigate.")
@@ -77,6 +82,10 @@ def update_emby(configobj: db.ConfigObj):
 
         # Lastly we write the newly installed version into the config file
         try:
+            configobj.mainconfig.version = configobj.onlineversion
+            configobj.mainconfig.dateupdated = timestamp.time_stamp()
+            db.MainUpdateHistory(date=timestamp.time_stamp(), version=configobj.onlineversion,
+                                 success=1, errorid="No Errors").insert_to_db()
             configobj.mainconfig.update_db()
 
             print(f"{timestamp.time_stamp()} EmbyUpdate: Updated to Emby version {configobj.mainconfig.version}."
