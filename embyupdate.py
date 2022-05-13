@@ -1,9 +1,8 @@
-"""
-This is the "main" program for embyupdate. It is the only file that can be ran on it's own.
-"""
 #!/usr/bin/env python3
 # This Python file uses the following encoding: utf-8
-# EmbyUpdate
+"""
+EmbyUpdate: The main file and only executable script of the EmbyUpdate package
+
 
 ###############################################################################################
 # This script can be used to to keep Emby servers for linux automatically up to date.         #
@@ -13,8 +12,20 @@ This is the "main" program for embyupdate. It is the only file that can be ran o
 # has logic that can stop and start the server if needed. If you don't have systemd then      #
 # if you want the server stopped and started by the script you'll need to modify the          #
 # commands as needed.                                                                         #
-# Should work with both python 2.7 and all flavors of 3.                                      #
+# Must use python 3.6 +. 3.7 + recommended as dataclasses are used.                           #
 ###############################################################################################
+"""
+
+__version__ = "v4.0"
+__author__ = "Justin Hopper"
+__email__ = "doonze@gmail.com"
+__maintainer__ = "Justin Hopper"
+__copyright__ = "Copyright 2022, EmbyUpdate"
+__license__ = "GNU3"
+__status__ = "Beta"
+__credits__ = [""]
+
+# ------------------------------------------------------------------------------------------
 
 import os.path
 import sys
@@ -23,65 +34,72 @@ from functions import (pythonversion, config, arguments, configsetup, selfupdate
                        api, updatecheck, install)
 from db import createdb, dbobjects
 
-# pylint: disable=C0103
+def main():
+    """
+    The main function is the entry point for the program. It is called when embyupdate starts up 
+    and checks to see if there are any updates available. If there are, it will download them
+    and install them.
+    """
+    
+    # pylint: disable=C0103
 
-# Sets the version # for the command line -v/--version response
-VERSIONNUM = "v4.0 - Beta"
+    # Sets the version # for the command line -v/--version response
+    VERSIONNUM = f"{__version__} - {__status__}"
 
-# Setting default init values
-returncode = None
+    # Checks for python version, exit if not greater than 3.6
+    pythonversion.python_version_check()
 
-# Checks for python version, exit if not greater than 3.6
-pythonversion.python_version_check()
+    # Checks for command line arguments
 
-# Checks for command line arguments
+    args = arguments.read_args(VERSIONNUM)
 
-args = arguments.read_args(VERSIONNUM)
+    # Creates the default config object
+    configfix = config.Config()
 
-# Creates the default config object
-configfix = config.Config()
+    # Fixes pre version 4.0 config files
+    configfix.config_fix()
 
-# Fixes pre version 4.0 config files
-configfix.config_fix()
+    # First we're going to force the working path to be where the script lives
+    os.chdir(sys.path[0])
 
-# First we're going to force the working path to be where the script lives
-os.chdir(sys.path[0])
+    # This will test to see if the DB exist.If it doesn't it will launch the config setup process
 
-# This will test to see if the DB exist.If it doesn't it will launch the config setup process
+    if not exists('./db/embyupdate.db'):
 
-if not exists('./db/embyupdate.db'):
+        print()
+        print("Database does NOT exist, creating database...")
+        createdb.create_db(VERSIONNUM)
+        print("Database has been created.")
+        print()
+        print("Starting config setup...")
+        print()
+        configsetup.config_setup()
 
-    print()
-    print("Database does NOT exist, creating database...")
-    createdb.create_db(VERSIONNUM)
-    print("Database has been created.")
-    print()
-    print("Starting config setup...")
-    print()
-    configsetup.config_setup()
+    # Here we call configupdate to setup or update the config file if command line option -c was invoked
+    if args.config is True:
+        print("")
+        print("Config update started....")
+        print("")
+        configsetup.config_setup()
 
-# Here we call configupdate to setup or update the config file if command line option -c was invoked
-if args.config is True:
-    print("")
-    print("Config update started....")
-    print("")
-    configsetup.config_setup()
+    # We'll get the config from the DB
+    configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
+    configobj.selfupdate.version = VERSIONNUM
 
-# We'll get the config from the DB
-configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
-configobj.selfupdate.version = VERSIONNUM
+    # Now well try and update the app if the user chose that option
+    if configobj.selfupdate.runupdate is True:
+        selfupdate.self_update(configobj)
 
-# Now well try and update the app if the user chose that option
-if configobj.selfupdate.runupdate is True:
-    selfupdate.self_update(configobj)
-
-configobj = api.get_main_online_version(configobj)
+    configobj = api.get_main_online_version(configobj)
 
 
-# Ok, we've got all the info we need. Now we'll test if we even need to update or not
+    # Ok, we've got all the info we need. Now we'll test if we even need to update or not
 
-update_needed = updatecheck.check_for_update(
-    configobj)  # pylint: disable=E1111
+    update_needed = updatecheck.check_for_update(
+        configobj)  # pylint: disable=E1111
 
-if update_needed:
-    install.update_emby(configobj)
+    if update_needed:
+        install.update_emby(configobj)
+        
+if __name__ == "__main__":
+    main()
