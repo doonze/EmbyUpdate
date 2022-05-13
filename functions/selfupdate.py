@@ -6,6 +6,7 @@ from sqlite3 import Error
 import sys
 import os.path
 import zipfile
+from genericpath import exists
 import requests
 from functions import api, timestamp
 import db.dbobjects as db
@@ -30,7 +31,7 @@ def self_update(configobj: db.ConfigObj):
     # exit the script.
 
     try:
-        # Download the latest version for the requested release        
+        # Download the latest version for the requested release
         selfupdate = api.get_self_online_version()
         selfupdate.version = configobj.selfupdate.version
 
@@ -80,7 +81,15 @@ def self_update(configobj: db.ConfigObj):
                 unzip.extract(zip_info, '')
 
         # And to keep things nice and clean, we remove the downloaded file once unzipped
-        os.remove(selfupdate.zipfile)
+        # then do some cleanup if updating from an older pre 4.0 version
+        if exists(selfupdate.zipfile):
+            os.remove(selfupdate.zipfile)
+
+        if exists('configupdate.py'):
+            os.remove('configupdate.py')
+
+        if exists('selfupdate.py'):
+            os.remove('selfupdate.py')
 
         # now we'll set the app as executable
         state = os.stat("embyupdate.py")
@@ -93,7 +102,8 @@ def self_update(configobj: db.ConfigObj):
               "EmbyUpdate(self): Here's the error we got -- " + str(exception))
         sys.exit()
 
-    # Lastly we write the newly installed version into the config file
+    # Lastly we write the newly installed version into the config file and restart the
+    # program
     try:
         selfupdate.version = selfupdate.onlineversion
         selfupdate.onlineversion = None
@@ -101,12 +111,14 @@ def self_update(configobj: db.ConfigObj):
         selfupdate.update_db()
         print('')
         print(timestamp.time_stamp() + "EmbyUpdate(self): Updating to EmbyUpdate app version "
-              + selfupdate.version + " finished! Script exiting!")
+              + selfupdate.version + " finished! Script restarting to run with new update!")
         print('')
         print(
             "*****************************************************************************")
         print("\n")
-        return selfupdate
+
+        # Here we restart the program
+        os.execv(sys.argv[0], sys.argv)
 
     except Error as exception:
         print(timestamp.time_stamp() +
