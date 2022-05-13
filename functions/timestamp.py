@@ -14,6 +14,6 @@ def time_stamp(print_format: bool = True):
     time_now = time.strftime("%x %X", time.localtime())
 
     if print_format:
-        return "<" + time_now + "> "
+        return time_now
 
     return time_now
