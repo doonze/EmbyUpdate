@@ -23,7 +23,7 @@ from db import createdb, dbobjects
 # pylint: disable=C0103
 
 # Sets the version # for the command line -v/--version response
-VERSIONNUM = "4.0 Beta"
+VERSIONNUM = "v4.0 - Beta"
 
 # Setting default init values
 returncode = None
@@ -50,7 +50,7 @@ if not exists('./db/embyupdate.db'):
 
     print()
     print("Database does NOT exist, creating database...")
-    createdb.create_db()
+    createdb.create_db(VERSIONNUM)
     print("Database has been created.")
     print()
     print("Starting config setup...")
@@ -66,10 +66,11 @@ if args.config is True:
 
 # We'll get the config from the DB
 configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
+configobj.selfupdate.version = VERSIONNUM
 
 # Now well try and update the app if the user chose that option
 if configobj.selfupdate.runupdate is True:
-    selfupdate.self_update()
+    selfupdate.self_update(configobj)
         
 configobj = api.get_main_online_version(configobj)
 

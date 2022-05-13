@@ -1,11 +1,11 @@
 """
 dbobjects
 """
+from contextlib import closing
 from dataclasses import dataclass
 from datetime import date
 from pprint import pp
 import db.db_functions as db
-# import embyupdate
 
 
 @dataclass
@@ -77,7 +77,7 @@ class SelfUpdate():
     id: int = 1
     dateupdated: str = None
     runupdate: bool = True
-    version: str = "test"
+    version: str = None
     onlineversion: str = None
     releasetype: str = 'Stable'
     selfgithubapi: str = 'https://api.github.com/repos/doonze/Embyupdate/releases'
@@ -116,16 +116,41 @@ class SelfUpdateHistory():
 
 
 @dataclass
-class DbUpdateHistory():
-    version: str
-    date: date
-    notes: str
-
-
-@dataclass
 class DBversion():
-    version: str
-    dateupdated: date
+    id: str = None
+    version: str = None
+    dateupdated: date = None
+    notes: str = None
+
+    def insert_to_db(self):
+        """
+        The insert_to_db function inserts a new row into the DBVersion table with the version number.
+        
+        
+        Args:
+            self: Access the variables in the class
+        """
+        
+        sql = f"INSERT into DBversion (version) VALUES({self.version})"
+        
+        conn = db.db_conn()
+        with conn:
+            with closing(conn.cursor()) as cur:
+                cur = conn.cursor()
+                cur.execute(sql)
+        
+
+    def pull_from_db(self):
+        """
+        Pulls object table from DB
+        """
+        db.db_return_class_object(db.db_conn(), 'DBversion', 'id', '(SELECT MAX(ID)  FROM TABLE)', self)
+
+    def print_me(self):
+        """
+        Prints object to output
+        """
+        print(self)
 
 
 @dataclass
@@ -140,7 +165,7 @@ class Errors():
 class ServerInfo:
     id: int = 1
     enablecheck: bool = True
-    scheme: str = 'https://'
+    scheme: str = 'http://'
     address: str = 'localhost'
     port: str = '8096'
     portused: bool = True

@@ -63,13 +63,15 @@ def get_self_online_version() -> db_obj.SelfUpdate:
 
         # Here we search the github API response for the most recent version of beta or stable
         # depending on what was chosen by the user
-        for i, entry in enumerate(updatejson):
+        for entry in updatejson:
+            
             if selfupdate.releasetype == "Beta":
 
                 if entry["prerelease"] is True:
                     selfupdate.onlineversion = entry["tag_name"]
                     break
             else:
+                
                 if entry["prerelease"] is False:
                     selfupdate.onlineversion = entry["tag_name"]
                     break
@@ -116,25 +118,26 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
         updatejson = json.loads(response.text)
         # Here we search the github API response for the most recent version of beta or stable
         # depending on what was chosen above.
-        for i, entry in enumerate(updatejson):
-            i = i
+        for entry in updatejson:
+
             if configobj.mainconfig.releasetype == 'Beta':
 
                 if entry["prerelease"] is True:
                     configobj.onlineversion = entry["tag_name"]
-                    return configobj
+                    break
 
-            if configobj.mainconfig.releasetype == 'Stable':
+            elif configobj.mainconfig.releasetype == 'Stable':
 
                 if entry["prerelease"] is False:
                     configobj.onlineversion = entry["tag_name"]
-                    return configobj
+                    break
 
+            else:
+                print("Couldn't find release type requested in GigHub API result, value is "
+                    f"{configobj.mainconfig.releasetype}")
+                configobj.onlineversion = None
             
-            print("Couldn't determine release requested, value is "
-                  f"{configobj.mainconfig.releasetype}")
-            configobj.onlineversion = None
-            return configobj
+        return configobj
 
     except requests.exceptions.RequestException:
         exceptrace.execpt_trace("*** EmbyUpdate: Couldn't get git version from GitHub. "

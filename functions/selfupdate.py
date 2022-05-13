@@ -6,9 +6,10 @@ import os.path
 import zipfile
 import requests
 from functions import api, timestamp
+import db.dbobjects as db
 
 
-def self_update():
+def self_update(configobj: db.ConfigObj):
     """
     The self_update function is used to update the EmbyUpdate app. It does this by checking
     the latest version of the app online and comparing it to what is currently installed on
@@ -21,17 +22,15 @@ def self_update():
 
     Returns:
         The updated version of the embyupdate app
-
-    Doc Author:
-        Trelent
     """
 
     # Now we're just going to see what the latest version is! If we get any funky response we'll
     # exit the script.
 
     try:
-        # Download the latest version for the requested release
+        # Download the latest version for the requested release        
         selfupdate = api.get_self_online_version()
+        selfupdate.version = configobj.selfupdate.version
 
         # Build the zip file name
         selfupdate.zipfile = f"{selfupdate.onlineversion}.zip"
@@ -41,7 +40,7 @@ def self_update():
 
         # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
 
-        if str(selfupdate.onlineversion[1:]) == str(selfupdate.version):
+        if f"{selfupdate.onlineversion} - {selfupdate.releasetype}" == str(selfupdate.version):
 
             # If the latest online version matches the last installed version then we let you know
             # and exit
