@@ -108,13 +108,14 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
         if configobj.serverinfo.enablecheck:
             if configobj.serverinfo.version == "None":
                 print()
-                print("Running Emby server check is enabled, however, I was not able to "
-                      "reach the server. Have you changed the port or address of your "
-                      "Emby server? Is it down? If you feel this is incorrect rerun config "
-                      "setup and update the server info. I'm going to make assumptions based "
-                      "on the last good update I was able to run (I track such things). But if "
-                      "you used a method other than myself to update (or this is a first run), "
-                      "we may waste some resources updateing to a version you already have. "
+                print("If this is a run to install emby for the first time, ignore this message. \n\n" 
+                      "Running Emby server check is enabled, however, I was not able to \n"
+                      "reach the server. Have you changed the port or address of your \n"
+                      "Emby server? Is it down? If you feel this is incorrect rerun config \n"
+                      "setup and update the server info. I'm going to make assumptions based \n"
+                      "on the last good update I was able to run (I track such things). But if \n"
+                      "you used a method other than myself to update (or this is a first run), \n"
+                      "we may waste some resources updateing to a version you already have. \n"
                       "Won't hurt nothin'.")
                 print()
 
