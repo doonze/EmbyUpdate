@@ -47,7 +47,7 @@ def get_self_online_version() -> db_obj.SelfUpdate:
     """
     The get_self_version function is used to get the most recent version of this script from GitHub.
     It is called by the selfupdate function and returns a SelfUpdate object with two attributes:
-    selfgithubapi, which is the API link for all releases on GitHub, and version, which is 
+    selfgithubapi, which is the API link for all releases on GitHub, and version, which is
     the most recent release tag name.
 
     Args:
@@ -68,14 +68,14 @@ def get_self_online_version() -> db_obj.SelfUpdate:
         # Here we search the github API response for the most recent version of beta or stable
         # depending on what was chosen by the user
         for entry in updatejson:
-            
+
             if selfupdate.releasetype == "Beta":
 
                 if entry["prerelease"] is True:
                     selfupdate.onlineversion = entry["tag_name"]
                     break
             else:
-                
+
                 if entry["prerelease"] is False:
                     selfupdate.onlineversion = entry["tag_name"]
                     break
@@ -83,7 +83,7 @@ def get_self_online_version() -> db_obj.SelfUpdate:
         return selfupdate
 
     except requests.exceptions.RequestException:
-        exceptrace.execpt_trace("*** Selfupdate: Could get git version from GitHub. "
+        exceptrace.execpt_trace("*** Selfupdate: Couldn't get git version from GitHub. "
                                 "We will not be able update this script for now!", sys.exc_info())
         selfupdate.onlineversion = None
         return selfupdate
@@ -91,8 +91,8 @@ def get_self_online_version() -> db_obj.SelfUpdate:
 
 def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
     """
-    We first check the running server version and record that. We then pull the latest online version
-    from github to know if we need to update. 
+    We first check the running server version and record that. We then pull the latest online
+    version from github to know if we need to update.
 
     Args:
         configobj:db_obj.ConfigObj: Pass the configobj object
@@ -101,8 +101,8 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
         The online version of the script
     """
 
-    # Now we're just going to see what the latest version is! If we get any funky response we'll exit
-    # the script.
+    # Now we're just going to see what the latest version is! If we get any funky response we'll
+    # exit the script.
     try:
         configobj.serverinfo = get_running_version()
         if configobj.serverinfo.enablecheck:
@@ -138,9 +138,9 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
 
             else:
                 print("Couldn't find release type requested in GigHub API result, value is "
-                    f"{configobj.mainconfig.releasetype}")
+                      f"{configobj.mainconfig.releasetype}")
                 configobj.onlineversion = None
-            
+
         return configobj
 
     except requests.exceptions.RequestException:
