@@ -10,7 +10,6 @@ def python_version_check():
     program will exit.
 
     :return: The version of python you are running
-    :doc-author: Trelent
     """
     python_version = str(sys.version_info[0]) + "." + str(sys.version_info[1])
     if int(sys.version_info[0]) < 3:
