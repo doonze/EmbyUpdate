@@ -36,6 +36,7 @@ def get_running_version() -> db_obj.ServerInfo:
             updatejson = json.loads(response.text)
             if "Version" in updatejson:
                 serverinfo.version = updatejson['Version']
+                serverinfo.servername = updatejson['ServerName']
                 return serverinfo
 
         except requests.exceptions.RequestException:
@@ -108,7 +109,7 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
         if configobj.serverinfo.enablecheck:
             if configobj.serverinfo.version == "None":
                 print()
-                print("If this is a run to install emby for the first time, ignore this message. \n\n" 
+                print("If this is a run to install emby for the first time, ignore this message.\n"
                       "Running Emby server check is enabled, however, I was not able to \n"
                       "reach the server. Have you changed the port or address of your \n"
                       "Emby server? Is it down? If you feel this is incorrect rerun config \n"
