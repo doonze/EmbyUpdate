@@ -199,7 +199,7 @@ class Errors():
 @dataclass
 class ServerInfo:
     """
-    Class for interfacing with the SErverInfo table
+    Class for interfacing with the ServerInfo table
     """
     id: int = 1
     enablecheck: bool = True
