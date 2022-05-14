@@ -4,6 +4,9 @@ command line arguments
 import argparse
 import sys
 import db
+from db import createdb
+from db import dbobjects as db
+from db.editconfig import edit_config
 from functions.colors import Terminalcolors as c
 from functions.configsetup import config_setup
 
@@ -22,25 +25,45 @@ def read_args(version_num):
     """
 
     parser = argparse.ArgumentParser(
-        description="An updater for Emby Media Player", prog='EmbyUpdate')
-    parser.add_argument('-c', '--config', action='store_true',
-                        help='Runs the config updater', required=False)
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + version_num,
+        description="An updater for Emby Media Player",
+        prog='EmbyUpdate')
+    parser.add_argument('-c', '--config',
+                        action='store_true',
+                        help='Runs the config updater',
+                        required=False)
+    parser.add_argument('-v', '--version',
+                        action='version',
+                        version='%(prog)s ' + version_num,
                         help='Displays version number')
-    parser.add_argument('--db_rebuild', action='store_true',
-                        help='Rebuilds (Drops/Creates) the database. Resets to default. '
-                        'All data will be lost.')
-    parser.add_argument('-cd', '--config_display',
-                        help='Displays config options. Default: All', nargs='?', const='all')
+    parser.add_argument('--db_rebuild',
+                        action='store_true',
+                        help=f'Rebuilds (Drops/Creates) the database. {c.fg.lt_red}Resets to '
+                        f'default. All data will be lost.{c.end}')
+    parser.add_argument('-cd',
+                        dest='config_display',
+                        choices=('mainconfig', 'selfupdate', 'serverinfo', 'distroconfig',
+                                 'edit'),
+                        help=f'''Config Display: Used to display config settings. Use with "edit"
+                               to update configs. Can display or edit multiple configs at once. Examples: 
+                               "{c.fg.cyan}-cd mainconfig serverinfo{c.end}" would display both configs. 
+                               "{c.fg.cyan}-cd mainconfig serverinfo edit{c.end}" would allow you to edit both.
+                               Allowable values are {c.fg.green}['mainconfig', 'selfupdate', 'serverinfo', 'distroconfig',
+                                   'edit']{c.end}''',
+                        type=str,
+                        default=None,
+                        nargs="+",
+                        metavar="")
     args = parser.parse_args()
 
-    # Here we call configupdate to setup or update the config file if command line option -c was invoked
+    # Here we call configupdate to setup or update the config file if command line 
+    # option -c was invoked
     if args.config:
         print("")
         print("Config update started....")
         print("")
         config_setup()
 
+    # Here we rebuild the database
     if args.db_rebuild:
         while True:
             print()
@@ -51,7 +74,7 @@ def read_args(version_num):
             if response.casefold() == 'y':
                 print("Database is being dropped and rebuilt...")
                 print()
-                db.createdb.create_db(version_num)
+                createdb.create_db(version_num)
                 print("Database has been rebuilt. Starting config...")
                 print()
                 config_setup()
@@ -63,3 +86,38 @@ def read_args(version_num):
                 sys.exit()
 
             print(f"{response} was invalid input, please try again!")
+
+    # Here we display the config settings
+    display_config = args.config_display
+
+    if "mainconfig" in display_config:
+        mainconfig = db.MainConfig()
+        mainconfig.pull_from_db()
+        key_map = mainconfig.print_me()
+        if "edit" in display_config:
+            edit_config(key_map, mainconfig)
+
+    if "selfupdate" in display_config:
+        print()
+        print(f"{c.fg.yellow}SelfUpdate:{c.end}")
+        selfupdate = db.SelfUpdate()
+        selfupdate.pull_from_db()
+        key_map = selfupdate.print_me()
+        if "edit" in display_config:
+            edit_config(key_map, selfupdate)
+
+    if "serverinfo" in display_config:
+        print()
+        print(f"{c.fg.yellow}ServerInfo:{c.end}")
+        serverinfo = db.ServerInfo()
+        serverinfo.pull_from_db()
+        key_map = serverinfo.print_me()
+        if "edit" in display_config:
+            edit_config(key_map, serverinfo)
+
+    if "distroconfig" in display_config:
+        print()
+        print(f"{c.fg.yellow}DistroConfig:{c.end}")
+        distroconfig = db.DistroConfig()
+
+    sys.exit()
