@@ -246,7 +246,8 @@ class ConfigObj:
     
     def get_config(self):
         """
-        The get_config function pulls the configuration from the database and returns it as a dataclass object.
+        The get_config function pulls the configuration from the database tables MainConfig,
+        SelfUpdate, and ServerInfo then returns it as a dataclass object.
         
         
         Args:
