@@ -13,19 +13,7 @@ import db.db_functions as db
 @dataclass
 class MainConfig:
     """
-    Class for interfacing with the mainconfig table
-
-    Attributes:
-    id          : int = 1
-    configran   : bool = False
-    distro      : str = None
-    startserver : bool = False
-    stopserver  : bool = False
-    version     : str = 'First Run'
-    releasetype : str = 'Stable'
-    dateupdated : str = None
-    embygithubapi: str
-    downloadurl: str
+    Class for interfacing with the MainConfig table
     """
     id: int = 1
     configran: bool = False
@@ -66,7 +54,9 @@ class MainConfig:
 
 @dataclass
 class MainUpdateHistory():
-
+    """
+    Class for interfacing with the MainUpdateHistory table
+    """
     id: int = None
     date: date = None
     version: str = None
@@ -107,6 +97,9 @@ class MainUpdateHistory():
 
 @dataclass
 class SelfUpdate():
+    """
+    Class for interfacing with the SelfUpdate table
+    """
     id: int = 1
     dateupdated: str = None
     runupdate: bool = True
@@ -141,6 +134,9 @@ class SelfUpdate():
 
 @dataclass
 class SelfUpdateHistory():
+    """
+    Class for interfacing with the SelfUpdateHistory table
+    """
     id: int
     date: date
     version: str
@@ -150,6 +146,9 @@ class SelfUpdateHistory():
 
 @dataclass
 class DBversion():
+    """
+    Class for interfacing with the DBversion table
+    """
     id: str = None
     version: str = None
     dateupdated: date = None
@@ -188,6 +187,9 @@ class DBversion():
 
 @dataclass
 class Errors():
+    """
+    Class for interfacing with the Errors table
+    """
     id: int
     date: date
     message: str
@@ -196,6 +198,9 @@ class Errors():
 
 @dataclass
 class ServerInfo:
+    """
+    Class for interfacing with the SErverInfo table
+    """
     id: int = 1
     enablecheck: bool = True
     scheme: str = 'http://'
@@ -230,6 +235,10 @@ class ServerInfo:
 
 @dataclass
 class ConfigObj:
+    """
+    Class for interfacing with the ConfigObj object. This holds the Mainconfig,
+    SelfUpdate, and ServerInfo tables. As well as the temp field onlineversion.
+    """
     mainconfig: MainConfig = MainConfig()
     selfupdate: SelfUpdate = SelfUpdate()
     serverinfo: ServerInfo = ServerInfo()
@@ -256,6 +265,9 @@ class ConfigObj:
 
 @dataclass
 class DistroConfig:
+    """
+    Class for interfacing with the DistroConfig table
+    """
     distro: str = None
     downloadurl: str = None
     installcommand: str = None
@@ -280,6 +292,12 @@ class DistroConfig:
         Pulls object table from DB
         """
         db.db_return_class_object(db.db_conn(), 'DistroConfig', 'distro', what, self)
+        
+    def pull_distros(self):
+        """
+        pulls all distros from table and returns them
+        """
+        return db.db_select_values(db.db_conn(),'DistroConfig','distro')
 
     def print_me(self):
         """
