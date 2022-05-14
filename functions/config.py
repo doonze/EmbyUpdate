@@ -1,15 +1,21 @@
+"""
+legacy config reader, only used to convert to new database format
+"""
 import sys
 import configparser
-from os import remove, path
+from os import remove
 from genericpath import exists
 from db.createdb import create_db
-from db.dbobjects import MainConfig, SelfUpdate, ConfigObj
-from db.db_functions import *
-from functions.api import get_running_version
+from db.dbobjects import ConfigObj
+from functions import exceptrace
 
+# pylint: disable=broad-except
 
 class Config:
-
+    """
+    This class is now only used to convert from older versions of the config process to the new
+    database version
+    """
     def __init__(self):
         self.config_file = configparser.ConfigParser()
         self.distro = "None"
@@ -19,15 +25,26 @@ class Config:
         self.emby_release = "Stable"
         self.self_update = True
         self.self_version = "First Run"
-        self.self_release = "Beta"
+        self.self_release = "Stable"
 
-    def config_fix(self):
+    def config_fix(self, version_num):
         """ Convert to new DB config if needed (for versions before 4.0)."""
         try:
-            # We'll read the config file to find if it's a version that needs fixing, if so we'll copy the current
-            # settings into our configuration dictionary
+
+            if exists("config.ini"):
+                print()
+                print("I've detected an old style config file. I will now try to fix it if")
+                print("it's pre version 3.5, and then recreate your settings in the new")
+                print("database config.")
+            else:
+                return None
+
+            # We'll read the config file to find if it's a version that needs fixing, if so we'll
+            # copy the current settings into our configuration dictionary
             self.config_file.read("config.ini")
             if self.config_file.has_option('DISTRO', 'releaseversion'):
+                print()
+                print("Old style config found, trying to fix it")
                 self.distro = self.config_file['DISTRO']['installdistro']
                 self.emby_release = self.config_file['DISTRO']['releaseversion']
                 self.stop_server = self.config_file['SERVER']['stopserver']
@@ -35,103 +52,75 @@ class Config:
                 self.emby_version = self.config_file['SERVER']['embyversion']
                 self.self_update = self.config_file['EmbyUpdate']['autoupdate']
                 self.self_version = self.config_file['EmbyUpdate']['version']
+            else:
+                print()
+                print("Reading old style config so we can write it to the database.")
+                self.distro = self.config_file['DISTRO']['installdistro']
+                self.stop_server = self.config_file['SERVER'].getboolean(
+                    'stopserver')
+                self.start_server = self.config_file['SERVER'].getboolean(
+                    'startserver')
+                self.emby_version = self.config_file['SERVER']['embyversion']
+                self.emby_release = self.config_file['SERVER']['embyrelease']
+                self.self_update = self.config_file['EMBYUPDATE'].getboolean(
+                    'selfupdate')
+                self.self_version = self.config_file['EMBYUPDATE']['selfversion']
+                self.self_release = self.config_file['EMBYUPDATE']['selfrelease']
 
-                # Now that we have all the settings, we'll remove the config file
-                if path.isfile("config.ini"):
-                    remove("config.ini")
+            # Now we'll create the DB
+            if not exists('./db/embyupdate.db'):
+                print()
+                print("Trying to create Database...")
+                create_db(version_num)
 
-                # We'll also clean up the old configupdate.py file that's no longer used
-                if path.isfile("configupdate.py"):
-                    remove("configupdate.py")
+            # Next we'll put the old config data in our new dataclass style config
+            # and write the old config to the new database
+            print()
+            print("Converting settings...")
+            configobj = ConfigObj().get_config()
+            configobj.mainconfig.distro = self.distro
+            configobj.mainconfig.stopserver = self.stop_server
+            configobj.mainconfig.startserver = self.start_server
+            configobj.mainconfig.version = self.emby_version
+            configobj.mainconfig.releasetype = self.emby_release
+            configobj.selfupdate.runupdate = self.self_update
+            configobj.selfupdate.version = self.self_version
+            configobj.selfupdate.releasetype = self.self_release
+            print()
+            print("Settings converted... Writing to database.")
+            configobj.mainconfig.update_db()
+            configobj.selfupdate.update_db()
+            print()
+            print("Imported settings written to database")
 
-                # And now we'll recreate the new file
-                Config.create_config(self)
-                print("")
-                print("It was found you had a pre-version 4.0 config file, it's been deleted and recreated to "
-                      "conform to post 4.0 config file styles.")
-                print("")
+            # Now that we have all the settings converted, we'll remove the config file
+            if exists("config.ini"):
+                print()
+                print("config.ini removed. (no longer needed)")
+                remove("config.ini")
 
-        except Exception as ex:
-            print("EmbyUpdate: Couldn't read the Config file.")
-            print("EmbyUpdate: Here's the error we got -- " + str(ex) + " not found in config file!")
-            print("There appears to be a config file error, re-runing config update to fix!")
+            # We'll also clean up the old configupdate.py file that's no longer used
+            if exists("configupdate.py"):
+                print()
+                print("configupdate.py removed (no longer needed).")
+                remove("configupdate.py")
 
-    def write_config(self):
-        """
-        This function will write (update) the current Config class object to the database
+        except Exception:
+            exceptrace.execpt_trace("***config_fix: An error was encountered..",
+                                sys.exc_info())
+        print()
+        print("We were not able to finish the conversion to the new config system.")
+        print("Unfortunately, I cannot tell if you want Emby Stable or Beta, and it")
+        print("won't tell me what release type it is if I ask it. I don't want to")
+        print("overwrite your current server with the wrong version. This will break")
+        print("you if you run this script unattended automatically (cron or systemd) ")
+        print("and I'm sorry about that.")
+        print()
+        print("If you're seeing this, the best bet is to delete config.ini youself")
+        print("and then run 'embyupdate.py -c' to force a new run of the config process")
+        print("and just start fresh. Again sorry, if you raise an issue and give me the")
+        print("details on my github page, I'll fix it. But that doesn't help you now.")
+        print()
+        print("I'm exiting.... and very upset about it.")
+        sys.exit()
 
-        """
-        try:
-
-            mainconfig = MainConfig()
-            selfupdate = SelfUpdate()
-
-            # Main config 
-            mainconfig.distro = self.distro
-            mainconfig.stopserver = self.stop_server
-            mainconfig.startserver = self.start_server
-            mainconfig.version = self.emby_version
-            mainconfig.releasetype = self.emby_release
-
-            # Self update config            
-            selfupdate.runupdate = self.self_update
-            selfupdate.releasetype = self.self_release
-            selfupdate.version = self.self_version
-
-            result_main = db_update_class_in_table(db_conn, mainconfig, 'MainConfig', 'id', 1)
-            result_self = db_update_class_in_table(db_conn, selfupdate, 'SelfUpdate', 'id', 1)            
-
-        except Exception as e:
-            print("EmbyUpdate: Couldn't write to the config file.")
-            print("EmbyUpdate: Here's the error we got -- " + str(e))
-            sys.exit(1)
-
-    def create_config(self):
-        """
-         This function will create the config.ini file
-
-
-        """
-        print("create config, remove me")
-        try:
-
-            self.config_file['DISTRO'] = {'installdistro': self.distro}
-            self.config_file['SERVER'] = {'stopserver': self.stop_server,
-                                          'startserver': self.start_server,
-                                          'embyversion': self.emby_version,
-                                          'embyrelease': self.emby_release}
-            self.config_file['EMBYUPDATE'] = {'selfupdate': self.self_update,
-                                              'selfversion': self.self_version,
-                                              'selfrelease': self.self_release}
-
-            with open('config.ini', 'w') as configfile:
-                self.config_file.write(configfile)
-
-        except Exception as e:
-            print("EmbyUpdate: Couldn't create the config file!")
-            print("EmbyUpdate: Here's the error we got -- " + str(e))
-
-    def read_config(self):
-        """
-        Used to read the entire config file into the Config class object
-
-        """
-        try:
-
-            configobj = ConfigObj()
-            
-
-            # Now we're going to read the config from the database
-            configobj.mainconfig.pull_from_db()
-            configobj.selfupdate.pull_from_db()
-
-            # Here we pull the main config params.
-            
-
-            return configobj
-
-        except Exception as e:
-            print("EmbyUpdate: Couldn't write to the config file.")
-            print("EmbyUpdate: Here's the error we got -- " + str(e))
-
-    
