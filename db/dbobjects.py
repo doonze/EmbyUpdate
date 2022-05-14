@@ -6,8 +6,8 @@ All database functions happen within these classes.
 from contextlib import closing
 from dataclasses import dataclass
 from datetime import date
-from pprint import pp
 import db.db_functions as db
+from functions.colors import Terminalcolors as c
 
 # pylint: disable=invalid-name
 
@@ -51,7 +51,18 @@ class MainConfig:
         """
         Prints object to output
         """
-        pp(self, depth=1, indent=4)
+        print()
+        print(f"{c.fg.yellow}MainConfig:{c.end}")
+        dc_dict: dict = self.__dict__
+        if "id" in dc_dict.keys():
+            dc_dict.pop("id")
+        key_map = {}
+        print()
+        for i, key in enumerate(dc_dict, start=1):
+            key_map[str(i)] = key
+            print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{key :<16}{c.end}: "
+                  f"{c.fg.lt_cyan}{dc_dict[key]}{c.end}")
+        return key_map
 
 
 @dataclass
@@ -135,7 +146,18 @@ class SelfUpdate():
         """
         Prints object to output
         """
-        print(self, depth=1, indent=4)
+        print()
+        print(f"{c.fg.yellow}SelfUpdate:{c.end}")
+        dc_dict: dict = self.__dict__
+        if "id" in dc_dict.keys():
+            dc_dict.pop("id")
+        key_map = {}
+        print()
+        for i, key in enumerate(dc_dict, start=1):
+            key_map[i] = key
+            print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{key :<16}{c.end}: "
+                  f"{c.fg.lt_cyan}{dc_dict[key]}{c.end}")
+        return key_map
 
 
 @dataclass
@@ -241,7 +263,18 @@ class ServerInfo:
         """
         Prints object to output
         """
-        print(self)
+        print()
+        print(f"{c.fg.yellow}ServerInfo:{c.end}")
+        dc_dict: dict = self.__dict__
+        if "id" in dc_dict.keys():
+            dc_dict.pop("id")
+        key_map = {}
+        print()
+        for i, key in enumerate(dc_dict, start=1):
+            key_map[i] = key
+            print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{key :<16}{c.end}: "
+                  f"{c.fg.lt_cyan}{dc_dict[key]}{c.end}")
+        return key_map
 
 
 @dataclass
@@ -316,4 +349,12 @@ class DistroConfig:
         """
         Prints object to output
         """
-        pp(self, depth=1, indent=4)
+        dc_dict: dict = self.__dict__
+        dc_dict.pop("id")
+        key_map = {}
+        print()
+        for i, key in enumerate(dc_dict, start=1):
+            key_map[i] = key
+            print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{key :<16}{c.end}: "
+                  f"{c.fg.lt_cyan}{dc_dict[key]}{c.end}")
+        return key_map
