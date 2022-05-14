@@ -223,6 +223,9 @@ def create_db(version_num):
                 create_distros()
                 db_obj.DBversion(version=DBVERSION,
                                  notes="Initial DB creation").insert_to_db()
+                
+                print()
+                print(f"Database version {DBVERSION} has been created!")
 
     except Error:
         exceptrace.execpt_trace("***create_db: An error was encountered creating the DB",
