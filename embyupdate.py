@@ -31,8 +31,10 @@ import os.path
 import sys
 from genericpath import exists
 from functions import (pythonversion, config, arguments, configsetup, selfupdate,
-                       api, updatecheck, install)
+                       api, updatecheck, install, colors)
 from db import createdb, dbobjects
+
+c = colors.Terminalcolors()
 
 def main():
     """
@@ -49,10 +51,6 @@ def main():
     # Checks for python version, exit if not greater than 3.6
     pythonversion.python_version_check()
 
-    # Checks for command line arguments
-
-    args = arguments.read_args(VERSIONNUM)
-
     # Creates the default config object
     configfix = config.Config()
 
@@ -67,21 +65,20 @@ def main():
     if not exists('./db/embyupdate.db'):
 
         print()
-        print("Database does NOT exist, creating database...")
+        print(f"Database does {c.fg.red}NOT{c.end} exist, creating database...")
         createdb.create_db(VERSIONNUM)
         print("Database has been created.")
         print()
         print("Starting config setup...")
         print()
         configsetup.config_setup()
-
-    # Here we call configupdate to setup or update the config file if command line option -c was invoked
-    if args.config is True:
-        print("")
-        print("Config update started....")
-        print("")
-        configsetup.config_setup()
-
+        
+    else:
+        print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")
+        
+    # Checks for command line arguments
+    arguments.read_args(VERSIONNUM)
+        
     # We'll get the config from the DB
     configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
     configobj.selfupdate.version = VERSIONNUM
@@ -95,8 +92,7 @@ def main():
 
     # Ok, we've got all the info we need. Now we'll test if we even need to update or not
 
-    update_needed = updatecheck.check_for_update(
-        configobj)  # pylint: disable=E1111
+    update_needed = updatecheck.check_for_update(configobj)  # pylint: disable=E1111
 
     if update_needed:
         install.update_emby(configobj)
