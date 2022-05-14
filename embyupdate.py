@@ -55,22 +55,21 @@ def main():
     configfix = config.Config()
 
     # Fixes pre version 4.0 config files
-    configfix.config_fix()
+    configfix.config_fix(VERSIONNUM)
 
     # First we're going to force the working path to be where the script lives
     os.chdir(sys.path[0])
 
-    # This will test to see if the DB exist.If it doesn't it will launch the config setup process
+    # This will test to see if the DB exist. If it doesn't it will create it and 
+    # launch the config setup process
 
     if not exists('./db/embyupdate.db'):
 
         print()
         print(f"Database does {c.fg.red}NOT{c.end} exist, creating database...")
         createdb.create_db(VERSIONNUM)
-        print("Database has been created.")
         print()
         print("Starting config setup...")
-        print()
         configsetup.config_setup()
         
     else:
