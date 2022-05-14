@@ -2,6 +2,7 @@
 Python version Check
 """
 import sys
+from functions.colors import Terminalcolors as c
 def python_version_check():
     """
     The python_version_check function checks the version of Python being used to run this script.
@@ -25,5 +26,5 @@ def python_version_check():
         sys.exit()
 
     print()
-    print("You are running Python version " + python_version + ", you're good!")
+    print(f"You are running Python version {python_version} ,{c.fg.green}CHECK PASSED{c.end}!")
     
