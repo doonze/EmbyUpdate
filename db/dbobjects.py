@@ -9,6 +9,8 @@ from datetime import date
 from pprint import pp
 import db.db_functions as db
 
+# pylint: disable=invalid-name
+
 
 @dataclass
 class MainConfig:
@@ -62,31 +64,32 @@ class MainUpdateHistory():
     version: str = None
     success: bool = None
     errorid: int = None
-    
+
     def insert_to_db(self):
         """
-        The insert_to_db function inserts a new row into the DBVersion table with the version number.
-        
-        
+        The insert_to_db function inserts a new row into the DBVersion table with the version
+        number.
+
+
         Args:
             self: Access the variables in the class
         """
-        
+
         sql = f"""INSERT into MainUpdateHistory (date, version, success, errorid)
                   VALUES({self.date, self.version, self.success, self.errorid})"""
-        
+
         conn = db.db_conn()
         with conn:
             with closing(conn.cursor()) as cur:
                 cur = conn.cursor()
                 cur.execute(sql)
-        
 
     def pull_from_db(self):
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'MainUpdateHistory', 'id', '(SELECT MAX(ID)  FROM TABLE)', self)
+        db.db_return_class_object(db.db_conn(), 'MainUpdateHistory', 'id',
+                                  '(SELECT MAX(ID)  FROM TABLE)', self)
 
     def print_me(self):
         """
@@ -117,6 +120,9 @@ class SelfUpdate():
         db.db_update_class_in_table(db.db_conn(), self, 'SelfUpdate', 'id', 1)
 
     def insert_to_db(self):
+        """
+        Insert object into table
+        """
         db.db_insert_class_in_table(db.db_conn(), self, 'SelfUpdate')
 
     def pull_from_db(self):
@@ -156,27 +162,28 @@ class DBversion():
 
     def insert_to_db(self):
         """
-        The insert_to_db function inserts a new row into the DBVersion table with the version number.
-        
-        
+        The insert_to_db function inserts a new row into the DBVersion table with the version
+        number.
+
+
         Args:
             self: Access the variables in the class
         """
-        
+
         sql = f"INSERT into DBversion (version) VALUES({self.version})"
-        
+
         conn = db.db_conn()
         with conn:
             with closing(conn.cursor()) as cur:
                 cur = conn.cursor()
                 cur.execute(sql)
-        
 
     def pull_from_db(self):
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'DBversion', 'id', '(SELECT MAX(ID)  FROM TABLE)', self)
+        db.db_return_class_object(db.db_conn(), 'DBversion', 'id',
+                                  '(SELECT MAX(ID)  FROM TABLE)', self)
 
     def print_me(self):
         """
@@ -219,6 +226,9 @@ class ServerInfo:
         db.db_update_class_in_table(db.db_conn(), self, 'ServerInfo', 'id', 1)
 
     def insert_to_db(self):
+        """
+        Inserts object into table
+        """
         db.db_insert_class_in_table(db.db_conn(), self, 'ServerInfo')
 
     def pull_from_db(self):
@@ -244,24 +254,24 @@ class ConfigObj:
     selfupdate: SelfUpdate = SelfUpdate()
     serverinfo: ServerInfo = ServerInfo()
     onlineversion: str = None
-    
+
     def get_config(self):
         """
         The get_config function pulls the configuration from the database tables MainConfig,
         SelfUpdate, and ServerInfo then returns it as a dataclass object.
-        
-        
+
+
         Args:
             self: Reference the class object itself
-        
+
         Returns:
             The config dataclass object
         """
-        
+
         self.mainconfig.pull_from_db()
         self.selfupdate.pull_from_db()
         self.serverinfo.pull_from_db()
-        
+
         return self
 
 
@@ -293,13 +303,14 @@ class DistroConfig:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'DistroConfig', 'distro', what, self)
-        
+        db.db_return_class_object(
+            db.db_conn(), 'DistroConfig', 'distro', what, self)
+
     def pull_distros(self):
         """
         pulls all distros from table and returns them
         """
-        return db.db_select_values(db.db_conn(),'DistroConfig','distro')
+        return db.db_select_values(db.db_conn(), 'DistroConfig', 'distro')
 
     def print_me(self):
         """
