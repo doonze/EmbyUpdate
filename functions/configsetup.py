@@ -5,7 +5,9 @@ Config setup module
 import sys
 from sqlite3 import Error
 import db.dbobjects as db_obj
-from functions import api, exceptrace
+from functions import api, exceptrace, colors
+
+c = colors.Terminalcolors()
 
 def config_setup():
     """
@@ -28,7 +30,7 @@ def config_setup():
         if serverinfo.version == "None":
             print()
             print("I didn't find a running Emby instance on this server.")
-            print(f"I tried the address {serverinfo.fullurl}")
+            print(f"I tried the address {c.fg.cyan}{serverinfo.fullurl}{c.end}")
             print("If this is correct, make sure the server is running.")
             print()
             print("* This is not required, however the script will try to update   *")
@@ -68,10 +70,12 @@ def config_setup():
                 if str(response) == "3":
                     while True:
                         while loop:
-                            print("*** Just hitting enter will retain current values. ***")
+                            print(f"{c.fg.green}*** Just hitting enter will retain current "
+                                  f"values. ***{c.end}")
                             print()
                             response = input("Do you use a port to access your server? "
-                                f"Current value is ({serverinfo.portused}) [y/n]: ")
+                                f"Current value is ({c.fg.cyan}{serverinfo.portused}{c.end}) "
+                                f"[y/n]: ")
                             if response.casefold() == "y":
                                 serverinfo.portused = True
                                 break
@@ -189,186 +193,183 @@ def config_setup():
         print("Server check disabled, skipping...")
         print()
 
-    configobj: db_obj.ConfigObj = db_obj.ConfigObj()
+    configobj: db_obj.ConfigObj = db_obj.ConfigObj().get_config()
+    distros = db_obj.DistroConfig().pull_distros()
+    distro_dict = {}
+    for i, row in enumerate(distros, start=1):
+        distro_dict[str(i)] = row['distro']
+        print(f"[{c.fg.pink}{str(i)}{c.end}] {c.fg.lt_blue}{row['distro']}{c.end}")
+    print(f"[{c.fg.pink}C{c.end}] {c.bold}{c.fg.lt_blue}Cancel config update{c.end}")
     # Next user will choose their distro
-
-    print("[1] Debian X64")
-    print("[2] Debian ARM")
-    print("[3] Arch")
-    print("[4] CentOS")
-    print("[5] Fedora X64")
-    print("[6] Fedora ARM")
-    print("[7] OpenSUSE X64")
-    print("[8] OpenSUSE ARM")
-    print("[C] Cancel config update")
+    print(f"{c.bold}{c.fg.lt_green}")
+    print("*** Just pressing enter will keep current option ***")
+    print(c.end)
 
     while True:
         distro_choice = input(f"Choose your distro by number or C to cancel update. "
-                              f"Current distro is ({configobj.mainconfig.distro}): [?] ")
-        if str(distro_choice) == "1":
-            configobj.mainconfig.distro = "Debian X64"
+                              f"Current distro is ({c.fg.lt_cyan}{configobj.mainconfig.distro}"
+                              f"{c.end}): [?] ")
+        
+        if str(distro_choice) in distro_dict.keys():
+            configobj.mainconfig.distro = distro_dict[distro_choice]
+            break 
+        
+        if str(distro_choice) == "":
             break
-        elif str(distro_choice) == "2":
-            configobj.mainconfig.distro = "Debian ARM"
-            break
-        elif str(distro_choice) == "3":
-            configobj.mainconfig.distro = "Arch"
-            break
-        elif str(distro_choice) == "4":
-            configobj.mainconfig.distro = "CentOS"
-            break
-        elif str(distro_choice) == "5":
-            configobj.mainconfig.distro = "Fedora X64"
-            break
-        elif str(distro_choice) == "6":
-            configobj.mainconfig.distro = "Fedora ARM"
-            break
-        elif str(distro_choice) == "7":
-            configobj.mainconfig.distro = "OpenSUSE X64"
-            break
-        elif str(distro_choice) == "8":
-            configobj.mainconfig.distro = "OpenSUSE ARM"
-            break
-        elif str(distro_choice.casefold()) == "c":
+        
+        if str(distro_choice.casefold()) == "c":
             print("")
             print("Exiting config update and installer....")
             print("")
             sys.exit()
-        else:
-            print("")
-            print("Invalid Choice! Valid choices are 1-8 or C to cancel. Please Try again.")
-            print("")
+        
+        print("")
+        print(f"{c.bold}{c.fg.red}Invalid Choice!{c.end} Please choose a number or C to cancel. Please Try again.")
+        print("")
 
     print("")
-    print(configobj.mainconfig.distro + " Chosen")
+    print(f"{c.fg.lt_cyan}Distro: {configobj.mainconfig.distro} chosen{c.end}")
     print("")
 
     # Now user chooses beta or Stable releases
 
     while True:
         choose_beta = input("Do you want to install the beta version of Emby Server? "
-                            f"Current release setting is ({configobj.mainconfig.releasetype}): "
-                            "[y/N] ")
+                            f"Current release setting is ({c.fg.lt_cyan}{configobj.mainconfig.releasetype}"
+                            f"{c.end}): [y/n] ")
         if choose_beta.casefold() == "y":
             configobj.mainconfig.releasetype = "Beta"
             break
 
-        if choose_beta in ("n", "N", ""):
+        if choose_beta in ("n", "N"):
             configobj.mainconfig.releasetype = "Stable"
+            break
+        
+        if choose_beta == "":
             break
 
         print("")
-        print("Invalid choice. Please choose y or n")
+        print(f"{c.bold}{c.fg.red}Invalid Choice!{c.end} Please choose y or n")
         print("")
 
     print("")
-    print(configobj.mainconfig.releasetype + " version of Emby has been chosen for install.")
+    print(f"{c.fg.lt_cyan}{configobj.mainconfig.releasetype} version of Emby has been "
+          f"chosen for install{c.end}")
     print("")
 
     # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
     while True:
-        servstop = input("Do we need to manually stop the server to install? *RARELY NEEDED* "
-                         f"Current setting is ({configobj.mainconfig.stopserver}): [y/N] ")
+        servstop = input(f"Do we need to manually STOP the server to install? "
+                         f"{c.fg.orange}*RARELY NEEDED*{c.end} Current setting is "
+                         f"({c.fg.lt_cyan}{configobj.mainconfig.stopserver}{c.end}): [y/N] ")
+        
         if servstop.casefold() == "y":
-            servstopchoice = "Server will be manually stopped on install."
             configobj.mainconfig.stopserver = True
             break
 
-        if servstop in ("n", "N", ""):
-            servstopchoice = "Server will NOT be manually stopped on install."
+        if servstop in ("n", "N"):
             configobj.mainconfig.stopserver = False
+            break
+        
+        if servstop == "":
             break
 
         print("")
-        print("Invalid choice. Please choose y or n")
+        print(f"{c.bold}{c.fg.red}Invalid Choice!{c.end} Please choose y or n")
         print("")
 
     print("")
-    print(servstopchoice)
+    print(f"{c.fg.lt_cyan}Stopping the server is set to: {c.bold}{configobj.mainconfig.stopserver}{c.end}")
     print("")
 
     # User chooses if they wish to start the server again after updates. Not normally needed.
     while True:
-        servstart = input("Do we need to manually start the server after install? *RARELY NEEDED* "
-                f"Current setting is ({configobj.mainconfig.startserver}): [y/N] ")
+        servstart = input(f"Do we need to manually START the server to install? "
+                         f"{c.fg.orange}*RARELY NEEDED*{c.end} Current setting is "
+                         f"({c.fg.lt_cyan}{configobj.mainconfig.stopserver}{c.end}): [y/N] ")
         if servstart.casefold() == "y":
-            server_start_choice = "Server will be manually started after install."
             configobj.mainconfig.startserver = True
             break
 
-        if servstart in ("n", "N", ""):
-            server_start_choice = "Server will NOT be manually started after install."
+        if servstart in ("n", "N"):
             configobj.mainconfig.startserver = False
+            break
+        
+        if servstart == "":
             break
 
         print("")
-        print("Invalid choice. Please choose y or n")
+        print(f"{c.bold}{c.fg.red}Invalid Choice!{c.end} Please choose y or n")
         print("")
 
     print("")
-    print(server_start_choice)
+    print(f"{c.fg.lt_cyan}Starting the server is set to: {c.bold}{configobj.mainconfig.stopserver}{c.end}")
     print("")
 
     # User chooses if they wish to autoupdate the Update app (this program)
     while True:
         script_update = input("Keep EmbyUpdate (this script) up to date with latest version? "
-            f"Current setting is ({configobj.selfupdate.runupdate}): [Y/n] ")
+            f"Current setting is ({c.fg.lt_cyan}{configobj.selfupdate.runupdate}{c.end}): [Y/n] ")
 
-        if script_update in ("y", "Y", ""):
-            script_update_choice = "Script (EmbyUpdate) will be automatically updated!"
+        if script_update in ("y", "Y"):
             configobj.selfupdate.runupdate = True
             break
 
         if script_update.casefold() == "n":
-            script_update_choice = "Script (EmbyUpdate) will NOT be automatically updated!"
             configobj.selfupdate.runupdate = False
+            break
+        
+        if script_update == "":
             break
 
         print("")
-        print("Invalid choice. Please choose y or n")
+        print(f"{c.bold}{c.fg.red}Invalid Choice!{c.end} Please choose y or n")
         print("")
 
     print("")
-    print(script_update_choice)
+    print(f"{c.fg.lt_cyan}Updating of this script has been set to: "
+          f"{c.bold}{configobj.selfupdate.runupdate}{c.end}")
     print("")
 
     # User chooses if they want to update to beta or stable for the script
     while True:
 
         script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? "
-            f"Current release setting is {configobj.selfupdate.releasetype}: [y/N] ")
+            f"Current release setting is {c.fg.lt_cyan}{configobj.selfupdate.releasetype}{c.end}: [y/N] ")
 
         if script_beta_choice.casefold() == "y":
-            self_beta_choice = "Script (EmbyUpdate) will be automatically updated to Beta!"
             configobj.selfupdate.releasetype = "Beta"
             break
 
-        if script_beta_choice in ("n", "N", ""):
-            self_beta_choice = "Script (EmbyUpdate) will NOT be automatically updated to Stable!"
+        if script_beta_choice in ("n", "N"):
             configobj.selfupdate.releasetype = "Stable"
+            break
+        
+        if script_beta_choice == "":
             break
 
         print("")
-        print("Invalid choice. Please choose (y)es or (n)o")
+        print(f"{c.bold}{c.fg.red}Invalid Choice!{c.end} Please choose (y)es or (n)o")
         print("")
 
     print("")
-    print(self_beta_choice)
+    print(f"{c.fg.lt_cyan}Release version of this the updater set to: "
+          f"{c.bold}{configobj.selfupdate.releasetype}{c.end}")
     print("")
 
     print("Choices to write to config file...")
-    print(f"Linux distro version to update: {configobj.mainconfig.distro}")
-    print(f"The chosen Emby Server release version is: {configobj.mainconfig.releasetype}")
-    print(f"Server set to be manually stopped: {configobj.mainconfig.stopserver}")
-    print(f"Server set to be manually started: {configobj.mainconfig.startserver}")
-    print(f"EmbyUpdate app set to autoupdate: {configobj.selfupdate.runupdate}")
-    print(f"EmbyUpdate app set to update to release: {configobj.selfupdate.releasetype}")
+    print(f"Linux distro version to update: {c.fg.lt_cyan}{configobj.mainconfig.distro}{c.end}")
+    print(f"The chosen Emby Server release version is: {c.fg.lt_cyan}{configobj.mainconfig.releasetype}{c.end}")
+    print(f"Server set to be manually stopped: {c.fg.lt_cyan}{configobj.mainconfig.stopserver}{c.end}")
+    print(f"Server set to be manually started: {c.fg.lt_cyan}{configobj.mainconfig.startserver}{c.end}")
+    print(f"EmbyUpdate app set to autoupdate: {c.fg.lt_cyan}{configobj.selfupdate.runupdate}{c.end}")
+    print(f"EmbyUpdate app set to update to release: {c.fg.lt_cyan}{configobj.selfupdate.releasetype}{c.end}")
     print("")
 
     while True:
-        confirm = input("Please review above choices and type CONFIRM to continue or c to "
-            "cancel the application! [CONFIRM/c] ")
+        confirm = input(f"Please review above choices and type {c.fg.green}CONFIRM{c.end} to continue or c to "
+            f"cancel the application! [{c.fg.green}CONFIRM{c.end}/c] ")
         if confirm.casefold() == "c":
             print("")
             print("Exiting config update and installer. No changes were made and nothing "
@@ -393,6 +394,6 @@ def config_setup():
                 sys.exit()
 
         print("")
-        print("Invalid choice. Please type CONFIRM to continue or (c)ancel!!")
+        print(f"{c.bold}{c.fg.red}Invalid Choice!{c.end}. Please type CONFIRM to continue or (c)ancel!!")
         print("")
            
