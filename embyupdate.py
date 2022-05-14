@@ -36,13 +36,14 @@ from db import createdb, dbobjects
 
 c = colors.Terminalcolors()
 
+
 def main():
     """
-    The main function is the entry point for the program. It is called when embyupdate starts up 
+    The main function is the entry point for the program. It is called when embyupdate starts up
     and checks to see if there are any updates available. If there are, it will download them
     and install them.
     """
-    
+
     # pylint: disable=C0103
 
     # Sets the version # for the command line -v/--version response
@@ -60,7 +61,7 @@ def main():
     # First we're going to force the working path to be where the script lives
     os.chdir(sys.path[0])
 
-    # This will test to see if the DB exist. If it doesn't it will create it and 
+    # This will test to see if the DB exist. If it doesn't it will create it and
     # launch the config setup process
 
     if not exists('./db/embyupdate.db'):
@@ -71,13 +72,13 @@ def main():
         print()
         print("Starting config setup...")
         configsetup.config_setup()
-        
+
     else:
         print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")
-        
+
     # Checks for command line arguments
     arguments.read_args(VERSIONNUM)
-        
+
     # We'll get the config from the DB
     configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
     configobj.selfupdate.version = VERSIONNUM
@@ -88,13 +89,13 @@ def main():
 
     configobj = api.get_main_online_version(configobj)
 
-
     # Ok, we've got all the info we need. Now we'll test if we even need to update or not
 
     update_needed = updatecheck.check_for_update(configobj)  # pylint: disable=E1111
 
     if update_needed:
         install.update_emby(configobj)
-        
+
+
 if __name__ == "__main__":
     main()
