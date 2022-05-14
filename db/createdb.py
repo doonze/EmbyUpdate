@@ -196,6 +196,7 @@ def create_db(version_num):
                 "apipath"	    TEXT NOT NULL DEFAULT '/System/Info/Public',
                 "fullurl"	    TEXT DEFAULT '',
                 "version"	    TEXT DEFAULT '',
+                "servername"	TEXT DEFAULT '',
                 PRIMARY KEY("id")
                 );
                 """
