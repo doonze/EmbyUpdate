@@ -14,6 +14,7 @@ from functions import exceptrace, timestamp
 
 # pylint: disable=broad-except
 # pylint: disable=line-too-long
+# pylint: disable=too-many-statements
 
 
 def update_emby(configobj: db.ConfigObj):
