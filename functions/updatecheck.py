@@ -1,3 +1,5 @@
+""" updatecheck: checks to see if update needed """
+
 import db.dbobjects as db
 from functions import timestamp
 
@@ -37,8 +39,8 @@ def check_for_update(configobj: db.ConfigObj) -> bool:
     # the versions are and start updating
     print(f"{timestamp.time_stamp()} EmbyUpdate: Most recent online version is "
           f"{configobj.onlineversion} - {configobj.mainconfig.releasetype} and current installed "
-          f"version is {current_version} - {configobj.mainconfig.releasetype}. "
-          "We're updating Emby.")
+          f"version is {current_version} - {configobj.mainconfig.releasetype} for server "
+          f"{configobj.serverinfo.servername}. We're updating Emby.")
     print()
     print(f"{timestamp.time_stamp()} EmbyUpdate: Starting update......")
     return True
