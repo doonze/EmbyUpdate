@@ -5,3 +5,5 @@ jsontest.py
 .vscode/*
 /.vs/*
 /.gitattributes
+*.pyc
+*.db
