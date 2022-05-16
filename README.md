@@ -1,9 +1,9 @@
 # EmbyUpdate
 A python script for automatically updating Emby Server to the latest version on Linux distros.
 
-## BETA has been merged with MASTER. See the release downloads themselves for instruction for older versions (3.6 and before). Once I get beta fully tested I will update the instructions below for the new version. Much has changed. Biggest thing to note here is you will need to have at least python version 3.6 (but you'll have to download dataclasses to use it). Full support is only for Python versions 3.7+. Tested on 3.9.
+# BETA has been merged with MASTER. See the release downloads themselves for instruction for older versions (3.6 and before). Once I get beta fully tested I will update the instructions below for the new version. Much has changed. Biggest thing to note here is you will need to have at least python version 3.6 (but you'll have to download dataclasses to use it). Full support is only for Python versions 3.7+. Tested on 3.9.
 
-# The current master version is a fully working stand alone and can be cloned and ran as is. I just need to do some testing for upgrades from previous versions before I make a beta release. Once that testing is done, I'll make a new master release and update this readme.
+### The current master version is a fully working stand alone and can be cloned and ran as is. I just need to do some testing for upgrades from previous versions before I make a beta release. Once that testing is done, I'll make a new master release and update this readme.
 
 * Backup your server before doing anything!! Install the Emby backup/restore plugin and get a good backup!
 * It's possible to loose your settings if you are switching from a repo version to the standalone version this script installs. So make sure you have that backup!
