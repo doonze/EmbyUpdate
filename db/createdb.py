@@ -11,6 +11,7 @@ from functions import exceptrace
 
 DBVERSION = "1.0"
 
+# pylint: disable=line-too-long
 
 def create_distros():
     """
@@ -22,48 +23,48 @@ def create_distros():
 
     distro_list.append(db_obj.DistroConfig("Debian X64",
                                            "https://github.com/MediaBrowser/Emby.Releases/releases/"
-                                           "download/{0}/{1}",
-                                           "dpkg -i -E {0}",
-                                           "emby-server-deb_{0}_amd64.deb"))
+                                           "download/{online_version}/{install_file}",
+                                           "sudo dpkg -i -E {install_file}",
+                                           "emby-server-deb_{online_version}_amd64.deb"))
 
     distro_list.append(db_obj.DistroConfig("Debian ARM",
                                            "https://github.com/MediaBrowser/Emby.Releases/releases/"
-                                           "download/{0}/{1}",
-                                           "dpkg -i {0}",
-                                           "emby-server-deb_{0}_armhf.deb"))
+                                           "download/{online_version}/{install_file}",
+                                           "dpkg -i {install_file}",
+                                           "emby-server-deb_{online_version}_armhf.deb"))
 
     distro_list.append(db_obj.DistroConfig("Arch",
                                            "notused",
-                                           "pacman -S emby-server",
+                                           "sudo pacman -S emby-server",
                                            "notused"))
 
     distro_list.append(db_obj.DistroConfig("CentOS",
-                                           "yum --y install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{0}/emby-server-rpm_{0}_x86_64.rpm",
+                                           "sudo yum --y install https://github.com/MediaBrowser/Emby.Releases/"
+                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
                                            "notused",
                                            "notused"))
 
     distro_list.append(db_obj.DistroConfig("Fedora X64",
-                                           "dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{0}/emby-server-rpm_{0}_x86_64.rpm",
+                                           "sudo dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
+                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
                                            "notused",
                                            "notused"))
 
     distro_list.append(db_obj.DistroConfig("Fedora ARM",
-                                           "dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{0}/emby-server-rpm_{0}_armv7hl.rpm",
+                                           "sudo dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
+                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_armv7hl.rpm",
                                            "notused",
                                            "notused"))
 
     distro_list.append(db_obj.DistroConfig("OpenSUSE X64",
-                                           "zypper install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{0}/emby-server-rpm_{0}_x86_64.rpm",
+                                           "sudo zypper install https://github.com/MediaBrowser/Emby.Releases/"
+                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
                                            "notused",
                                            "notused"))
 
     distro_list.append(db_obj.DistroConfig("OpenSUSE ARM",
-                                           "zypper install -y https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{0}/emby-server-rpm_{0}_armv7hl.rpm",
+                                           "sudo zypper install -y https://github.com/MediaBrowser/Emby.Releases/"
+                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_armv7hl.rpm",
                                            "notused",
                                            "notused"))
 
@@ -224,7 +225,7 @@ def create_db(version_num):
                 create_distros()
                 db_obj.DBversion(version=DBVERSION,
                                  notes="Initial DB creation").insert_to_db()
-                
+
                 print()
                 print(f"Database version {DBVERSION} has been created!")
 
