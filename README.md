@@ -1,30 +1,26 @@
 # EmbyUpdate
 A python script for automatically updating Emby Server to the latest version on Linux distros.
 
-This script has been tested with python 2.7 and 3+. I suggest using python 3, it always tries python 3 commands first. If those fail it falls back to python 2 commands. In the end it doesn't matter, it runs the same on both. However if you run it with 3 there won't be behind the scenes exceptions happening. If you don't have 3, or have mapped 3 to python instead of python3 you may get some chatter from the app. It was tested and developed on Debian 9. I haven't tested it on any other distro but it should work fine on Ubuntu and Mint for sure, or any other Debian based distro. It has also been coded (but not tested) to work with several other distor's listed below.
+## BETA has been merged with MASTER. See the release downloads themselves for instruction for older versions (3.6 and before). Once I get beta fully tested I will update the instructions below for the new version. Much has changed. Biggest thing to note here is you will need to have at least python version 3.6 (but you'll have to download dataclasses to use it). Full support is only for Python versions 3.7+. Tested on 3.9.
+
+# The current master version is a fully working stand alone and can be cloned and ran as is. I just need to do some testing for upgrades from previous versions before I make a beta release. Once that testing is done, I'll make a new master release and update this readme.
 
 * Backup your server before doing anything!! Install the Emby backup/restore plugin and get a good backup!
-* It's possiable to loose your settings if you are switching from a repo version to the standalone version this script installs. So make sure you have that backup!
+* It's possible to loose your settings if you are switching from a repo version to the standalone version this script installs. So make sure you have that backup!
 * If switching from repo version make sure you uninstall the repo version first (apt remove emby-server or your disto's process) or your next distro repo upgrade could switch you back to repo version. MAKE SURE YOU HAVE A BACKUP!!
 
 ### Prerequisites 
 
 For Debian and it's derivatives all you need is:
 ```
-wget
-```
-and one of these:
-```
-python
-python3 (optional but highly suggested)
+python3
 ```
 
 for Python you'll need to get:
 
 ```
 (install through pip or apt, google if you need to know specifics for your system)
-requests 
-configparser (or for 2.7 it's ConfigParser)
+requests
 ```
 
 ### Getting Started
