@@ -86,8 +86,8 @@ class MainUpdateHistory():
             self: Access the variables in the class
         """
 
-        sql = f"""INSERT into MainUpdateHistory (date, version, success, errorid)
-                  VALUES({self.date, self.version, self.success, self.errorid})"""
+        sql = ("INSERT into MainUpdateHistory (date, version, success, errorid) "
+        f"VALUES ('{self.date}', '{self.version}', '{self.success}', '{self.errorid}')")
 
         conn = db.db_conn()
         with conn:
@@ -322,8 +322,7 @@ class DistroConfig:
         """
         Writes object to DB
         """
-        db.db_update_class_in_table(
-            db.db_conn(), self, 'DistroConfig', 'distro', self.distro)
+        db.db_update_class_in_table(db.db_conn(), self, 'DistroConfig', 'distro', self.distro)
 
     def insert_to_db(self):
         """
@@ -345,16 +344,40 @@ class DistroConfig:
         """
         return db.db_select_values(db.db_conn(), 'DistroConfig', 'distro')
 
-    def print_me(self):
+    def print_me(self, single: bool = False, edit: bool = False):
         """
         Prints object to output
         """
+        if not single:
+            rows = db.db_select_values(db.db_conn(), 'DistroConfig', '*')
+            
+            distro_dict = {}
+
+            for i, row in enumerate(rows, start=1):
+                distroconfig = DistroConfig()
+                if not edit:
+                    print()
+                    print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{row['distro']}{c.end}:")
+                    print()
+                
+                for each in row.keys():
+                    setattr(distroconfig, each, row[each])
+                    if not edit:
+                        if not each == "distro":
+                            print(f"{c.fg.yellow}{each:<16}{c.end}: "
+                            f"{c.fg.lt_cyan}{row[each]}{c.end}")
+                    
+                distro_dict[row['distro']] = distroconfig
+            print()
+            return distro_dict
+        
+        print()
+        print(f"{c.fg.yellow}{self.distro}{c.end}")
         dc_dict: dict = self.__dict__
-        dc_dict.pop("id")
-        key_map = {}
+        if "distro" in dc_dict.keys():
+            dc_dict.pop("distro")
         print()
         for i, key in enumerate(dc_dict, start=1):
-            key_map[i] = key
             print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{key :<16}{c.end}: "
                   f"{c.fg.lt_cyan}{dc_dict[key]}{c.end}")
-        return key_map
+        
