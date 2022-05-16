@@ -6,7 +6,7 @@ import sys
 import db
 from db import createdb
 from db import dbobjects as db
-from db.editconfig import edit_config
+from db.editconfig import edit_config, edit_distroconfig
 from functions.colors import Terminalcolors as c
 from functions.configsetup import config_setup
 
@@ -55,7 +55,7 @@ def read_args(version_num):
                         metavar="")
     args = parser.parse_args()
 
-    # Here we call configupdate to setup or update the config file if command line 
+    # Here we call configupdate to setup or update the config file if command line
     # option -c was invoked
     if args.config:
         print("")
@@ -90,34 +90,53 @@ def read_args(version_num):
     # Here we display the config settings
     display_config = args.config_display
 
-    if "mainconfig" in display_config:
-        mainconfig = db.MainConfig()
-        mainconfig.pull_from_db()
-        key_map = mainconfig.print_me()
-        if "edit" in display_config:
-            edit_config(key_map, mainconfig)
+    displayed = False
 
-    if "selfupdate" in display_config:
-        print()
-        print(f"{c.fg.yellow}SelfUpdate:{c.end}")
-        selfupdate = db.SelfUpdate()
-        selfupdate.pull_from_db()
-        key_map = selfupdate.print_me()
-        if "edit" in display_config:
-            edit_config(key_map, selfupdate)
+    if display_config is not None:
+        if "mainconfig" in display_config:
+            mainconfig = db.MainConfig()
+            mainconfig.pull_from_db()
+            key_map = mainconfig.print_me()
+            if "edit" in display_config:
+                edit_config(key_map, mainconfig)
 
-    if "serverinfo" in display_config:
-        print()
-        print(f"{c.fg.yellow}ServerInfo:{c.end}")
-        serverinfo = db.ServerInfo()
-        serverinfo.pull_from_db()
-        key_map = serverinfo.print_me()
-        if "edit" in display_config:
-            edit_config(key_map, serverinfo)
+            displayed = True
 
-    if "distroconfig" in display_config:
-        print()
-        print(f"{c.fg.yellow}DistroConfig:{c.end}")
-        distroconfig = db.DistroConfig()
+        if "selfupdate" in display_config:
+            print()
+            print(f"{c.fg.yellow}SelfUpdate:{c.end}")
+            selfupdate = db.SelfUpdate()
+            selfupdate.pull_from_db()
+            key_map = selfupdate.print_me()
+            if "edit" in display_config:
+                edit_config(key_map, selfupdate)
 
-    sys.exit()
+            displayed = True
+
+        if "serverinfo" in display_config:
+            print()
+            print(f"{c.fg.yellow}ServerInfo:{c.end}")
+            serverinfo = db.ServerInfo()
+            serverinfo.pull_from_db()
+            key_map = serverinfo.print_me()
+            if "edit" in display_config:
+                edit_config(key_map, serverinfo)
+
+            displayed = True
+
+        if "distroconfig" in display_config:
+            if "edit" in display_config:
+                distroconfig = db.DistroConfig()
+                distro_dict = distroconfig.print_me(edit=True)
+                edit_distroconfig(distro_dict)
+            else:    
+                print()
+                print(f"{c.fg.yellow}DistroConfig:{c.end}")
+                distroconfig = db.DistroConfig()
+                distro_dict = distroconfig.print_me()
+            
+
+            displayed = True
+
+        if displayed:
+            sys.exit()
