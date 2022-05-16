@@ -401,7 +401,7 @@ def config_setup():
                 configobj.selfupdate.update_db()
                 serverinfo.update_db()
                 print("")
-                print("Config written to database, install continuing!")
+                print("Config written to database!")
                 print("")
                 break
             except Error:
