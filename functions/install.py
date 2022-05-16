@@ -33,53 +33,73 @@ def update_emby(configobj: db.ConfigObj):
     try:
         distroconfig: db.DistroConfig = db.DistroConfig()
         distroconfig.pull_from_db(configobj.mainconfig.distro)
-        # This will stop the server on a systemd distro if it's been set to true above
+        install_file = distroconfig.installfile.format(online_version = configobj.onlineversion)
+        download_url = distroconfig.downloadurl.format(
+                online_version = configobj.onlineversion, install_file = install_file)
+        install_command = distroconfig.installcommand.format(install_file = distroconfig.installfile.
+                    format(online_version = configobj.onlineversion))
+                
+        # This will stop the server if it's been set to true
         if configobj.mainconfig.stopserver:
+            
+            print()
             print("Stopping Emby server.....")
-            stopreturn = subprocess.call(
-                "systemctl stop emby-server", shell=True)
+            
+            stopreturn = subprocess.call("sudo service emby-server stop", shell=True)
+            
             time.sleep(3)
+            
             if stopreturn > 0:
+                print()
                 print("Server Stop failed! Non-critical error! Investigate if needed.")
-
-            print("Emby Server Stopped...")
+            else:
+                print()
+                print("Emby Server Stopped...")
 
         # Here we download the package to install if used
         if "notused" not in distroconfig.downloadurl:
+            
             print("Starting Package download... Please wait, this can take several minutes.")
-            download = requests.get(distroconfig.downloadurl.format(
-                configobj.onlineversion, distroconfig.installfile.format(configobj.onlineversion)))
-            with open(distroconfig.installfile.format(configobj.onlineversion), 'wb') as file:
+            
+            download = requests.get(download_url)
+            
+            with open(install_file,'wb') as file:
                 file.write(download.content)
+                
             print("Package downloaded!")
 
         # Next we install it if used
         if "notused" not in distroconfig.installfile:
+            
             print("Installing/Updating Emby server....")
-            installreturn = subprocess.call(
-                distroconfig.installcommand.format(
-                    distroconfig.installfile.format(configobj.onlineversion)), shell=True)
+            
+            installreturn = subprocess.call(install_command, shell=True)
+            
             if installreturn > 0:
                 print("Install/Update failed! Exiting!")
                 sys.exit()
-            print("Install/Update Finished!")
+            else:
+                print("Install/Update Finished!")
 
         # And to keep things nice and clean, we remove the downloaded file once installed if needed
         if "notused" not in distroconfig.installfile:
-            print("Removing install file...")
-            if exists(distroconfig.installfile.format(configobj.onlineversion)):
-                os.remove(distroconfig.installfile.format(configobj.onlineversion))
-            subprocess.call("rm -f " + distroconfig.installfile.format(configobj.onlineversion), shell=True)
-            print("File removed!")
 
-        # This will restart the server if using systemd if set to True above
+            if exists(install_file):
+                print("Removing install file...")
+                
+                os.remove(install_file)
+                
+                print("File removed!")
+
+        # This will restart the server if set to True
         if configobj.mainconfig.stopserver:
             print("Restarting Emby server after update...")
-            startreturn = subprocess.call("systemctl start emby-server", shell=True)
+            startreturn = subprocess.call("sudo service emby-server start", shell=True)
             if startreturn > 0:
                 print(
                     "Server start failed. Non-critical to update but server may not be running. Investigate.")
-            print("Server restarted!")
+            else:
+                print("Server restarted!")
 
         # Lastly we write the newly installed version into the config file
         try:
