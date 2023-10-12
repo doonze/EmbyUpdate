@@ -79,9 +79,8 @@ def main():
     else:
         print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")
 
-    # Checks for command line arguments
-    arguments.read_args(version)
-
+    # TODO: remove below!
+    sys.exit()
     # We'll get the config from the DB
     config_obj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
     config_obj.selfupdate.version = version

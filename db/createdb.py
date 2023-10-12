@@ -19,7 +19,7 @@ def create_distros():
     The create_distros function creates a list of DistroConfig objects.
     """
     dist_entry = db_obj.DistroConfig
-    distro_list = [dist_entry]
+    distro_list = []
 
     distro_list.append(dist_entry("Debian X64",
                                   "https://github.com/MediaBrowser/Emby.Releases/releases/"
