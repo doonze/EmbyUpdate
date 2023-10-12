@@ -74,7 +74,7 @@ def main():
         createdb.create_db(version)
         print()
         print("Starting config setup...")
-        configsetup.config_setup()
+        configsetup.config_setup(version)
 
     else:
         print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")

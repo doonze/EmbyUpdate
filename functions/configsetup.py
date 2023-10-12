@@ -3,24 +3,32 @@ Config setup module
 
 """
 import sys
+from os.path import exists
 from sqlite3 import Error
 import db.dbobjects as db_obj
+from db import createdb
 from functions import api, exceptrace, colors
 
 
 c = colors.Terminalcolors()
 
 
-def config_setup():
+def config_setup(version):
     """
     The config_setup function will gather user input and write it to the database.
     This function will also be used to read from the database when needed.
 
     Args:
-        self: Access variables that belongs to the class
+        version: Current version of EmbyUpdate
 
     """
+    # We'll check if the DB exist or not
+    if not exists('./db/embyupdate.db'):
 
+        print()
+        print(f"Database does {c.fg.red}NOT{c.end} exist, creating database...")
+        createdb.create_db(version)
+        print()
     # Now we'll start gathering user input
 
     # First to check if Emby is running so we can get the version
@@ -32,8 +40,7 @@ def config_setup():
         if serverinfo.version == "None":
             print()
             print("I didn't find a running Emby instance on this server.")
-            print(
-                f"I tried the address {c.fg.cyan}{serverinfo.fullurl}{c.end}")
+            print(f"I tried the address {c.fg.cyan}{serverinfo.fullurl}{c.end}")
             print("If this is correct, make sure the server is running.")
             print()
             print("* This is not required, however the script will try to update   *")

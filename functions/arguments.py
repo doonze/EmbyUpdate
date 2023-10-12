@@ -12,13 +12,13 @@ from functions.configsetup import config_setup
 
 
 # This sets up the command line arguments
-def read_args(version_num):
+def read_args(version):
     """
     The read_args function is used to read in the arguments from the command line.
     It returns a list of arguments that can then be passed into other functions.
 
     Args:
-        version_num: Hold the version number of the program
+        version: Hold the version number of the program
 
     Returns:
         A dictionary of the arguments passed to it
@@ -33,7 +33,7 @@ def read_args(version_num):
                         required=False)
     parser.add_argument('-v', '--version',
                         action='version',
-                        version='%(prog)s ' + version_num,
+                        version='%(prog)s ' + version,
                         help='Displays version number')
     parser.add_argument('--db_rebuild',
                         action='store_true',
@@ -61,7 +61,7 @@ def read_args(version_num):
         print("")
         print("Config update started....")
         print("")
-        config_setup()
+        config_setup(version)
 
     # Here we rebuild the database
     if args.db_rebuild:
@@ -74,7 +74,7 @@ def read_args(version_num):
             if response.casefold() == 'y':
                 print("Database is being dropped and rebuilt...")
                 print()
-                createdb.create_db(version_num)
+                createdb.create_db(version)
                 print("Database has been rebuilt. Starting config...")
                 print()
                 config_setup()
