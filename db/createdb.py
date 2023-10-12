@@ -11,62 +11,62 @@ from functions import exceptrace
 
 DBVERSION = "1.0"
 
+
 # pylint: disable=line-too-long
 
 def create_distros():
     """
     The create_distros function creates a list of DistroConfig objects.
     """
+    dist_entry = db_obj.DistroConfig
+    distro_list = [dist_entry]
 
-    distro_list: db_obj.DistroConfig = []
-    obj: db_obj.DistroConfig = None
+    distro_list.append(dist_entry("Debian X64",
+                                  "https://github.com/MediaBrowser/Emby.Releases/releases/"
+                                  "download/{online_version}/{install_file}",
+                                  "sudo dpkg -i -E {install_file}",
+                                  "emby-server-deb_{online_version}_amd64.deb"))
 
-    distro_list.append(db_obj.DistroConfig("Debian X64",
-                                           "https://github.com/MediaBrowser/Emby.Releases/releases/"
-                                           "download/{online_version}/{install_file}",
-                                           "sudo dpkg -i -E {install_file}",
-                                           "emby-server-deb_{online_version}_amd64.deb"))
+    distro_list.append(dist_entry("Debian ARM",
+                                  "https://github.com/MediaBrowser/Emby.Releases/releases/"
+                                  "download/{online_version}/{install_file}",
+                                  "dpkg -i {install_file}",
+                                  "emby-server-deb_{online_version}_armhf.deb"))
 
-    distro_list.append(db_obj.DistroConfig("Debian ARM",
-                                           "https://github.com/MediaBrowser/Emby.Releases/releases/"
-                                           "download/{online_version}/{install_file}",
-                                           "dpkg -i {install_file}",
-                                           "emby-server-deb_{online_version}_armhf.deb"))
+    distro_list.append(dist_entry("Arch",
+                                  "notused",
+                                  "sudo pacman -S emby-server",
+                                  "notused"))
 
-    distro_list.append(db_obj.DistroConfig("Arch",
-                                           "notused",
-                                           "sudo pacman -S emby-server",
-                                           "notused"))
+    distro_list.append(dist_entry("CentOS",
+                                  "sudo yum --y install https://github.com/MediaBrowser/Emby.Releases/"
+                                  "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
+                                  "notused",
+                                  "notused"))
 
-    distro_list.append(db_obj.DistroConfig("CentOS",
-                                           "sudo yum --y install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
-                                           "notused",
-                                           "notused"))
+    distro_list.append(dist_entry("Fedora X64",
+                                  "sudo dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
+                                  "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
+                                  "notused",
+                                  "notused"))
 
-    distro_list.append(db_obj.DistroConfig("Fedora X64",
-                                           "sudo dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
-                                           "notused",
-                                           "notused"))
+    distro_list.append(dist_entry("Fedora ARM",
+                                  "sudo dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
+                                  "releases/download/{online_version}/emby-server-rpm_{online_version}_armv7hl.rpm",
+                                  "notused",
+                                  "notused"))
 
-    distro_list.append(db_obj.DistroConfig("Fedora ARM",
-                                           "sudo dnf -y install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_armv7hl.rpm",
-                                           "notused",
-                                           "notused"))
+    distro_list.append(dist_entry("OpenSUSE X64",
+                                  "sudo zypper install https://github.com/MediaBrowser/Emby.Releases/"
+                                  "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
+                                  "notused",
+                                  "notused"))
 
-    distro_list.append(db_obj.DistroConfig("OpenSUSE X64",
-                                           "sudo zypper install https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_x86_64.rpm",
-                                           "notused",
-                                           "notused"))
-
-    distro_list.append(db_obj.DistroConfig("OpenSUSE ARM",
-                                           "sudo zypper install -y https://github.com/MediaBrowser/Emby.Releases/"
-                                           "releases/download/{online_version}/emby-server-rpm_{online_version}_armv7hl.rpm",
-                                           "notused",
-                                           "notused"))
+    distro_list.append(dist_entry("OpenSUSE ARM",
+                                  "sudo zypper install -y https://github.com/MediaBrowser/Emby.Releases/"
+                                  "releases/download/{online_version}/emby-server-rpm_{online_version}_armv7hl.rpm",
+                                  "notused",
+                                  "notused"))
 
     for obj in distro_list:
         obj.insert_to_db()
@@ -75,8 +75,8 @@ def create_distros():
 def populate_db(version_num):
     """
     The populate_db function is used to populate the database with some initial data.
-    It is called when the server is started up and can be used to add default values for
-    the main configuration options.  This function should only be called once at startup.
+    It is called when the program is first ran and can be used to add default values for
+    the main configuration options.  This function should only be called once for a new installation.
     However, it can be called manually to reset all setting to default.
 
     Args:
@@ -104,7 +104,6 @@ def create_db(version_num):
         conn = db_conn()
         with conn:
             with closing(conn.cursor()) as cur:
-
                 cur.execute("DROP TABLE IF EXISTS MainConfig")
                 cur.execute("DROP TABLE IF EXISTS MainUpdateHistory")
                 cur.execute("DROP TABLE IF EXISTS SelfUpdate")

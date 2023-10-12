@@ -9,6 +9,7 @@ from db.createdb import create_db
 from db.dbobjects import ConfigObj
 from functions import exceptrace
 
+
 # pylint: disable=broad-except
 
 class Config:
@@ -16,6 +17,7 @@ class Config:
     This class is now only used to convert from older versions of the config process to the new
     database version
     """
+
     def __init__(self):
         self.config_file = configparser.ConfigParser()
         self.distro = "None"
@@ -52,18 +54,16 @@ class Config:
                 self.emby_version = self.config_file['SERVER']['embyversion']
                 self.self_update = self.config_file['EmbyUpdate']['autoupdate']
                 self.self_version = self.config_file['EmbyUpdate']['version']
+
             else:
                 print()
                 print("Reading old style config so we can write it to the database.")
                 self.distro = self.config_file['DISTRO']['installdistro']
-                self.stop_server = self.config_file['SERVER'].getboolean(
-                    'stopserver')
-                self.start_server = self.config_file['SERVER'].getboolean(
-                    'startserver')
+                self.stop_server = self.config_file['SERVER'].getboolean('stopserver')
+                self.start_server = self.config_file['SERVER'].getboolean('startserver')
                 self.emby_version = self.config_file['SERVER']['embyversion']
                 self.emby_release = self.config_file['SERVER']['embyrelease']
-                self.self_update = self.config_file['EMBYUPDATE'].getboolean(
-                    'selfupdate')
+                self.self_update = self.config_file['EMBYUPDATE'].getboolean('selfupdate')
                 self.self_version = self.config_file['EMBYUPDATE']['selfversion']
                 self.self_release = self.config_file['EMBYUPDATE']['selfrelease']
 
@@ -107,7 +107,7 @@ class Config:
 
         except Exception:
             exceptrace.execpt_trace("***config_fix: An error was encountered..",
-                                sys.exc_info())
+                                    sys.exc_info())
         print()
         print("We were not able to finish the conversion to the new config system.")
         print("Unfortunately, I cannot tell if you want Emby Stable or Beta, and it")
@@ -116,11 +116,10 @@ class Config:
         print("you if you run this script unattended automatically (cron or systemd) ")
         print("and I'm sorry about that.")
         print()
-        print("If you're seeing this, the best bet is to delete config.ini youself")
+        print("If you're seeing this, the best bet is to delete config.ini yourself")
         print("and then run 'embyupdate.py -c' to force a new run of the config process")
         print("and just start fresh. Again sorry, if you raise an issue and give me the")
         print("details on my github page, I'll fix it. But that doesn't help you now.")
         print()
         print("I'm exiting.... and very upset about it.")
         sys.exit()
-
