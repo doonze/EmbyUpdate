@@ -18,7 +18,7 @@ def read_args(version_num):
     It returns a list of arguments that can then be passed into other functions.
 
     Args:
-        verNum: Hold the version number of the program
+        version_num: Hold the version number of the program
 
     Returns:
         A dictionary of the arguments passed to it
@@ -29,7 +29,7 @@ def read_args(version_num):
         prog='EmbyUpdate')
     parser.add_argument('-c', '--config',
                         action='store_true',
-                        help='Runs the config updater',
+                        help='Runs the config creator/updater',
                         required=False)
     parser.add_argument('-v', '--version',
                         action='version',
@@ -55,7 +55,7 @@ def read_args(version_num):
                         metavar="")
     args = parser.parse_args()
 
-    # Here we call configupdate to setup or update the config file if command line
+    # Here we call configupdate to set up or update the config file if command line
     # option -c was invoked
     if args.config:
         print("")

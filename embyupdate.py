@@ -49,6 +49,9 @@ def main():
     # Sets the version # for the command line -v/--version response
     version = f"{__version__} - {__status__}"
 
+    # Checks for command line arguments
+    arguments.read_args(version)
+
     # Checks for python version, exit if not greater than 3.6
     pythonversion.python_version_check()
 
