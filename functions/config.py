@@ -84,8 +84,12 @@ class Config:
             configobj.mainconfig.version = self.emby_version
             configobj.mainconfig.releasetype = self.emby_release
             configobj.selfupdate.runupdate = self.self_update
-            configobj.selfupdate.version = self.self_version
-            configobj.selfupdate.releasetype = self.self_release
+            configobj.selfupdate.version = version
+            if "Beta" in version:
+                configobj.selfupdate.releasetype = "Beta"
+            else:
+                configobj.selfupdate.releasetype = "Stable"
+
             print()
             print("Settings converted from old config file... Writing to database.")
             configobj.mainconfig.configran = True
