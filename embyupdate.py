@@ -84,6 +84,8 @@ def main():
 
     # We'll get the config from the DB
     config_obj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
+    if not config_obj.mainconfig.configran:
+        configsetup.config_setup(version)
     config_obj.selfupdate.version = version
 
     # Now well try and update this app if the user chose that option
