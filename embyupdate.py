@@ -29,10 +29,16 @@ __credits__ = [""]
 
 import os.path
 import sys
+import directoryfix
 from genericpath import exists
-from functions import (pythonversion, config, arguments, configsetup, selfupdate,
-                       api, updatecheck, install, colors)
-from db import createdb, dbobjects
+os.chdir(sys.path[0])
+if os.path.exists("configupdate.py"):
+    directoryfix.fix_directory()
+    os.execv(sys.argv[0], sys.argv)
+else:
+    from functions import (pythonversion, config, arguments, configsetup, selfupdate,
+                           api, updatecheck, install, colors)
+    from db import createdb, dbobjects
 
 c = colors.Terminalcolors()
 
