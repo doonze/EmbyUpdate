@@ -9,6 +9,7 @@ from datetime import date
 import db.db_functions as db
 from functions.colors import Terminalcolors as c
 
+
 # pylint: disable=invalid-name
 
 
@@ -31,7 +32,7 @@ class MainConfig:
         """
         Writes object to DB
         """
-        db.db_update_class_in_table(db.db_conn(), self, 'MainConfig', 'id', 1)
+        db.db_update_class_in_table(db.db_conn(), self, 'MainConfig', 'id', '1')
 
     def insert_to_db(self):
         """
@@ -45,7 +46,7 @@ class MainConfig:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'MainConfig', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(), 'MainConfig', 'id', '1', self)
 
     def print_me(self):
         """
@@ -66,7 +67,7 @@ class MainConfig:
 
 
 @dataclass
-class MainUpdateHistory():
+class MainUpdateHistory:
     """
     Class for interfacing with the MainUpdateHistory table
     """
@@ -87,11 +88,11 @@ class MainUpdateHistory():
         """
 
         sql = ("INSERT into MainUpdateHistory (date, version, success, errorid) "
-        f"VALUES ('{self.date}', '{self.version}', '{self.success}', '{self.errorid}')")
+               f"VALUES ('{self.date}', '{self.version}', '{self.success}', '{self.errorid}')")
 
         conn = db.db_conn()
         with conn:
-            with closing(conn.cursor()) as cur:
+            with closing(conn.cursor()):
                 cur = conn.cursor()
                 cur.execute(sql)
 
@@ -110,7 +111,7 @@ class MainUpdateHistory():
 
 
 @dataclass
-class SelfUpdate():
+class SelfUpdate:
     """
     Class for interfacing with the SelfUpdate table
     """
@@ -128,7 +129,7 @@ class SelfUpdate():
         """
         Writes object to DB
         """
-        db.db_update_class_in_table(db.db_conn(), self, 'SelfUpdate', 'id', 1)
+        db.db_update_class_in_table(db.db_conn(), self, 'SelfUpdate', 'id', '1')
 
     def insert_to_db(self):
         """
@@ -140,7 +141,7 @@ class SelfUpdate():
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'SelfUpdate', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(), 'SelfUpdate', 'id', '1', self)
 
     def print_me(self):
         """
@@ -161,19 +162,36 @@ class SelfUpdate():
 
 
 @dataclass
-class SelfUpdateHistory():
+class SelfUpdateHistory:
     """
     Class for interfacing with the SelfUpdateHistory table
     """
-    id: int
-    date: date
-    version: str
-    success: bool
-    errorid: int
+    id: int = None
+    date: date = None
+    version: str = None
+    success: bool = True
+    errorid: int = None
+
+    def insert_to_db(self):
+        """
+        The insert_to_db function inserts a new row into the SelfUpdateHistory table for each update
+
+        Args:
+            self: The database object to be used
+        """
+
+        sql = (f"INSERT into SelfUpdateHistory (date, version, success, errorid) "
+               f"VALUES({self.date, self.version,self.success, self.errorid})")
+
+        conn = db.db_conn()
+        with conn:
+            with closing(conn.cursor()):
+                cur = conn.cursor()
+                cur.execute(sql)
 
 
 @dataclass
-class DBversion():
+class DBversion:
     """
     Class for interfacing with the DBversion table
     """
@@ -196,7 +214,7 @@ class DBversion():
 
         conn = db.db_conn()
         with conn:
-            with closing(conn.cursor()) as cur:
+            with closing(conn.cursor()):
                 cur = conn.cursor()
                 cur.execute(sql)
 
@@ -215,7 +233,7 @@ class DBversion():
 
 
 @dataclass
-class Errors():
+class Errors:
     """
     Class for interfacing with the Errors table
     """
@@ -245,7 +263,7 @@ class ServerInfo:
         """
         Writes object to DB
         """
-        db.db_update_class_in_table(db.db_conn(), self, 'ServerInfo', 'id', 1)
+        db.db_update_class_in_table(db.db_conn(), self, 'ServerInfo', 'id', '1')
 
     def insert_to_db(self):
         """
@@ -257,7 +275,7 @@ class ServerInfo:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'ServerInfo', 'id', 1, self)
+        db.db_return_class_object(db.db_conn(), 'ServerInfo', 'id', '1', self)
 
     def print_me(self):
         """
@@ -335,8 +353,7 @@ class DistroConfig:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(
-            db.db_conn(), 'DistroConfig', 'distro', what, self)
+        return db.db_return_class_object(db.db_conn(), 'DistroConfig', 'distro', what, self)
 
     def pull_distros(self):
         """
@@ -350,27 +367,27 @@ class DistroConfig:
         """
         if not single:
             rows = db.db_select_values(db.db_conn(), 'DistroConfig', '*')
-            
+
             distro_dict = {}
 
             for i, row in enumerate(rows, start=1):
-                distroconfig = DistroConfig()
+                distro_config = DistroConfig()
                 if not edit:
                     print()
                     print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{row['distro']}{c.end}:")
                     print()
-                
+
                 for each in row.keys():
-                    setattr(distroconfig, each, row[each])
+                    setattr(distro_config, each, row[each])
                     if not edit:
                         if not each == "distro":
                             print(f"{c.fg.yellow}{each:<16}{c.end}: "
-                            f"{c.fg.lt_cyan}{row[each]}{c.end}")
-                    
-                distro_dict[row['distro']] = distroconfig
+                                  f"{c.fg.lt_cyan}{row[each]}{c.end}")
+
+                distro_dict[row['distro']] = distro_config
             print()
             return distro_dict
-        
+
         print()
         print(f"{c.fg.yellow}{self.distro}{c.end}")
         dc_dict: dict = self.__dict__
@@ -380,4 +397,3 @@ class DistroConfig:
         for i, key in enumerate(dc_dict, start=1):
             print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{key :<16}{c.end}: "
                   f"{c.fg.lt_cyan}{dc_dict[key]}{c.end}")
-        
