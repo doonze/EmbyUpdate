@@ -11,9 +11,10 @@ def time_stamp(print_format: bool = True):
     :return: The current date and time in the format mm/dd/yy
     """
 
-    time_now = time.strftime("%x %X", time.localtime())
+    time_now_print = time.strftime("[%b %d %Y - %r]", time.localtime())
+    time_now = time.strftime("%m/%d/%Y %T", time.localtime())
 
     if print_format:
-        return time_now
+        return time_now_print
 
     return time_now
