@@ -5,10 +5,8 @@ Config setup module
 import sys
 from os.path import exists
 from sqlite3 import Error
-import db.dbobjects as db_obj
-from db import createdb
+from db import createdb, dbobjects
 from functions import api, exceptrace, colors
-
 
 c = colors.Terminalcolors()
 
@@ -24,15 +22,14 @@ def config_setup(version):
     """
     # We'll check if the DB exist or not
     if not exists('./db/embyupdate.db'):
-
         print()
         print(f"Database does {c.fg.red}NOT{c.end} exist, creating database...")
         createdb.create_db(version)
         print()
     # Now we'll start gathering user input
 
-    # First to check if Emby is running so we can get the version
-    serverinfo: db_obj.ServerInfo = api.get_running_version()
+    # First to check if Emby is running, so we can get the version
+    serverinfo: dbobjects.ServerInfo = api.get_running_version()
 
     # If the option to check server is True, and the sever is not reachable, we'll run the server
     # setup
@@ -41,10 +38,12 @@ def config_setup(version):
             print()
             print("I didn't find a running Emby instance on this server.")
             print(f"I tried the address {c.fg.cyan}{serverinfo.fullurl}{c.end}")
-            print("If this is correct, make sure the server is running.")
+            print("If this is correct, make sure the server is running. If you")
+            print("haven't installed Emby yet, select [1] to skip this for now")
+            print("at the prompt below. Emby will install after config setup.")
             print()
             print("* This is not required, however the script will try to update   *")
-            print("* Emby to the lastest version as we cannot contact the server   *")
+            print("* Emby to the latest version as we cannot contact the server   *")
             print("* to find what version it's currently running. It doesn't hurt  *")
             print("* anything to do so. But saves some time on slow connections if *")
             print("* your already running the latest version. After the first      *")
@@ -66,7 +65,6 @@ def config_setup(version):
                 if str(response) == "1":
                     print("Skipping server check and continuing config setup...")
                     print()
-                    loop = False
                     break
 
                 if str(response) == "2":
@@ -75,7 +73,6 @@ def config_setup(version):
                     print()
                     print("Server check has been permanently disabled.")
                     print()
-                    loop = False
                     break
 
                 if str(response) == "3":
@@ -102,9 +99,9 @@ def config_setup(version):
                             print()
 
                         while True:
-                            response = input("Do you use ssl to access your server? "
-                                             f"[Example: HTTPS://] Current value is "
-                                             f"({serverinfo.scheme}) [y/n]: ")
+                            response = input("Do you use SSL/TLS to access your server? "
+                                             f"[{c.fg.green}Example: HTTPS://{c.end}] Current value is "
+                                             f"({c.fg.cyan}{serverinfo.scheme}{c.end}) [y/n]: ")
 
                             if response.casefold() == "y":
                                 serverinfo.scheme = "https://"
@@ -201,13 +198,15 @@ def config_setup(version):
                     print("Input invalid. Please enter 1-4 or (c)ancel.")
                     print()
                     continue
+
+                loop = False  # Fires if 1 or 2 was selected, breaking out of the loop
     else:
         print()
         print("Server check disabled, skipping...")
         print()
 
-    configobj: db_obj.ConfigObj = db_obj.ConfigObj().get_config()
-    distros = db_obj.DistroConfig().pull_distros()
+    configobj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
+    distros = dbobjects.DistroConfig().pull_distros()
     distro_dict = {}
     for i, row in enumerate(distros, start=1):
         distro_dict[str(i)] = row['distro']
@@ -223,7 +222,7 @@ def config_setup(version):
                               f"Current distro is ({c.fg.lt_cyan}{configobj.mainconfig.distro}"
                               f"{c.end}): [?] ")
 
-        if str(distro_choice) in distro_dict.keys(): # pylint: disable=consider-iterating-dictionary
+        if str(distro_choice) in distro_dict.keys():  # pylint: disable=consider-iterating-dictionary
             configobj.mainconfig.distro = distro_dict[distro_choice]
             break
 
@@ -274,19 +273,19 @@ def config_setup(version):
     # User chooses if they wish to stop the server before installing updates. Not normally needed.
 
     while True:
-        servstop = input(f"Do we need to manually STOP the server to install? "
-                         f"{c.fg.orange}*RARELY NEEDED*{c.end} Current setting is "
-                         f"({c.fg.lt_cyan}{configobj.mainconfig.stopserver}{c.end}): [y/N] ")
+        emby_stop = input(f"Do we need to manually STOP the Emby server to install? "
+                          f"{c.fg.orange}*RARELY NEEDED*{c.end} Current setting is "
+                          f"({c.fg.lt_cyan}{configobj.mainconfig.stopserver}{c.end}): [y/N] ")
 
-        if servstop.casefold() == "y":
+        if emby_stop.casefold() == "y":
             configobj.mainconfig.stopserver = True
             break
 
-        if servstop in ("n", "N"):
+        if emby_stop in ("n", "N"):
             configobj.mainconfig.stopserver = False
             break
 
-        if servstop == "":
+        if emby_stop == "":
             break
 
         print("")
@@ -300,18 +299,18 @@ def config_setup(version):
 
     # User chooses if they wish to start the server again after updates. Not normally needed.
     while True:
-        servstart = input(f"Do we need to manually START the server to install? "
-                          f"{c.fg.orange}*RARELY NEEDED*{c.end} Current setting is "
-                          f"({c.fg.lt_cyan}{configobj.mainconfig.stopserver}{c.end}): [y/N] ")
-        if servstart.casefold() == "y":
+        emby_start = input(f"Do we need to manually START the Emby server to install? "
+                           f"{c.fg.orange}*RARELY NEEDED*{c.end} Current setting is "
+                           f"({c.fg.lt_cyan}{configobj.mainconfig.stopserver}{c.end}): [y/N] ")
+        if emby_start.casefold() == "y":
             configobj.mainconfig.startserver = True
             break
 
-        if servstart in ("n", "N"):
+        if emby_start in ("n", "N"):
             configobj.mainconfig.startserver = False
             break
 
-        if servstart == "":
+        if emby_start == "":
             break
 
         print("")
