@@ -88,6 +88,7 @@ class Config:
             configobj.selfupdate.releasetype = self.self_release
             print()
             print("Settings converted from old config file... Writing to database.")
+            configobj.mainconfig.configran = True
             configobj.mainconfig.update_db()
             configobj.selfupdate.update_db()
             print()
