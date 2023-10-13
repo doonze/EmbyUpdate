@@ -94,7 +94,7 @@ def main():
     config_obj.selfupdate.version = version
 
     # Next line is for my testing, leave commented
-    # config_obj.selfupdate.releasetype = "Beta"
+    # config_obj.selfupdate.releasetype = version
 
     # Now well try and update this app if the user chose that option
     if config_obj.selfupdate.runupdate is True:
