@@ -1,17 +1,31 @@
+EmbyUpdate Version 4.1 (Rolled 10/13/2023)
+* Huge update to how the app works
+* Now using SQLite DB for config
+* Command line options for viewing/updating the configs
+* Update history will now be recorded for both the app and Emby
+* Will now query the running instance of Emby (if possible) to get the current version. Main use is so that we don't
+bother updating Emby the first time the app is run if the current version and latest online version are the same. May
+have more uses later for this functionality.
+* App will restart itself if it's been updated. Previously updates would not come into effect until the next time the
+app was run.
+
+EmbyUpdate Version 4.0 (beta, not rolled)
+* Mainly moved from a config file to a SQLite database
+
 EmbyUpdate Version 3.6 (Rolled 9/17/2021)
 * Merged a fix by MaDTaZ in configupdate.py
 
 EmbyUpdate Version 3.5 (Rolled 9/16/2021)
-* Working merge with PEP updates and breakfix... fixes...
+* Working merge with PEP updates and break fix... fixes...
 
 EmbyUpdate Version 3.4 (not rolled)
-* attempted breakfix
+* attempted break fix
 
 EmbyUpdate Version 3.3 (Rolled 9/12/2021)
 * Merged PEP fixes and ConfigParser updates from @deathbybandaid
 
 EmbyUpdate Version 3.2 (Rolled 10/1/2020)
-* Added flags to bypass any install conformations requiring user manual intervention in the install 
+* Added flags to bypass any install conformations requiring user manual intervention in the installation
   process. As this is a automatic script those would fail. Updated Fedora, SUSE, and CentOS.
 
 EmbyUpdate Version 3.1
