@@ -20,7 +20,9 @@ def check_for_update(configobj: db.ConfigObj) -> bool:
         True if the online version is newer than the installed
 
     """
-
+    # Just to remind myself. The current running server version has already been checked and configobj.serverinfo
+    # updated by the time we get here. If there were errors connecting or if the server check has been disabled, it
+    # gets None back.
     if configobj.serverinfo.version is None:
         current_version = configobj.mainconfig.version
     else:
