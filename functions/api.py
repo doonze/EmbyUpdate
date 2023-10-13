@@ -1,7 +1,7 @@
 """
-module for getting info from api's
+module for getting info from APIs
 
-Currently for the Emby server running on the system, the GitHub for this app, and the Emby
+Currently, for the Emby server running on the system, the GitHub for this app, and the Emby
 GitHub.
 """
 
@@ -23,25 +23,24 @@ def get_running_version() -> db_obj.ServerInfo:
     while True:
         try:
 
-            serverinfo = db_obj.ServerInfo()
-            serverinfo.pull_from_db()
+            server_info = db_obj.ServerInfo().pull_from_db()
 
-            if serverinfo.portused:
-                serverinfo.fullurl = f'{serverinfo.scheme}{serverinfo.address}:{serverinfo.port}'\
-                    f'{serverinfo.apipath}'
+            if server_info.portused:
+                server_info.fullurl = f'{server_info.scheme}{server_info.address}:{server_info.port}'\
+                    f'{server_info.apipath}'
             else:
-                serverinfo.fullurl = f'{serverinfo.scheme}{serverinfo.address}{serverinfo.apipath}'
+                server_info.fullurl = f'{server_info.scheme}{server_info.address}{server_info.apipath}'
 
-            response = requests.get(serverinfo.fullurl)
-            updatejson = json.loads(response.text)
-            if "Version" in updatejson:
-                serverinfo.version = updatejson['Version']
-                serverinfo.servername = updatejson['ServerName']
-                return serverinfo
+            response = requests.get(server_info.fullurl)
+            update_json = json.loads(response.text)
+            if "Version" in update_json:
+                server_info.version = update_json['Version']
+                server_info.servername = update_json['ServerName']
+                return server_info
 
         except requests.exceptions.RequestException:
-            serverinfo.version = "None"
-            return serverinfo
+            server_info.version = "None"
+            return server_info
 
 
 def get_self_online_version() -> db_obj.SelfUpdate:
@@ -51,11 +50,8 @@ def get_self_online_version() -> db_obj.SelfUpdate:
     selfgithubapi, which is the API link for all releases on GitHub, and version, which is
     the most recent release tag name.
 
-    Args:
-        None
-
     Returns:
-        The version of the current script from github
+        The version of the current script from GitHub
     """
 
     try:
@@ -64,11 +60,11 @@ def get_self_online_version() -> db_obj.SelfUpdate:
         selfupdate.pull_from_db()
 
         response = requests.get(selfupdate.selfgithubapi)
-        updatejson = json.loads(response.text)
+        update_json = json.loads(response.text)
 
-        # Here we search the github API response for the most recent version of beta or stable
+        # Here we search the GitHub API response for the most recent version of beta or stable
         # depending on what was chosen by the user
-        for entry in updatejson:
+        for entry in update_json:
 
             if selfupdate.releasetype == "Beta":
 
@@ -93,7 +89,7 @@ def get_self_online_version() -> db_obj.SelfUpdate:
 def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
     """
     We first check the running server version and record that. We then pull the latest online
-    version from github to know if we need to update.
+    version from GitHub to know if we need to update.
 
     Args:
         configobj:db_obj.ConfigObj: Pass the configobj object
@@ -116,15 +112,15 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
                       "setup and update the server info. I'm going to make assumptions based \n"
                       "on the last good update I was able to run (I track such things). But if \n"
                       "you used a method other than myself to update (or this is a first run), \n"
-                      "we may waste some resources updateing to a version you already have. \n"
-                      "Won't hurt nothin'.")
+                      "we may waste some resources updating to a version you already have. \n"
+                      "Won't hurt nothin'. Just waste both our times. :)")
                 print()
 
         response = requests.get(configobj.mainconfig.embygithubapi)
-        updatejson = json.loads(response.text)
-        # Here we search the github API response for the most recent version of beta or stable
+        update_json = json.loads(response.text)
+        # Here we search the GitHub API response for the most recent version of beta or stable
         # depending on what was chosen above.
-        for entry in updatejson:
+        for entry in update_json:
 
             if configobj.mainconfig.releasetype == 'Beta':
 
