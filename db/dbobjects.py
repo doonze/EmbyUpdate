@@ -6,7 +6,7 @@ All database functions happen within these classes.
 from contextlib import closing
 from dataclasses import dataclass
 from datetime import date
-import db.db_functions as db
+import db.dbfunctions as db
 from functions.colors import Terminalcolors as c
 
 
