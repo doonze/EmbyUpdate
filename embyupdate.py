@@ -16,7 +16,7 @@ EmbyUpdate: The main file and only executable script of the EmbyUpdate package
 ###############################################################################################
 """
 
-__version__ = "v4.0"
+__version__ = "v4.1"
 __author__ = "Justin Hopper"
 __email__ = "doonze@gmail.com"
 __maintainer__ = "Justin Hopper"
@@ -31,16 +31,16 @@ import os.path
 import sys
 import directoryfix
 from genericpath import exists
-os.chdir(sys.path[0])
-if os.path.exists("configupdate.py"):
-    directoryfix.fix_directory()
-    os.execv(sys.argv[0], sys.argv)
-else:
+try:
     from functions import (pythonversion, config, arguments, configsetup, selfupdate,
                            api, updatecheck, install, colors)
     from db import createdb, dbobjects
 
-c = colors.Terminalcolors()
+except Exception:
+    os.chdir(sys.path[0])
+    if os.path.exists("configupdate.py"):
+        directoryfix.fix_directory()
+        os.execv(sys.argv[0], sys.argv)
 
 
 def main():
@@ -51,7 +51,7 @@ def main():
     """
 
     # pylint: disable=C0103
-
+    c = colors.Terminalcolors()
     # Sets the version # for the command line -v/--version response
     version = f"{__version__} - {__status__}"
 
@@ -71,7 +71,6 @@ def main():
     # launch the config setup process
 
     if not exists('./db/embyupdate.db'):
-
         print()
         print(f"Database does {c.fg.red}NOT{c.end} exist, creating database...")
         createdb.create_db(version)
