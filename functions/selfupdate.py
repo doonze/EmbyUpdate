@@ -18,7 +18,7 @@ def self_update(configobj: db.ConfigObj):
     the latest version of the app online and comparing it to what is currently installed on
     your machine. It will then download the latest version if needed. Once downloaded, it
     will delete any previous versions of embyupdate from your machine (including older
-    versions of this script). Lastly, it sets itself as executable so you can run the script
+    versions of this script). Lastly, it sets itself as executable, so you can run the script
     directly from terminal.
 
     Args:
@@ -38,7 +38,7 @@ def self_update(configobj: db.ConfigObj):
         # Build the zip file name
         selfupdate.zipfile = f"{selfupdate.onlineversion}.zip"
 
-        # Build path for unziping
+        # Build path for unzipping
         zip_base_path = ("EmbyUpdate-" + selfupdate.onlineversion[1:] + "/")
 
         # Ok, we've got all the info we need. Now we'll test if we even need to update or not.
@@ -71,7 +71,7 @@ def self_update(configobj: db.ConfigObj):
             file.write(download.content)
         print("Package downloaded!")
 
-        # Next we unzip and install it to the directory where the app was ran from
+        # Next we unzip and install it to the directory where the app was run from
         with zipfile.ZipFile(selfupdate.zipfile) as unzip:
             for zip_info in unzip.infolist():
                 if zip_info.filename[-1] == '/':
@@ -95,14 +95,18 @@ def self_update(configobj: db.ConfigObj):
         state = os.stat("embyupdate.py")
         os.chmod("embyupdate.py", state.st_mode | 0o111)
 
-    except zipfile.error as exception:
+    except Exception as exception:
         print(timestamp.time_stamp(
         ) + "EmbyUpdate(self): We had a problem installing new version of updater!")
         print(timestamp.time_stamp() +
               "EmbyUpdate(self): Here's the error we got -- " + str(exception))
+        db.SelfUpdateHistory(date=timestamp.time_stamp(),
+                             version=selfupdate.onlineversion,
+                             success=False,
+                             errorid=1).insert_to_db()
         sys.exit()
 
-    # Lastly we write the newly installed version into the config file and restart the
+    # We write the newly installed version into the config file and restart the
     # program
     try:
         selfupdate.version = selfupdate.onlineversion
@@ -116,6 +120,12 @@ def self_update(configobj: db.ConfigObj):
         print(
             "*****************************************************************************")
         print("\n")
+
+        # Now we'll update the UpdateHistoryTable
+        db.SelfUpdateHistory(date=timestamp.time_stamp(),
+                             version=selfupdate.version,
+                             success=True,
+                             errorid=0).insert_to_db()
 
         # Here we restart the program
         os.execv(sys.argv[0], sys.argv)
