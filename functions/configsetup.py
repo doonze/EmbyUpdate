@@ -351,7 +351,7 @@ def config_setup(version):
     # User chooses if they want to update to beta or stable for the script
     while True:
 
-        script_beta_choice = input("Install EmbyUpdate Beta versions (this script)? "
+        script_beta_choice = input("Install EmbyUpdate (this script) Beta versions? "
                                    f"Current release setting is {c.fg.lt_cyan}"
                                    f"{configobj.selfupdate.releasetype}{c.end}: [y/N] ")
 
