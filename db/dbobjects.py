@@ -275,7 +275,7 @@ class ServerInfo:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'ServerInfo', 'id', '1', self)
+        return db.db_return_class_object(db.db_conn(), 'ServerInfo', 'id', '1', self)
 
     def print_me(self):
         """
