@@ -7,7 +7,7 @@ from contextlib import closing
 from sqlite3 import Error
 
 import db.dbobjects as db_obj
-from db.db_functions import db_conn
+from db.dbfunctions import db_conn
 from db.dbobjects import DistroConfig
 from functions import exceptrace
 
