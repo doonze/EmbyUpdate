@@ -113,7 +113,7 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
                       "on the last good update I was able to run (I track such things). But if \n"
                       "you used a method other than myself to update (or this is a first run), \n"
                       "we may waste some resources updating to a version you already have. \n"
-                      "Won't hurt nothin'. Just waste both our times. :)")
+                      "Won't hurt nothin'. Just waste both our times. ;)")
                 print()
 
         response = requests.get(configobj.mainconfig.embygithubapi)

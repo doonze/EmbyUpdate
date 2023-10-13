@@ -29,8 +29,12 @@ __credits__ = [""]
 
 import os.path
 import sys
-import directoryfix
 from genericpath import exists
+import directoryfix
+# Before we import the rest, we have to see if the user has a 3.6 or earlier version of EmbyUpdate. Because it had a
+# broken unzipper that couldn't unzip into directories, it unzips 4.1+ versions without their directories. Therefore,
+# causing an app failure. If it does fail to import, it throws an exception which we catch and trigger a fix. We detect
+# earlier version by checking for the existence of a file (configupdate.py) that doesn't exist in later versions.
 try:
     from functions import (pythonversion, config, arguments, configsetup, selfupdate,
                            api, updatecheck, install, colors)
@@ -40,6 +44,8 @@ except Exception:
     os.chdir(sys.path[0])
     if os.path.exists("configupdate.py"):
         directoryfix.fix_directory()
+        # Here we reload the app to run with the directories now created. This will allow the app to run without an
+        # exception.
         os.execv(sys.argv[0], sys.argv)
 
 
