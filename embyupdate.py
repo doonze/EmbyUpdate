@@ -73,8 +73,8 @@ def main():
         print("Starting config setup...")
         configsetup.config_setup(version)
 
-    else:
-        print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")
+    # else:
+    #    print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")
 
     # We'll get the config from the DB
     config_obj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
