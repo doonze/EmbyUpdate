@@ -64,12 +64,12 @@ def self_update(configobj: db.ConfigObj):
         print('')
 
         # Here we download the zip to install
-        print("Starting Package download...")
+        print(f"{timestamp.time_stamp()} Starting Package download...")
         download = requests.get(
             f"{selfupdate.downloadurl}{selfupdate.zipfile}")
         with open(selfupdate.zipfile, 'wb') as file:
             file.write(download.content)
-        print("Package downloaded!")
+        print(f"{timestamp.time_stamp()} Package downloaded!")
 
         # Next we unzip and install it to the directory where the app was run from
         with zipfile.ZipFile(selfupdate.zipfile) as unzip:
