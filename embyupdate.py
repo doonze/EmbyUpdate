@@ -55,11 +55,8 @@ def main():
     # Checks for python version, exit if not greater than 3.6
     pythonversion.python_version_check()
 
-    # Creates the default config object
-    config_fix = config.Config()
-
-    # Fixes pre version 4.0 config files
-    config_fix.config_fix(version)
+    # Fixes pre version 4.0 config files if they exist (upgrade to new DB config system)
+    config.Config().config_fix(version)
 
     # First we're going to force the working path to be where the script lives
     os.chdir(sys.path[0])
@@ -79,13 +76,11 @@ def main():
     else:
         print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")
 
-    # TODO: remove below!
-    sys.exit()
     # We'll get the config from the DB
     config_obj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
     config_obj.selfupdate.version = version
 
-    # Now well try and update the app if the user chose that option
+    # Now well try and update this app if the user chose that option
     if config_obj.selfupdate.runupdate is True:
         selfupdate.self_update(config_obj)
 
