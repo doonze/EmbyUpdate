@@ -26,5 +26,5 @@ def python_version_check():
                                                                    "required! Exiting!!")
         sys.exit()
 
-    print()
-    print(f"You are running Python version {python_version} ,{c.fg.green}CHECK PASSED{c.end}!")
+    # print()
+    # print(f"You are running Python version {python_version} ,{c.fg.green}CHECK PASSED{c.end}!")
