@@ -9,13 +9,13 @@ import sys
 import json
 import requests
 import db.dbobjects as db_obj
-from functions import exceptrace
+from functions import exceptrace, timestamp
 
 
 def get_running_version() -> db_obj.ServerInfo:
     """
-    The GetRunningVersion function returns the version number of the latest build on the server.
-    It is used to determine if a user's local copy of Emby is out-of-date.
+    The GetRunningVersion function returns the version number the currently running Emby Server.
+    It is used to determine if a user's Emby Server is out-of-date and needs updating.
 
     :return: The server info of the running Emby server
     """
@@ -38,10 +38,14 @@ def get_running_version() -> db_obj.ServerInfo:
                 server_info.servername = update_json['ServerName']
                 return server_info
             else:
+                print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. "
+                      f"If it's running, try running the config updater to check settings.")
                 server_info.version = None
                 return server_info
 
         except requests.exceptions.RequestException:
+            print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. If it's "
+                  f"running, try running the config updater to check settings.")
             server_info.version = None
             return server_info
 
