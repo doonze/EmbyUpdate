@@ -96,20 +96,18 @@ def self_update(configobj: db.ConfigObj):
         os.chmod("embyupdate.py", state.st_mode | 0o111)
 
     except Exception as exception:
-        print(timestamp.time_stamp(
-        ) + "EmbyUpdate(self): We had a problem installing new version of updater!")
-        print(timestamp.time_stamp() +
-              "EmbyUpdate(self): Here's the error we got -- " + str(exception))
-        db.SelfUpdateHistory(date=timestamp.time_stamp(),
+        print(timestamp.time_stamp() + "EmbyUpdate(self): We had a problem installing new version of updater!")
+        print(timestamp.time_stamp() + "EmbyUpdate(self): Here's the error we got -- " + str(exception))
+        db.SelfUpdateHistory(date=timestamp.time_stamp(False),
                              version=selfupdate.onlineversion,
                              success=False,
                              errorid=1).insert_to_db()
-        sys.exit()
 
     # We write the newly installed version into the config file and restart the
     # program
     try:
         selfupdate.version = selfupdate.onlineversion
+        selfupdate.dateupdated = timestamp.time_stamp(False)
         selfupdate.onlineversion = None
         selfupdate.zipfile = None
         selfupdate.update_db()
@@ -122,7 +120,7 @@ def self_update(configobj: db.ConfigObj):
         print("\n")
 
         # Now we'll update the UpdateHistoryTable
-        db.SelfUpdateHistory(date=timestamp.time_stamp(),
+        db.SelfUpdateHistory(date=timestamp.time_stamp(False),
                              version=selfupdate.version,
                              success=True,
                              errorid=0).insert_to_db()
