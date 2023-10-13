@@ -37,9 +37,12 @@ def get_running_version() -> db_obj.ServerInfo:
                 server_info.version = update_json['Version']
                 server_info.servername = update_json['ServerName']
                 return server_info
+            else:
+                server_info.version = None
+                return server_info
 
         except requests.exceptions.RequestException:
-            server_info.version = "None"
+            server_info.version = None
             return server_info
 
 
