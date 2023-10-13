@@ -6,7 +6,6 @@ from db.dbobjects import DistroConfig
 from functions.colors import Terminalcolors as c
 
 
-
 def edit_config(key_map, dataclass):
     """
     The edit_config function allows the user to edit a specific attribute of a dataclass
@@ -18,7 +17,7 @@ def edit_config(key_map, dataclass):
     the specified attribute.
 
     Args:
-        key_map: Map the user input to a specific attribute of the dataclass
+        key_map: Map the user input to a specific attribute of the dataclass.
         dataclass: Instantiate the class
     """
 
@@ -56,10 +55,9 @@ def edit_distroconfig(distro_dict):
     the specified attribute.
 
     Args:
-        key_map: Map the user input to a specific attribute of the dataclass
-        dataclass: Instantiate the class
+        distro_dict: A dictionary of distro's
     """
-    distroconfig = DistroConfig()
+
     key_map = {}
     while True:
         print()
@@ -81,7 +79,7 @@ def edit_distroconfig(distro_dict):
             print()
             sub_map = {}
             for i, field in enumerate(fields(distroconfig), start=0):
-                if field.name is not ("distro"):
+                if field.name != "distro":
                     sub_map[str(i)] = field.name
                     print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{field.name :<16}{c.end}: "
                           f"{c.fg.lt_cyan}{getattr(distroconfig, field.name)}{c.end}")
