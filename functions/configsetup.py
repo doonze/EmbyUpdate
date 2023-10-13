@@ -403,6 +403,7 @@ def config_setup(version):
         elif confirm == "CONFIRM":
             # Now we write the config to the database
             try:
+                configobj.mainconfig.configran = True
                 configobj.mainconfig.update_db()
                 configobj.selfupdate.update_db()
                 serverinfo.update_db()
