@@ -29,7 +29,7 @@ class Config:
         self.self_version = "First Run"
         self.self_release = "Stable"
 
-    def config_fix(self, version_num):
+    def config_fix(self, version):
         """ Convert to new DB config if needed (for versions before 4.0)."""
         try:
 
@@ -71,7 +71,7 @@ class Config:
             if not exists('./db/embyupdate.db'):
                 print()
                 print("Trying to create Database...")
-                create_db(version_num)
+                create_db(version)
 
             # Next we'll put the old config data in our new dataclass style config
             # and write the old config to the new database
@@ -87,7 +87,7 @@ class Config:
             configobj.selfupdate.version = self.self_version
             configobj.selfupdate.releasetype = self.self_release
             print()
-            print("Settings converted... Writing to database.")
+            print("Settings converted from old config file... Writing to database.")
             configobj.mainconfig.update_db()
             configobj.selfupdate.update_db()
             print()
@@ -96,30 +96,30 @@ class Config:
             # Now that we have all the settings converted, we'll remove the config file
             if exists("config.ini"):
                 print()
-                print("config.ini removed. (no longer needed)")
+                print("Trying to remove config file...")
                 remove("config.ini")
+                print("config.ini removed. (no longer needed)")
 
             # We'll also clean up the old configupdate.py file that's no longer used
             if exists("configupdate.py"):
-                print()
                 print("configupdate.py removed (no longer needed).")
                 remove("configupdate.py")
 
-        except Exception:
+        except (OSError, SystemError):
             exceptrace.execpt_trace("***config_fix: An error was encountered..",
                                     sys.exc_info())
-        print()
-        print("We were not able to finish the conversion to the new config system.")
-        print("Unfortunately, I cannot tell if you want Emby Stable or Beta, and it")
-        print("won't tell me what release type it is if I ask it. I don't want to")
-        print("overwrite your current server with the wrong version. This will break")
-        print("you if you run this script unattended automatically (cron or systemd) ")
-        print("and I'm sorry about that.")
-        print()
-        print("If you're seeing this, the best bet is to delete config.ini yourself")
-        print("and then run 'embyupdate.py -c' to force a new run of the config process")
-        print("and just start fresh. Again sorry, if you raise an issue and give me the")
-        print("details on my github page, I'll fix it. But that doesn't help you now.")
-        print()
-        print("I'm exiting.... and very upset about it.")
-        sys.exit()
+            print()
+            print("We were not able to finish the conversion to the new config system.")
+            print("Unfortunately, I cannot tell if you want Emby Stable or Beta, and it")
+            print("won't tell me what release type it is if I ask it. I don't want to")
+            print("overwrite your current server with the wrong version. This will break")
+            print("you if you run this script unattended automatically (cron or systemd) ")
+            print("and I'm sorry about that.")
+            print()
+            print("If you're seeing this, the best bet is to delete config.ini yourself")
+            print("and then run 'embyupdate.py -c' to force a new run of the config process")
+            print("and just start fresh. Again sorry, if you raise an issue and give me the")
+            print("details on my github page, I'll fix it. But that doesn't help you now.")
+            print()
+            print("I'm exiting.... and very upset about it.")
+            sys.exit()
