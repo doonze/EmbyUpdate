@@ -46,7 +46,7 @@ class MainConfig:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'MainConfig', 'id', '1', self)
+        return db.db_return_class_object(db.db_conn(), 'MainConfig', 'id', '1', self)
 
     def print_me(self):
         """
@@ -141,7 +141,7 @@ class SelfUpdate:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'SelfUpdate', 'id', '1', self)
+        return db.db_return_class_object(db.db_conn(), 'SelfUpdate', 'id', '1', self)
 
     def print_me(self):
         """
@@ -301,9 +301,9 @@ class ConfigObj:
     Class for interfacing with the ConfigObj object. This holds the Mainconfig,
     SelfUpdate, and ServerInfo tables. As well as the temp field onlineversion.
     """
-    mainconfig: MainConfig = MainConfig()
-    selfupdate: SelfUpdate = SelfUpdate()
-    serverinfo: ServerInfo = ServerInfo()
+    mainconfig: MainConfig = None
+    selfupdate: SelfUpdate = None
+    serverinfo: ServerInfo = None
     onlineversion: str = None
 
     def get_config(self):
@@ -319,9 +319,9 @@ class ConfigObj:
             The config dataclass object
         """
 
-        self.mainconfig.pull_from_db()
-        self.selfupdate.pull_from_db()
-        self.serverinfo.pull_from_db()
+        self.mainconfig = MainConfig().pull_from_db()
+        self.selfupdate = SelfUpdate().pull_from_db()
+        self.serverinfo = ServerInfo().pull_from_db()
 
         return self
 
