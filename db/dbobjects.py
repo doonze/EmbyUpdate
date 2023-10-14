@@ -257,7 +257,7 @@ class ServerInfo:
     apipath: str = '/System/Info/Public'
     fullurl: str = None
     version: str = None
-    servername: str = None
+    servername: str = "Unknown"
 
     def update_db(self):
         """
