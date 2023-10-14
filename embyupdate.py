@@ -16,7 +16,7 @@ EmbyUpdate: The main file and only executable script of the EmbyUpdate package
 ###############################################################################################
 """
 
-__version__ = "v4.12"
+__version__ = "v4.20"
 __author__ = "Justin Hopper"
 __email__ = "doonze@gmail.com"
 __maintainer__ = "Justin Hopper"
