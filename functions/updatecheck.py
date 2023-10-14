@@ -27,6 +27,9 @@ def check_for_update(configobj: db.ConfigObj) -> bool:
         current_version = configobj.mainconfig.version
     else:
         current_version = configobj.serverinfo.version
+        if configobj.mainconfig.version is "First Run":
+            configobj.mainconfig.version = configobj.serverinfo.version
+            configobj.mainconfig.update_db()
 
     if str(configobj.onlineversion) == str(current_version):
         # If the latest online version matches the last installed version then we let you
