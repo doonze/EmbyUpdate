@@ -36,7 +36,7 @@ class Config:
             if exists("config.ini"):
                 print()
                 print("I've detected an old style config file. I will now try to fix it if")
-                print("it's pre version 3.5, and then recreate your settings in the new")
+                print("it's version 3.6 or before, and then recreate your settings in the new")
                 print("database config.")
             else:
                 return None
@@ -51,9 +51,9 @@ class Config:
                 self.emby_release = self.config_file['DISTRO']['releaseversion']
                 self.stop_server = self.config_file['SERVER']['stopserver']
                 self.start_server = self.config_file['SERVER']['startserver']
-                self.emby_version = self.config_file['SERVER']['embyversion']
+                self.emby_version = self.config_file['SERVER']['embyversion'].split("-", 1)[0]
                 self.self_update = self.config_file['EmbyUpdate']['autoupdate']
-                self.self_version = self.config_file['EmbyUpdate']['version']
+                self.self_version = version
 
             else:
                 print()
@@ -61,10 +61,10 @@ class Config:
                 self.distro = self.config_file['DISTRO']['installdistro']
                 self.stop_server = self.config_file['SERVER'].getboolean('stopserver')
                 self.start_server = self.config_file['SERVER'].getboolean('startserver')
-                self.emby_version = self.config_file['SERVER']['embyversion']
+                self.emby_version = self.config_file['SERVER']['embyversion'].split("-", 1)[0]
                 self.emby_release = self.config_file['SERVER']['embyrelease']
                 self.self_update = self.config_file['EMBYUPDATE'].getboolean('selfupdate')
-                self.self_version = self.config_file['EMBYUPDATE']['selfversion']
+                self.self_version = version
                 self.self_release = self.config_file['EMBYUPDATE']['selfrelease']
 
             # Now we'll create the DB
