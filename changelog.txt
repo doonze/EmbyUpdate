@@ -1,3 +1,6 @@
+EmbyUpdate Version 4.20 (Rolled 10/14/2023)
+* Break fix for Python3.11 issues. Problem didn't show up in 3.7-3.10
+
 EmbyUpdate Version 4.12 Stable (Rolled 10/13/2023)
 * Rolled 4.11 Beta to 4.12 Stable and updated README with new process. Man was that old.
 * Been sitting in this chair for 17 hours today working on this release, and worked on this about 4 hours yesterday.
