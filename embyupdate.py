@@ -16,7 +16,7 @@ EmbyUpdate: The main file and only executable script of the EmbyUpdate package
 ###############################################################################################
 """
 
-__version__ = "v4.1"
+__version__ = "v4.11"
 __author__ = "Justin Hopper"
 __email__ = "doonze@gmail.com"
 __maintainer__ = "Justin Hopper"
@@ -83,9 +83,6 @@ def main():
         print()
         print("Starting config setup...")
         configsetup.config_setup(version)
-
-    # else:
-    #    print(f"Database exists! {c.fg.green}CHECK PASSED{c.end}!")
 
     # We'll get the config from the DB
     config_obj: dbobjects.ConfigObj = dbobjects.ConfigObj().get_config()
