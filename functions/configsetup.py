@@ -34,7 +34,7 @@ def config_setup(version):
     # If the option to check server is True, and the sever is not reachable, we'll run the server
     # setup
     if serverinfo.enablecheck:
-        if serverinfo.version == "None":
+        if serverinfo.version is None:
             print()
             print("I didn't find a running Emby instance on this server.")
             print(f"I tried the address {c.fg.cyan}{serverinfo.fullurl}{c.end}")
