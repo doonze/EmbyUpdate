@@ -20,34 +20,35 @@ def get_running_version() -> db_obj.ServerInfo:
     :return: The server info of the running Emby server
     """
 
-    while True:
-        try:
+    try:
 
-            server_info = db_obj.ServerInfo().pull_from_db()
+        server_info: db_obj.ServerInfo = db_obj.ServerInfo().pull_from_db()
 
-            if server_info.portused:
-                server_info.fullurl = f'{server_info.scheme}{server_info.address}:{server_info.port}'\
-                    f'{server_info.apipath}'
-            else:
-                server_info.fullurl = f'{server_info.scheme}{server_info.address}{server_info.apipath}'
+        if server_info.portused:
+            server_info.fullurl = f'{server_info.scheme}{server_info.address}:{server_info.port}' \
+                                  f'{server_info.apipath}'
+        else:
+            server_info.fullurl = f'{server_info.scheme}{server_info.address}{server_info.apipath}'
 
-            response = requests.get(server_info.fullurl)
-            update_json = json.loads(response.text)
-            if "Version" in update_json:
-                server_info.version = update_json['Version']
-                server_info.servername = update_json['ServerName']
-                return server_info
-            else:
-                print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. "
-                      f"If it's running, try running the config updater to check settings.")
-                server_info.version = None
-                return server_info
+        response = requests.get(server_info.fullurl)
+        update_json = json.loads(response.text)
+        if "Version" in update_json:
+            server_info.version = update_json['Version']
+            server_info.servername = update_json['ServerName']
+            server_info.update_db()
+            return server_info
 
-        except requests.exceptions.RequestException:
-            print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. If it's "
-                  f"running, try running the config updater to check settings.")
+        else:
+            print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. "
+                  f"If it's running, try running the config updater to check settings.")
             server_info.version = None
             return server_info
+
+    except requests.exceptions.RequestException:
+        print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. If it's "
+              f"running, try running the config updater to check settings.")
+        server_info.version = None
+        return server_info
 
 
 def get_self_online_version() -> db_obj.SelfUpdate:
