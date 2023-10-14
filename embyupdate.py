@@ -22,7 +22,7 @@ __email__ = "doonze@gmail.com"
 __maintainer__ = "Justin Hopper"
 __copyright__ = "Copyright 2023, EmbyUpdate"
 __license__ = "GNU3"
-__status__ = "Beta"
+__status__ = "Stable"
 __credits__ = [""]
 
 # ------------------------------------------------------------------------------------------
