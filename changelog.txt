@@ -1,4 +1,13 @@
-EmbyUpdate Version 4.1 (Rolled 10/13/2023)
+EmbyUpdate Version 4.12 Stable (Rolled 10/13/2023)
+* Rolled 4.11 Beta to 4.12 Stable and updated README with new process. Man was that old.
+* Been sitting in this chair for 17 hours today working on this release, and worked on this about 4 hours yesterday.
+Man my butt hurts.
+
+EmbyUpdate Version 4.11 Beta (Rolled 10/13/2023)
+* Fixed some logic errors with how the app handled updates when I could find the server, then couldn't an a later run.
+or vise versa.
+
+EmbyUpdate Version 4.1 Beta (Rolled 10/13/2023)
 * Huge update to how the app works
 * Now using SQLite DB for config
 * Command line options for viewing/updating the configs
@@ -25,7 +34,7 @@ EmbyUpdate Version 3.3 (Rolled 9/12/2021)
 * Merged PEP fixes and ConfigParser updates from @deathbybandaid
 
 EmbyUpdate Version 3.2 (Rolled 10/1/2020)
-* Added flags to bypass any install conformations requiring user manual intervention in the installation
+* Added flags to bypass any install conformations requiring user manual intervention in the install
   process. As this is a automatic script those would fail. Updated Fedora, SUSE, and CentOS.
 
 EmbyUpdate Version 3.1
