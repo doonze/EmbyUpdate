@@ -1,15 +1,28 @@
 # EmbyUpdate
 A python script for automatically updating Emby Server to the latest version on Linux distros.
 
-# BETA has been merged with MASTER. See the release downloads themselves for instruction for older versions (3.6 and before). Once I get beta fully tested I will update the instructions below for the new version. Much has changed. Biggest thing to note here is you will need to have at least python version 3.6 (but you'll have to download dataclasses to use it). Full support is only for Python versions 3.7+. Tested on 3.9.
+# Version 4.1+ is a whole new animal. 
+* Requires Python 3.6+ (must install dataclasses to use on 3.6 however)
+* Converted from a config.ini file to SQLite DB as a config manager
+* I've Tested the updates from the old system installs, to the new, 9 ways from Sunday. If I break your install, sorry. Best to just install 4.11+ manually and set it all up again if you're broken after the update. I really tried to test everything the best I could
+* Now talks to the server if it's running to get what version it's on
+* Will update and rerun itself to run with new changes instantly
+* Lot's more... oh so much more. Too much to list.
 
-### The current master version is a fully working stand alone and can be cloned and ran as is. I just need to do some testing for upgrades from previous versions before I make a beta release. Once that testing is done, I'll make a new master release and update this readme.
+# How to install
 
-* Backup your server before doing anything!! Install the Emby backup/restore plugin and get a good backup!
-* It's possible to loose your settings if you are switching from a repo version to the standalone version this script installs. So make sure you have that backup!
-* If switching from repo version make sure you uninstall the repo version first (apt remove emby-server or your disto's process) or your next distro repo upgrade could switch you back to repo version. MAKE SURE YOU HAVE A BACKUP!!
+1. Backup your server before doing anything!! Install the Emby backup/restore plugin and get a good backup!
+2. It's possible to loose your settings if you are switching from a repo version to the standalone version this script installs. So make sure you have that backup!
+3. If switching from repo version make sure you uninstall the repo version first (apt remove emby-server or your disto's process) or your next distro repo upgrade could switch you back to repo version. MAKE SURE YOU HAVE A BACKUP!!
+4. Must use sudo to run the script as it calls system commands to install Emby Server. You can't manually install Emby without root privlages, and my app can't either
+5. Best install path: Go to releases and find the most recent Stable version (will be the top one that says Stable). Download the desired archive file under sources. Unzip somewhere handy.
+      - Alt install path: Clone or download the master branch. I don't suggest this as I sometimes am working on things in master and can't promise 100% stablility. I'll try my best tho.
+7. Once installed run the embyupdate.py file ```sudo ./embyupdate.py``` or ```sudo python3 embyupdate.py``` or the like. However you have your system setup.
+8. The app guides you throught the rest, step by step.
 
-### Prerequisites 
+More info on installing in the wiki here: [Install Instructions](https://github.com/doonze/EmbyUpdate/wiki/Initial-install-and-setup)
+  
+# Prerequisites 
 
 For Debian and it's derivatives all you need is:
 ```
@@ -19,101 +32,17 @@ python3
 for Python you'll need to get:
 
 ```
-(install through pip or apt, google if you need to know specifics for your system)
 requests
 ```
+(install through pip or apt. Google is your best friend if you need to know specifics for your system)
 
 ### Getting Started
 
-You will need to have root/sudo/admin access to your server to use this script. It won't have access to update your server otherwise. But you have to have those access rights to install Emby anyway, so moot point.
+The configuration wizard is pretty self-explanatory. But if you want a more indepth guide you can see it here: [Configuration Manager](https://github.com/doonze/EmbyUpdate/wiki/Configuration-Manager)
 
-Download the release .zip of your choice. Unzip the files into a directory you have full access to. I suggest a directory in your home directory called embyupdate. The very first time you run the script it will tell you that you have to run the config first. You'll have to run the following command and answer a few questions. Hitting enter on all but the first question will setup the defaults.
+### Update automation
 
-```
-sudo python embyupdate.py --config
-```
-Here's the config options questions, all are required:
-
-First you choose your distro from the list, or choose c to cancel and not create/update the config file nor install/update Emby.
-
-```
-[1] Debian X64
-[2] Debian ARM
-[3] Arch
-[4] CentOS
-[5] Fedora X64
-[6] Fedora ARM
-[7] OpenSUSE X64
-[8] OpenSUSE ARM
-[C] Cancel config update
-Choose your distro by number or C to cancel update [?]:
-```
-
-Next question default is no. You can just hit enter if you don't want to install beta versions. Enter y if you DO want to insall beta versions.
-
-```
-Do you want to install the beta version? [y/N]
-```
-
-Just hit enter unless you need to have the server stopped before installing. I don't think any distro needs this, but it's there if needed or you have issues. Default is no.
-
-```
-Do we need to manually stop the server to install? (Likely only needed for Arch.) [y/N]
-```
-
-Just hit enter here unless you need to have the server started manually after install. Once again I don't think this is needed, but it's there if so, and if you have any issues. Default is no.
-
-```
-Do we need to manually start the server after install? (Likely only needed for Arch.) [y/N]
-```
-
-Defalut is yes. Unless you have a reason you don't want to keep the script updated, just hit enter. This will only update to Stable releases, beta releases will be ignored. I have no desire to change this behavior as I don't plan on keeping an up to date beta version. Only time I'll release beta's is if I'm doing major changes that need testing.
-
-```
-Keep EmbyUpdate (this script) up to date with latest version? [Y/n]
-```
-
-The last question will show you all the config options you have selected, and will ask you to type CONFIRM (all caps, just like that) or c to cancel the config creation/update. Typing CONFIRM will move on to installing/updating Emby, cancel will discard all changes and stop the install.
-
-```
-Choices to write to config file...
-Linux distro version to update: Debian X64
-The chosen version for install is: Stable
-Server will NOT be manually stopped on install.
-Server will NOT be manually started after install.
-Script (EmbyUpdate) will be automatically updated!
-
-Please review above choices and type CONFIRM to continue or c to cancel update and install! [CONFIRM/c]
-```
-
-You can invoke the config interface at any time with -c or --config, any changes you choose will be updated and the installer ran. After inital creation you'll only have need to rerun it if you want to change something. Otherwise normal usage is listed below.
-
-Usage is: 
-```
-sudo python embyupdate.py 
-```
-or
-```
-sudo python3 embyupdate.py (suggested)
-```
-or if you have made it executable (see Deployment below)
-```
-sudo ./embyupdate.py
-```
-
-Also, there are a few command line arguments you can use:
-
-```
--c/--config = config creator/updator
--v/--version = display current version
--h/--help = displays help
-```
-
-Script sudo/root to be able to install packages and Stop/Start the server if needed. You can of course leave off the sudo if your already root.
-
-### **I however suggest running it as a cron job as root.** 
-
-See deployment section for cron example
+You can run the script at any time manually to update Emby Server. What you didn't come here to manually have to update like you do now. You want an automated solution! See [Deployment](#deployment) below for more info on that.
 
 ### Supported Linux Distros
 ```
@@ -125,69 +54,26 @@ Fedora
 Arch Linux
 OpenSuse
 ```
-(Or anything based on them. If you want to modify the code it should work on any distro)
-
-### ** For any Distro but Debian/Ubuntu/Mint you have to chage the distro varable as it's set to Debian flavors by default **
-
-### ** You can choose to install beta or stable. Default is stable. To change to installing betas change the "installbeta" variable to True.
+(Or anything based on them. If you want to modify the code it should work on any distro). If you are running a distro you don't see here, let me know. Raise an issue. I'll get it added if you'll help me to test it.
 
 ### Script Logic Flow
 
-1. Script will test to see if config file exist. If it doesn't it will notify user they must run the config creator and exit. Once the config has been setup the script will move on to installing the latest Emby version. 
+First run:
+1. Script will test to see if the database exist. If it doesn't it will create it, check to see it it can talk to a running server to pull the current version number, and then launch the configuration wizard. 
+2. After the wizard is finished, it goes into it's normal update mode. It will try to pull the current version from Emby server itself. If you don't have a server installed yet, if the server is down, or you've changed the ports, it will simply install the latest version. If you already have Emby installed, on all tested distro's it will simply get a message "Emby is already on that version" and do nothing. On future runs it now knows what version is installed (cause it tried to install it), so it won't do that again. 
 
-2. Script will pull the latest beta or stable version from Emby's github page depending on which you selected. Once it finds the most recent desired version it will stop searching the API and move on with that version. If it encouters any errors pulling from the page it will exit the script letting you know it failed and will try to tell you why.
-
-3. Once it has pulled the latest version number it will test to see if that is the more recent version installed. 
-  
- * The script keeps track of versions after the first install. However it will always try and update the server to the latest version the first time the script is run. This if for both Emby AND the App itself. On Debian derived distro's it will download the latest deb, but if the latest version is already the current version it won't do anything and will exit. It will however update the config file with the most recent version. It will also overwrite the EmbyUpdate app itself with the latest version if updating it was selected in options. Every other future run should be normal.
-    
-4. The script will start the upgrade now, first checking to see if your settings ask it to stop the server. As written this will only work on systemd systems, but the commands can be changed in the code as needed. This is not required in most cases as the install packages normally stops/starts the server when it's being updated anyway. But it's in the script if needed.
-
-4. For Debian based distros the script will download the newest deb file from Emby github. It will then run dpkg on the downloaded file    installing it as long as the version it's trying to install isn't also the current version. Dpkg stops and starts the server for you.    It will then delete the deb file to keep things nice and clean.
-   
-   The app itself also checks for a more recent version. If it finds one it downloads the .zip file from my github releases, unzips it      in the current working directory, and then deletes the .zip to keep things nice and tidy. It will also mark the embyupdate.py file as    executable. Not needed, but I can so I did.
-    
-   All other distros I believe do the three above steps from one command (yum, zypper, pacman, dnf) I have taken that into account in
-   the script and as long as you've correctly selected the distro you should be fine. (untested)
-   
-5. Lastly, if everything has gone ok with no errors, the script will write the newly installed version numbers into the config file.
+Normal runs:
+1. App checks for any updates to itself (if that option was selected). If it finds an update it will download it, install it, and restart the app with the new code.
+2. It will then try to reach the server to get it's version number. If it cannot reach the server, it will fall back on its install history to guess what version you're on. It will assume the last version it installed.
+3. It will then poll the Emby GitHub page and find the most recent release. If that release doesn't match the installed version. It will download the new version.
+4. The script will start the upgrade now, first checking to see if your settings ask it to stop the server. As written this will only work on systemd systems, but the commands can be changed in the code as needed. This is not required in most cases as the install package normally stops/starts the server when it's being updated anyway. But it's in the script if needed. It still there for fringe cases.
+5. It will then install the latest version.
+6. Lastly, if everything has gone ok with no errors, it updates the database with what it did, and what versions it installed.
 
 
 ## Deployment
 
-Download, copy, git, svn, or use any other way you know to get the script on your box. An easy way is to download the source .zip in releases and unzip in in the desired directory (suggested way). I created a directory just for this script. It will download the deb's and create the version.txt file and log into whatever directory you have it in.
-
-ALL FILE MUST REMAIN IN THE SAME DIRECTORY! Everything it does happens in the directly embyupdate.py lives in. If you move anything, delete anything, or rename anything your going to have issues. The script knows what directory it's in and behaves accordingly. You can move it anywhere, but you must move ALL FILES.
-
-Make the job executable by running this command on the script (optional)
-```
-sudo chmod u+x embyupdate.py 
-```
-Then you can run the script with a simple (optional)
-```
-sudo ./embyupdate.py
-```
-Or if you placed it in your $PATH (really optional! And untested)
-```
-sudo embyupdate.py
-```
-
-As stated above you must either be root or use sudo because the script calls privileged Linux commands. I also highly suggest running the script through cron as root.
-
-Example CRONTAB entry:
-```
-35 12   * * *    root  /usr/bin/python3 /path/to/embyupdate/embyupdate.py >> /path/to/embyupdate/embyupdate.log 2>&1
-```
-That runs the script every day at 12:35 and creates a log file in the location of my choice. I use my script location.
-
-However, if your user has sudo access without a password, you could update the commands in the script by apending
-```
-sudo
-```
-in front of them. (I mean the systemd commands and the package install command). Then you could run the script as normal from your user.
-```
-./embyupdate.py
-```
+See [Deployment](https://github.com/doonze/EmbyUpdate/wiki/Deployment)
 
 ## Authors
 
