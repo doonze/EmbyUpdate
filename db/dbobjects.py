@@ -71,11 +71,11 @@ class MainUpdateHistory:
     """
     Class for interfacing with the MainUpdateHistory table
     """
-    id: int = None
-    date: date = None
-    version: str = None
-    success: bool = None
-    errorid: int = None
+    id: int = 0
+    date: str = "Date"
+    version: str = "Version"
+    success: bool = True
+    errorid: int = 0
 
     def insert_to_db(self):
         """
@@ -100,14 +100,20 @@ class MainUpdateHistory:
         """
         Pulls object table from DB
         """
-        db.db_return_class_object(db.db_conn(), 'MainUpdateHistory', 'id',
-                                  '(SELECT MAX(ID)  FROM TABLE)', self)
+        return db.db_return_class_object(db.db_conn(), 'MainUpdateHistory', 'id',
+                                         '1', self)
 
-    def print_me(self):
+    @staticmethod
+    def print_me():
         """
-        Prints object to output
+        Prints table to output
         """
-        print(self)
+        log_list = db.db_select_values(db.db_conn(), 'MainUpdateHistory', "*")
+        for row in log_list:
+            print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}[{row['date']}]{c.end} "
+                  f"{c.fg.pink}Version:{c.end} {c.fg.lt_blue}{row['version']}{c.end} "
+                  f"{c.fg.pink}Success:{c.end} {c.fg.lt_blue}{row['success']}{c.end} "
+                  f"{c.fg.pink}ErrorID:{c.end} {c.fg.lt_blue}{row['errorid']}{c.end} ")
 
 
 @dataclass
@@ -155,7 +161,7 @@ class SelfUpdate:
         key_map = {}
         print()
         for i, key in enumerate(dc_dict, start=1):
-            key_map[i] = key
+            key_map[str(i)] = key
             print(f"[{c.fg.orange}{i}{c.end}] {c.fg.lt_blue}{key :<16}{c.end}: "
                   f"{c.fg.lt_cyan}{dc_dict[key]}{c.end}")
         return key_map
@@ -181,13 +187,25 @@ class SelfUpdateHistory:
         """
 
         sql = (f"INSERT into SelfUpdateHistory (date, version, success, errorid) "
-               f"VALUES({self.date, self.version,self.success, self.errorid})")
+               f"VALUES{self.date, self.version, self.success, self.errorid}")
 
         conn = db.db_conn()
         with conn:
             with closing(conn.cursor()):
                 cur = conn.cursor()
                 cur.execute(sql)
+
+    @staticmethod
+    def print_me():
+        """
+        Prints table to output
+        """
+        log_list = db.db_select_values(db.db_conn(), 'SelfUpdateHistory', "*")
+        for row in log_list:
+            print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}[{row['date']}]{c.end} "
+                  f"{c.fg.pink}Version:{c.end} {c.fg.lt_blue}{row['version']}{c.end} "
+                  f"{c.fg.pink}Success:{c.end} {c.fg.lt_blue}{row['success']}{c.end} "
+                  f"{c.fg.pink}ErrorID:{c.end} {c.fg.lt_blue}{row['errorid']}{c.end} ")
 
 
 @dataclass
@@ -241,6 +259,18 @@ class Errors:
     date: date
     message: str
     mainorself: str
+
+    @staticmethod
+    def print_me():
+        """
+        Prints table to output
+        """
+        log_list = db.db_select_values(db.db_conn(), 'MainUpdateHistory', "*")
+        for row in log_list:
+            print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}[{row['date']}]{c.end} "
+                  f"{c.fg.pink}Version:{c.end} {c.fg.lt_blue}{row['version']}{c.end} "
+                  f"{c.fg.pink}Success:{c.end} {c.fg.lt_blue}{row['success']}{c.end} "
+                  f"{c.fg.pink}ErrorID:{c.end} {c.fg.lt_blue}{row['errorid']}{c.end} ")
 
 
 @dataclass
