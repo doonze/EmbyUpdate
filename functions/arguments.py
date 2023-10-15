@@ -38,7 +38,7 @@ def read_args(version):
     parser.add_argument('--db_rebuild',
                         action='store_true',
                         help=f'Rebuilds (Drops/Creates) the database. {c.fg.lt_red}Resets to '
-                        f'default. All data will be lost.{c.end}')
+                             f'default. All data will be lost.{c.end}')
     parser.add_argument('-cd',
                         dest='config_display',
                         choices=('mainconfig', 'selfupdate', 'serverinfo', 'distroconfig',
@@ -88,7 +88,7 @@ def read_args(version):
                 createdb.create_db(version)
                 print("Database has been rebuilt. Starting config...")
                 print()
-                config_setup()
+                config_setup(version)
                 sys.exit()
 
             if response in ("n", "N", ""):
@@ -140,14 +140,45 @@ def read_args(version):
                 distroconfig = db.DistroConfig()
                 distro_dict = distroconfig.print_me(edit=True)
                 edit_distroconfig(distro_dict)
-            else:    
+            else:
                 print()
                 print(f"{c.fg.yellow}DistroConfig:{c.end}")
                 distroconfig = db.DistroConfig()
-                distro_dict = distroconfig.print_me()
-            
+                distroconfig.print_me()
+
+            displayed = True
+
+    # Here we display the logs
+    display_logs = args.logs_display
+
+    if display_logs is not None:
+        if "emby" in display_logs:
+            print()
+            print(f"{c.fg.yellow}Emby Server Update Log:{c.end}")
+            db.MainUpdateHistory().print_me()
+            displayed = True
+
+        if "self" in display_logs:
+            print()
+            print(f"{c.fg.yellow}Self Update Log:{c.end}")
+            db.SelfUpdateHistory().print_me()
+            displayed = True
+
+        if "errors" in display_logs:
+            print()
+            print(f"{c.fg.yellow}Error Log:{c.end}")
+            error_log = db.Errors().print_me()
+
+            displayed = True
+
+        if "runlog" in display_logs:
+            print()
+            print(f"{c.fg.yellow}ServerInfo:{c.end}")
+            run_log = db.ServerInfo()
+            run_log.pull_from_db()
+            run_log.print_me()
 
             displayed = True
 
         if displayed:
-            sys.exit()
+            sys.exit(0)
