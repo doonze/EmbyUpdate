@@ -53,6 +53,17 @@ def read_args(version):
                         default=None,
                         nargs="+",
                         metavar="")
+    parser.add_argument('-dl',
+                        dest='logs_display',
+                        choices=('emby', 'self', 'errors', 'runlog'),
+                        help=f'''Logs Display: Used to display logs. Examples: 
+                                   "{c.fg.cyan}-dl emby{c.end}" would display the Emby Server update logs. 
+                                   "{c.fg.cyan}-dl emby self{c.end}" would display both the Emby logs and self logs.
+                                   Allowable values are {c.fg.green}['emby', 'self', 'errors', 'runlog']{c.end}''',
+                        type=str,
+                        default=None,
+                        nargs="+",
+                        metavar="")
     args = parser.parse_args()
 
     # Here we call configupdate to set up or update the config file if command line
