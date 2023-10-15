@@ -65,8 +65,7 @@ def self_update(configobj: db.ConfigObj):
 
         # Here we download the zip to install
         print(f"{timestamp.time_stamp()} Starting Package download...")
-        download = requests.get(
-            f"{selfupdate.downloadurl}{selfupdate.zipfile}")
+        download = requests.get(f"{selfupdate.downloadurl}{selfupdate.zipfile}")
         with open(selfupdate.zipfile, 'wb') as file:
             file.write(download.content)
         print(f"{timestamp.time_stamp()} Package downloaded!")
@@ -77,7 +76,7 @@ def self_update(configobj: db.ConfigObj):
                 if zip_info.filename[-1] == '/':
                     continue
                 zip_info.filename = zip_info.filename.replace(
-                    zip_base_path, "")
+                   zip_base_path, "")
                 unzip.extract(zip_info, '')
 
         # And to keep things nice and clean, we remove the downloaded file once unzipped
@@ -133,4 +132,8 @@ def self_update(configobj: db.ConfigObj):
               "EmbyUpdate(self): We had a problem writing to config after update!")
         print(timestamp.time_stamp() +
               "EmbyUpdate(self): Here's the error we got -- " + str(exception))
+        db.SelfUpdateHistory(date=timestamp.time_stamp(False),
+                             version=selfupdate.onlineversion,
+                             success=False,
+                             errorid=1).insert_to_db()
         sys.exit()
