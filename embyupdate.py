@@ -56,9 +56,11 @@ def main():
     and install them.
     """
 
-    # pylint: disable=C0103
+    # This sets ups colored console text
     c = colors.Terminalcolors()
-    # Sets the version # for the command line -v/--version response
+
+    # Sets the version # for the command line -v/--version response. As well as used throughout the app. It's also used
+    # to compair with the online version to see if we need to update
     version = f"{__version__} - {__status__}"
 
     # Checks for command line arguments
