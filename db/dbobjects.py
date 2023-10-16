@@ -274,22 +274,28 @@ class Errors:
     """
     Class for interfacing with the Errors table
     """
-    id: int
-    date: date
-    message: str
-    mainorself: str
+    id: int = 0
+    date: str = "Date"
+    message: str = "Message"
+    mainorself: str = "Main or Self"
+
+    def insert_to_db(self):
+        """
+        Inserts object into table
+        """
+        db.db_insert_class_in_table(db.db_conn(), self, 'Errors')
 
     @staticmethod
     def print_me():
         """
         Prints table to output
         """
-        log_list = db.db_select_values(db.db_conn(), 'MainUpdateHistory', "*")
+        log_list = db.db_select_values(db.db_conn(), 'Errors', "*")
         for row in log_list:
             print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}[{row['date']}]{c.end} "
-                  f"{c.fg.pink}Version:{c.end} {c.fg.lt_blue}{row['version']}{c.end} "
-                  f"{c.fg.pink}Success:{c.end} {c.fg.lt_blue}{row['success']}{c.end} "
-                  f"{c.fg.pink}ErrorID:{c.end} {c.fg.lt_blue}{row['errorid']}{c.end} ")
+                  f"{c.fg.pink}Message:{c.end} {c.fg.lt_blue}{row['message']}{c.end} "
+                  f"{c.fg.pink}Process:{c.end} {c.fg.lt_blue}{row['mainorself']}{c.end} "
+                  )
 
 
 @dataclass
