@@ -8,7 +8,7 @@ import os.path
 import zipfile
 from genericpath import exists
 import requests
-from functions import api, timestamp
+from functions import api, timestamp, exceptrace
 import db.dbobjects as db
 
 
@@ -95,8 +95,8 @@ def self_update(configobj: db.ConfigObj):
         os.chmod("embyupdate.py", state.st_mode | 0o111)
 
     except Exception as exception:
-        print(timestamp.time_stamp() + "EmbyUpdate(self): We had a problem installing new version of updater!")
-        print(timestamp.time_stamp() + "EmbyUpdate(self): Here's the error we got -- " + str(exception))
+        exceptrace.execpt_trace("EmbyUpdate(self): We had a problem installing new version of updater!",
+                                sys.exc_info(), "Self")
         db.SelfUpdateHistory(date=timestamp.time_stamp(False),
                              version=selfupdate.onlineversion,
                              success=False,
@@ -128,10 +128,8 @@ def self_update(configobj: db.ConfigObj):
         os.execv(sys.argv[0], sys.argv)
 
     except Error as exception:
-        print(timestamp.time_stamp() +
-              "EmbyUpdate(self): We had a problem writing to config after update!")
-        print(timestamp.time_stamp() +
-              "EmbyUpdate(self): Here's the error we got -- " + str(exception))
+        exceptrace.execpt_trace("EmbyUpdate(self): We had a problem writing to config after update!",
+                                sys.exc_info(), "Self")
         db.SelfUpdateHistory(date=timestamp.time_stamp(False),
                              version=selfupdate.onlineversion,
                              success=True,
