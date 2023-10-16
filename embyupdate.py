@@ -31,6 +31,8 @@ import os.path
 import sys
 from genericpath import exists
 import directoryfix
+import functions.installrequirments
+
 # Before we import the rest, we have to see if the user has a 3.6 or earlier version of EmbyUpdate. Because it had a
 # broken unzipper that couldn't unzip into directories, it unzips 4.1+ versions without their directories. Therefore,
 # causing an app failure. If it does fail to import, it throws an exception which we catch and trigger a fix. We detect
@@ -40,7 +42,7 @@ try:
                            api, updatecheck, install, colors)
     from db import createdb, dbobjects
 
-except Exception:
+except ImportError:
     os.chdir(sys.path[0])
     if os.path.exists("configupdate.py"):
         directoryfix.fix_directory()
@@ -55,6 +57,8 @@ def main():
     and checks to see if there are any updates available. If there are, it will download them
     and install them.
     """
+    # Check for requirements. Will try to install if possible
+    functions.installrequirments.install_req()
 
     # This sets ups colored console text
     c = colors.Terminalcolors()
