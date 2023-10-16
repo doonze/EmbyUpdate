@@ -134,6 +134,6 @@ def self_update(configobj: db.ConfigObj):
               "EmbyUpdate(self): Here's the error we got -- " + str(exception))
         db.SelfUpdateHistory(date=timestamp.time_stamp(False),
                              version=selfupdate.onlineversion,
-                             success=False,
-                             errorid=1).insert_to_db()
+                             success=True,
+                             errorid=2).insert_to_db()
         sys.exit()
