@@ -412,8 +412,8 @@ def config_setup(version):
                 print("")
                 break
             except Error:
-                exceptrace.execpt_trace("*** EmbyUpdate: Couldn't update the database. ***",
-                                        sys.exc_info())
+                exceptrace.execpt_trace("Self Config: Couldn't update the database. ***",
+                                        sys.exc_info(), process="Self")
                 print()
                 print("EmbyUpdate: Cannot continue, exiting.")
                 sys.exit()
