@@ -42,14 +42,14 @@ def read_args(version):
                                  f'default. All data will be lost.{c.end}')
         parser.add_argument('-cd',
                             dest='config_display',
-                            choices=('mainconfig', 'selfupdate', 'serverinfo', 'distroconfig',
+                            choices=('emby', 'self', 'server', 'distro',
                                      'edit'),
                             help=f'''Config Display: Used to display config settings. Use with "edit"
                                    to update configs. Can display or edit multiple configs at once. Examples: 
-                                   "{c.fg.cyan}-cd mainconfig serverinfo{c.end}" would display both configs. 
-                                   "{c.fg.cyan}-cd mainconfig serverinfo edit{c.end}" would allow you to edit both.
-                                   Allowable values are {c.fg.green}['mainconfig', 'selfupdate', 'serverinfo', 'distroconfig',
-                                       'edit']{c.end}''',
+                                   "{c.fg.cyan}-cd emby server{c.end}" would display both configs. 
+                                   "{c.fg.cyan}-cd emby server edit{c.end}" would allow you to edit both.
+                                   Allowable values are {c.fg.green}['emby', 'self', 'server', 
+                                   'distro', 'edit']{c.end}''',
                             type=str,
                             default=None,
                             nargs="+",
@@ -105,7 +105,9 @@ def read_args(version):
         displayed = False
 
         if display_config is not None:
-            if "mainconfig" in display_config:
+            if "emby" in display_config:
+                print()
+                print(f"{c.fg.yellow}Emby Server Update:{c.end}")
                 mainconfig = db.MainConfig()
                 mainconfig.pull_from_db()
                 key_map = mainconfig.print_me()
@@ -114,9 +116,9 @@ def read_args(version):
 
                 displayed = True
 
-            if "selfupdate" in display_config:
+            if "self" in display_config:
                 print()
-                print(f"{c.fg.yellow}SelfUpdate:{c.end}")
+                print(f"{c.fg.yellow}Self Update:{c.end}")
                 selfupdate = db.SelfUpdate()
                 selfupdate.pull_from_db()
                 key_map = selfupdate.print_me()
@@ -125,9 +127,9 @@ def read_args(version):
 
                 displayed = True
 
-            if "serverinfo" in display_config:
+            if "server" in display_config:
                 print()
-                print(f"{c.fg.yellow}ServerInfo:{c.end}")
+                print(f"{c.fg.yellow}Server Info:{c.end}")
                 serverinfo = db.ServerInfo()
                 serverinfo.pull_from_db()
                 key_map = serverinfo.print_me()
@@ -136,7 +138,7 @@ def read_args(version):
 
                 displayed = True
 
-            if "distroconfig" in display_config:
+            if "distro" in display_config:
                 if "edit" in display_config:
                     distroconfig = db.DistroConfig()
                     distro_dict = distroconfig.print_me(edit=True)
@@ -159,11 +161,11 @@ def read_args(version):
                 print(f"{c.fg.orange}Error code {c.end}{c.fg.green}0{c.end} {c.fg.orange}means no errors.{c.end} "
                       f"{c.fg.lt_green}Success!{c.end}")
                 print(
-                    f"{c.fg.orange}Error code{c.end} {c.fg.red}1{c.end} {c.fg.orange}means it got an error on update, it "
-                    f"likely {c.fg.red}failed{c.end}{c.fg.orange}. See logs.{c.end}")
+                    f"{c.fg.orange}Error code{c.end} {c.fg.red}1{c.end} {c.fg.orange}means it got an error on update,"
+                    f" it likely {c.fg.red}failed{c.end}{c.fg.orange}. See logs.{c.end}")
                 print(
-                    f"{c.fg.orange}Error code{c.end} {c.fg.red}2{c.end} {c.fg.orange}means it got an error updating the "
-                    f"database, update was likely {c.fg.lt_green}successful{c.end} {c.fg.orange}however. "
+                    f"{c.fg.orange}Error code{c.end} {c.fg.red}2{c.end} {c.fg.orange}means it got an error updating the"
+                    f" database, update was likely {c.fg.lt_green}successful{c.end} {c.fg.orange}however. "
                     f"See logs.{c.end}")
                 print()
                 db.MainUpdateHistory().print_me()
@@ -175,11 +177,11 @@ def read_args(version):
                 print(f"{c.fg.orange}Error code {c.end}{c.fg.green}0{c.end} {c.fg.orange}means no errors.{c.end} "
                       f"{c.fg.lt_green}Success!{c.end}")
                 print(
-                    f"{c.fg.orange}Error code{c.end} {c.fg.red}1{c.end} {c.fg.orange}means it got an error on update, it "
-                    f"likely {c.fg.red}failed{c.end}{c.fg.orange}. See logs.{c.end}")
+                    f"{c.fg.orange}Error code{c.end} {c.fg.red}1{c.end} {c.fg.orange}means it got an error on update, "
+                    f"it likely {c.fg.red}failed{c.end}{c.fg.orange}. See logs.{c.end}")
                 print(
-                    f"{c.fg.orange}Error code{c.end} {c.fg.red}2{c.end} {c.fg.orange}means it got an error updating the "
-                    f"database, update was likely {c.fg.lt_green}successful{c.end} {c.fg.orange}however. "
+                    f"{c.fg.orange}Error code{c.end} {c.fg.red}2{c.end} {c.fg.orange}means it got an error updating the"
+                    f" database, update was likely {c.fg.lt_green}successful{c.end} {c.fg.orange}however. "
                     f"See logs.{c.end}")
                 print()
                 db.SelfUpdateHistory().print_me()
