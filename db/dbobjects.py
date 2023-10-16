@@ -110,10 +110,19 @@ class MainUpdateHistory:
         """
         log_list = db.db_select_values(db.db_conn(), 'MainUpdateHistory', "*")
         for row in log_list:
+            if row['success'] == 'False':
+                success = f'{c.fg.lt_red}False{c.end}'
+            else:
+                success = f'{c.fg.lt_green}True{c.end}'
+
+            if int(row['errorid']) == 0:
+                errorid = f'{c.fg.lt_green}0{c.end}'
+            else:
+                errorid = f"{c.fg.lt_red}{row['errorid']}{c.end}"
             print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}[{row['date']}]{c.end} "
                   f"{c.fg.pink}Version:{c.end} {c.fg.lt_blue}{row['version']}{c.end} "
-                  f"{c.fg.pink}Success:{c.end} {c.fg.lt_blue}{row['success']}{c.end} "
-                  f"{c.fg.pink}ErrorID:{c.end} {c.fg.lt_blue}{row['errorid']}{c.end} ")
+                  f"{c.fg.pink}Success:{c.end} {success} "
+                  f"{c.fg.pink}ErrorID:{c.end} {errorid} ")
 
 
 @dataclass
@@ -173,7 +182,7 @@ class SelfUpdateHistory:
     Class for interfacing with the SelfUpdateHistory table
     """
     id: int = None
-    date: date = None
+    date: str = None
     version: str = None
     success: bool = True
     errorid: int = None
@@ -187,7 +196,7 @@ class SelfUpdateHistory:
         """
 
         sql = (f"INSERT into SelfUpdateHistory (date, version, success, errorid) "
-               f"VALUES{self.date, self.version, self.success, self.errorid}")
+               f"VALUES({self.date}, {self.version}, {self.success}, {self.errorid})")
 
         conn = db.db_conn()
         with conn:
@@ -202,10 +211,20 @@ class SelfUpdateHistory:
         """
         log_list = db.db_select_values(db.db_conn(), 'SelfUpdateHistory', "*")
         for row in log_list:
-            print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}[{row['date']}]{c.end} "
+            if int(row['success']) == 0:
+                success = f'{c.fg.lt_red}False{c.end}'
+            else:
+                success = f'{c.fg.lt_green}True{c.end}'
+
+            if int(row['errorid']) == 0:
+                errorid = f'{c.fg.lt_green}0{c.end}'
+            else:
+                errorid = f"{c.fg.lt_red}{row['errorid']}{c.end}"
+
+            print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}{row['date']}{c.end} "
                   f"{c.fg.pink}Version:{c.end} {c.fg.lt_blue}{row['version']}{c.end} "
-                  f"{c.fg.pink}Success:{c.end} {c.fg.lt_blue}{row['success']}{c.end} "
-                  f"{c.fg.pink}ErrorID:{c.end} {c.fg.lt_blue}{row['errorid']}{c.end} ")
+                  f"{c.fg.pink}Success:{c.end} {success} "
+                  f"{c.fg.pink}ErrorID:{c.end} {errorid} ")
 
 
 @dataclass
