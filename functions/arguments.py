@@ -12,19 +12,19 @@ from functions.configsetup import config_setup
 
 
 # This sets up the command line arguments
-try:
-    def read_args(version):
-        """
-        The read_args function is used to read in the arguments from the command line.
-        It returns a list of arguments that can then be passed into other functions.
 
-        Args:
-            version: Hold the version number of the program
+def read_args(version):
+    """
+    The read_args function is used to read in the arguments from the command line.
+    It returns a list of arguments that can then be passed into other functions.
 
-        Returns:
-            A dictionary of the arguments passed to it
-        """
+    Args:
+        version: Hold the version number of the program
 
+    Returns:
+        A dictionary of the arguments passed to it
+    """
+    try:
         parser = argparse.ArgumentParser(
             description="An updater for Emby Media Player",
             prog='EmbyUpdate')
@@ -174,11 +174,13 @@ try:
                 print(f"{c.fg.yellow}Self Update Log:{c.end}")
                 print(f"{c.fg.orange}Error code {c.end}{c.fg.green}0{c.end} {c.fg.orange}means no errors.{c.end} "
                       f"{c.fg.lt_green}Success!{c.end}")
-                print(f"{c.fg.orange}Error code{c.end} {c.fg.red}1{c.end} {c.fg.orange}means it got an error on update, it "
-                      f"likely {c.fg.red}failed{c.end}{c.fg.orange}. See logs.{c.end}")
-                print(f"{c.fg.orange}Error code{c.end} {c.fg.red}2{c.end} {c.fg.orange}means it got an error updating the "
-                      f"database, update was likely {c.fg.lt_green}successful{c.end} {c.fg.orange}however. "
-                      f"See logs.{c.end}")
+                print(
+                    f"{c.fg.orange}Error code{c.end} {c.fg.red}1{c.end} {c.fg.orange}means it got an error on update, it "
+                    f"likely {c.fg.red}failed{c.end}{c.fg.orange}. See logs.{c.end}")
+                print(
+                    f"{c.fg.orange}Error code{c.end} {c.fg.red}2{c.end} {c.fg.orange}means it got an error updating the "
+                    f"database, update was likely {c.fg.lt_green}successful{c.end} {c.fg.orange}however. "
+                    f"See logs.{c.end}")
                 print()
                 db.SelfUpdateHistory().print_me()
                 displayed = True
@@ -199,8 +201,10 @@ try:
 
                 displayed = True
 
-            if displayed:
-                sys.exit(0)
+        if displayed:
+            sys.exit(0)
 
-except KeyboardInterrupt:
-    print("Exiting...")
+    except KeyboardInterrupt:
+        print()
+        print("Exiting...")
+        sys.exit(0)
