@@ -202,6 +202,8 @@ def read_args(version):
                 displayed = True
 
         if displayed:
+            print()
+            print("Exiting...")
             sys.exit(0)
 
     except KeyboardInterrupt:
