@@ -111,8 +111,8 @@ class Config:
                 remove("configupdate.py")
 
         except (OSError, SystemError):
-            exceptrace.execpt_trace("***config_fix: An error was encountered..",
-                                    sys.exc_info())
+            exceptrace.execpt_trace("config_fix: An error was encountered..",
+                                    sys.exc_info(), process="Self")
             print()
             print("We were not able to finish the conversion to the new config system.")
             print("Unfortunately, I cannot tell if you want Emby Stable or Beta, and it")
