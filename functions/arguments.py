@@ -190,7 +190,7 @@ def read_args(version):
             if "errors" in display_logs:
                 print()
                 print(f"{c.fg.yellow}Error Log:{c.end}")
-                error_log = db.Errors().print_me()
+                db.Errors().print_me()
 
                 displayed = True
 
