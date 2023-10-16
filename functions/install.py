@@ -118,12 +118,13 @@ def update_emby(configobj: db.ConfigObj):
 
         except Error:
             print()
-            exceptrace.execpt_trace("*** EmbyUpdate: Couldn't write config to database after "
-                                    "update finished. ", sys.exc_info())
+            exceptrace.execpt_trace("Emby Server Update: Couldn't write config to database after "
+                                    "update finished. ", sys.exc_info(), "Emby")
             db.MainUpdateHistory(date=timestamp.time_stamp(False), version=configobj.onlineversion,
                                  success=False, errorid=2).insert_to_db()
 
     except Exception:
-        exceptrace.execpt_trace("*** EmbyUpdate: Something went wrong on the update/install.", sys.exc_info())
+        exceptrace.execpt_trace("Emby Server Update: Something went wrong on the update/install.", sys.exc_info(),
+                                "Emby")
         db.MainUpdateHistory(date=timestamp.time_stamp(False), version=configobj.onlineversion,
                              success=False, errorid=1).insert_to_db()
