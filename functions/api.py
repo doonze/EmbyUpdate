@@ -8,6 +8,7 @@ GitHub.
 import sys
 import json
 import requests
+import db.dbobjects
 import db.dbobjects as db_obj
 from functions import exceptrace, timestamp
 
@@ -41,12 +42,17 @@ def get_running_version() -> db_obj.ServerInfo:
         else:
             print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. "
                   f"If it's running, try running the config updater to check settings.")
+            db.dbobjects.Errors(date=timestamp.time_stamp(False),
+                                message="We were unable to connect to a running instance of Emby Server. If it's "
+                                        "running, try running the config updater to check settings.",
+                                mainorself="Emby").insert_to_db()
             server_info.version = None
             return server_info
 
     except requests.exceptions.RequestException:
-        print(f"{timestamp.time_stamp()} We were unable to connect to a running instance of Emby Server. If it's "
-              f"running, try running the config updater to check settings.")
+        exceptrace.execpt_trace("Emby Server: We were unable to connect to a running instance of Emby Server. If "
+                                "it's running, try running the config updater to check settings.",
+                                sys.exc_info(), "Self")
         server_info.version = None
         return server_info
 
@@ -88,8 +94,8 @@ def get_self_online_version() -> db_obj.SelfUpdate:
         return selfupdate
 
     except requests.exceptions.RequestException:
-        exceptrace.execpt_trace("*** Selfupdate: Couldn't get git version from GitHub. "
-                                "We will not be able update this script for now!", sys.exc_info())
+        exceptrace.execpt_trace("Self Update: Couldn't get git version from GitHub. "
+                                "We will not be able update this script for now!", sys.exc_info(), "Self")
         selfupdate.onlineversion = None
         return selfupdate
 
@@ -150,7 +156,6 @@ def get_main_online_version(configobj: db_obj.ConfigObj) -> db_obj.ConfigObj:
         return configobj
 
     except requests.exceptions.RequestException:
-        exceptrace.execpt_trace("*** EmbyUpdate: Couldn't get git version from GitHub. "
-                                "We will not be able update this script for now!", sys.exc_info())
+        exceptrace.execpt_trace("Emby Server Update: Couldn't get git version from GitHub", sys.exc_info(), "Emby")
         configobj.onlineversion = None
         return configobj
