@@ -1,4 +1,11 @@
-EmbyUpdate Version 4.20 (Rolled 10/14/2023)
+EmbyUpdate Version 4.22 Beta (Rolled 10/15/2023)
+* You can now view both the Emby Server update logs and the Self update logs from command line
+* Fixed some issues with it writing to the Self update log. Python weirdness.
+
+EmbyUpdate Version 4.21 Beta (Rolled 10/14/2023)
+* Exact copy of 4.20 Stable, fix for Python3.11 in beta
+
+EmbyUpdate Version 4.20 Stable (Rolled 10/14/2023)
 * Break fix for Python3.11 issues. Problem didn't show up in 3.7-3.10
 
 EmbyUpdate Version 4.12 Stable (Rolled 10/13/2023)
