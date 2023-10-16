@@ -283,7 +283,14 @@ class Errors:
         """
         Inserts object into table
         """
-        db.db_insert_class_in_table(db.db_conn(), self, 'Errors')
+        sql = f"INSERT into Errors (date, message, mainorself) VALUES(? , ?, ?)"
+        params = [self.date, self.message, self.mainorself]
+
+        conn = db.db_conn()
+        with conn:
+            with closing(conn.cursor()):
+                cur = conn.cursor()
+                cur.execute(sql, params)
 
     @staticmethod
     def print_me():
@@ -292,10 +299,11 @@ class Errors:
         """
         log_list = db.db_select_values(db.db_conn(), 'Errors', "*")
         for row in log_list:
-            print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}[{row['date']}]{c.end} "
+            print(f"{c.fg.pink}Date:{c.end} {c.fg.lt_blue}{row['date']}{c.end} "
                   f"{c.fg.pink}Message:{c.end} {c.fg.lt_blue}{row['message']}{c.end} "
                   f"{c.fg.pink}Process:{c.end} {c.fg.lt_blue}{row['mainorself']}{c.end} "
                   )
+            print()
 
 
 @dataclass
